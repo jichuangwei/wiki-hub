@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>AI × Agent × 前端周报｜2026.09.21–09.27</title>
+<style>
+  body{margin:0;padding:0;background:#f2f5f8;color:#17233b;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  table{border-collapse:collapse;border-spacing:0;}
+  img{border:0;display:block;max-width:100%;height:auto;}
+  a{color:#155eef;text-decoration:underline;}
+  @media only screen and (max-width:640px){.pad{padding-left:12px!important;padding-right:12px!important}.story{padding:12px!important}.hero-title{font-size:27px!important;line-height:1.25!important}}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f2f5f8;">
+<div style="display:none;font-size:1px;color:#f2f5f8;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">一周看点：低成本推理模型、长程 Agent 工程化、代码安全闭环，以及中国 AI 全栈与开发者工具。</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f2f5f8;">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:960px;">
+<tr><td class="pad" style="padding:20px 12px 14px;">
+<div style="font-size:13px;line-height:20px;font-weight:700;letter-spacing:.5px;color:#101b32;">2026.09.21–09.27&nbsp;&nbsp;/&nbsp;&nbsp;第 39 周</div>
+<h1 class="hero-title" style="margin:12px 0 0;font-size:34px;line-height:1.2;font-weight:750;color:#101b32;">AI × Agent × 前端周报</h1>
+</td></tr>
+<tr><td class="pad" style="padding:14px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#eef4ff;border-left:3px solid #79a7ff;border-radius:6px;"><tr><td style="padding:12px 14px;font-size:14px;line-height:22px;color:#19345f;"><strong style="font-weight:700;">本期聚焦</strong><ul style="margin:8px 0 0;padding-left:20px;"><li style="padding:0 0 4px;">模型能力开始直接改变长程任务的成本曲线。</li><li style="padding:0 0 4px;">Agent 产品把工作延伸到 PR 后的发布与监控。</li><li style="padding:0;">开发工具补上权限边界、执行可观测性和浏览器调试能力。</li></ul></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dbe5f4;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#4574c5;">01&nbsp;·&nbsp;AI/大模型</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">模型发布 · OpenAI · 9 月 22 日（视觉输入修复：9 月 25 日）</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">OpenAI 发布 GPT-6 Sol 与 GPT-6 Luna：把推理能力扩展到不同成本档位</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://us1.discourse-cdn.com/openai1/optimized/4X/8/a/3/8a3e471a9d9e8924a80007e6dac44d5805d5be28_2_588x500.png" height="200" alt="OpenAI 官方社区发布的 GPT-6 Sol 与 Luna 成本和得分对比图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>OpenAI 将 GPT-6 Sol 和 GPT-6 Luna 加入 API 与 Codex/Work 产品线。API 支持文本和图像输入，并可通过 Responses 与 Chat Completions 调用。官方列出的标准价格（输入不超过 272K token 的标准档）为：Sol 每百万 token 输入 2 美元、缓存输入 0.20 美元、输出 10 美元；Luna 分别为 0.10、0.01 和 0.50 美元。9 月 25 日，API 更新修复了两款模型图像编码问题，官方建议视觉任务用户重新评测受影响工作流。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对前端与 Agent 开发的影响：</strong>Sol 与 Luna 让团队可以按任务难度和延迟预算分层路由模型：复杂规划交给 Sol，常规分类、轻量工具调用或批处理可评估 Luna。图像输入修复也关系到截图理解、视觉回归、浏览器操作等前端 Agent 链路；接入视觉模型时应把本周修复后的版本重新跑一轮自有评测，不要仅凭文本任务分数决定模型。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://openai.com/index/introducing-gpt-6-sol-and-luna/">OpenAI 发布公告</a> · <a href="https://developers.openai.com/api/docs/changelog">API Changelog（9 月 22 日发布、9 月 25 日修复）</a> · <a href="https://community.openai.com/t/announcing-gpt-6-sol-and-gpt-6-luna/1399925">OpenAI 开发者社区配图</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">模型发布 · Anthropic · 9 月 22 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Anthropic 推出 Claude Opus 5.5，强调复杂工作与推理成本下降</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://www-cdn.anthropic.com/images/4zrzovbb/website/f4d37a1d1f582f53f4e89440062b649b6273a093-1200x630.jpg" height="200" alt="Claude Opus 5.5 官方发布配图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>Opus 5.5 是 Claude 5.5 家族的首个模型。Anthropic 表示，它在多数工作上的表现达到 Claude Fable 5.1 水平，运行成本较 Opus 5 低 40%，并将其定位为面向高难度工作的旗舰模型。官方公布的早期案例包括：一位测试者在一天内完成了 68 万行代码迁移；模型发布前也经过外部评估。API 使用还包含 preserved thinking 等保护设置，需检查既有集成是否依赖旧的 thinking 行为。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对前端与 Agent 开发的影响：</strong>复杂迁移、跨模块重构和长时间工具链任务是 coding Agent 成本与可靠性的主要压力点。若官方成本说明能在自有任务中成立，旗舰模型可能从“只用于少数难题”进入更频繁的重构与代码审查环节；但 68 万行案例是厂商披露的早期案例，不应视为普遍生产结果。集成方还需验证 thinking 参数、上下文处理和数据保留要求。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://www.anthropic.com/claude-opus-5-5">Anthropic：Introducing Claude Opus 5.5</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">AI 科学研究 · Anthropic · 9 月 23 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">约 950 个 Claude Agent 协作筛查 DNA 数据，提出一种具有 CRISPR 类重复序列的新酶系统</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://www-cdn.anthropic.com/images/4zrzovbb/website/394de337d8a5d8db93a1c048fa1cb53e16a09625-2048x1240.jpg" height="200" alt="Anthropic DNA 研究公告中的实验画面" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>Anthropic 公布其生命科学研究团队的早期成果：Agent 从大规模 DNA 序列库中筛查逆转录酶，收集超过 20 万个候选、挑出 3,500 个新系统并缩小到 20 个重点对象，最终发现与逆转录酶相邻的重复序列模式。官方称，约 950 个 Agent 用 21 小时、约 2.1 亿 token 完成主要搜索和分析；研究人员随后进行实验，暂称该系统为 array-associated reverse transcriptases（ART）。其具体生物功能仍未确定，后续实验仍在进行。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对 Agent 开发的影响：</strong>这展示了多 Agent 在“宽范围搜索—候选排序—报告交付—人类实验验证”中的一种端到端研究流程，价值不只来自单次回答，而来自持续探索、候选筛选和可复核产物。开发类似系统时，任务分工、来源记录、候选淘汰理由与实验验证环节不可省略；Anthropic 也明确说 ART 功能尚未确认。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://www.anthropic.com/news/claude-discovers-novel-enzyme-system">Anthropic 研究公告与技术报告入口</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dbe5f4;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#4574c5;">02&nbsp;·&nbsp;Coding Agent/Agent 产品</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">产品发布 · Cursor · 9 月 23 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Cursor 推出 Rollouts 与 Security Reviewer：Agent 从 PR 延伸到上线观察</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/blog/security-reviewer-chart-r3-2400-9iLvPmOOav3nIdJTzMBFMcY7x7miBR.png" height="200" alt="Cursor Security Reviewer 审查耗时与评论采纳率对比图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>Rollouts 会在 PR 阶段阅读改动并写出监控计划，列出风险、预期效果、上线后要观察的指标及缺少的埋点；部署后再按环境比对基线，报告健康、回归或无法判定，并可按团队设置提醒、暂停渐进发布或准备回滚 PR。Security Reviewer 则为 PR 检查注入、认证授权、密钥、反序列化、依赖等问题，附攻击路径说明和修复建议。两项功能面向 Cursor Teams 与 Enterprise；连接源码托管、部署和遥测系统后启用。Cursor 称其内部审查平均用时由 4.8 分钟降至 3.8 分钟，评论采纳率由 45–50% 升至 60–70%，这是厂商披露的数据。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">适用场景与理由：</strong>适合已有 CI/CD、渐进发布和监控指标的团队，希望把 PR 风险检查与变更后的线上健康验证连起来。若团队没有稳定基线或遥测覆盖，先补指标与回滚权限设计；否则 Agent 只能给出“缺少证据”，不应自动执行高影响动作。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">对 Agent 开发的影响：</strong>产品方向从“写代码”进入“持续订阅事件并推进到结果”；Agent 的职责边界开始跨越 PR、部署与生产信号。工程上要把观察计划、证据、权限和审批记录作为一等产物。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://cursor.com/blog/rollouts-and-security-reviewer">Cursor 产品公告：Bots for the last mile</a> · <a href="https://cursor.com/changelog/rollouts-and-security-reviewer">Cursor Changelog</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">产品安全 · GitHub Copilot App · 9 月 23 日 · Public Preview</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">GitHub Copilot App 为本地 Agent 会话加入沙箱策略</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://github.blog/wp-content/uploads/2026/09/656087900-e37216e5-3bd4-448b-bcb5-03bd78440434.jpg" height="200" alt="GitHub Copilot App 本地沙箱功能官方发布图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>本地沙箱可按项目限制 Agent 对文件、网络和凭据的访问，包括读写/只读/拒绝目录、外网与本地网络策略，以及 Git 与 GitHub CLI 凭据。该能力处于公开预览，默认关闭；项目设置作用于新会话，当前会话可用 <code>/sandbox on</code> 启用。若操作系统无法执行请求的隔离策略，沙箱 shell 会报错并停止，而不会悄悄以无沙箱方式运行。云端沙箱和远程主机不在此功能覆盖范围内。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">适用场景与理由：</strong>适合希望 Agent 在本地仓库执行测试、脚本或重构，同时将文件、网络和凭据权限限定在项目范围内的开发者与企业管理员。它给本地 Agent 增加了可配置的最小权限边界；启用前应逐项核对网络、凭据与可写目录策略。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://github.blog/changelog/2026-09-23-local-sandboxing-in-the-github-copilot-app/">GitHub Changelog：Local sandboxing in the GitHub Copilot app</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dbe5f4;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#4574c5;">03&nbsp;·&nbsp;Agent 开发技术与工程</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">Agent Harness · Cursor · 9 月 23 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Cursor 分享长程 Agent 降本实践：动态加载工具、稳定缓存前缀、谨慎拆分子 Agent</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://ptht05hbb1ssoooe.public.blob.vercel-storage.com/assets/blog/gpt-5-6-breakpoints-light-9gMZiAGmTyXsAGXKBOqOaGWNCX1zjZ.png" height="200" alt="Cursor 长程 Agent 缓存断点示意图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>Cursor 报告称，对 Agent harness 的多项调整合计降低 7% token 成本且未降低质量：系统提示词缩短约 66%；低频内置工具改为需要时再注入，使静态上下文中的工具描述 token 降低 60%；将缓存断点放在稳定上下文层之后，使冷缓存未命中率下降 20%；文件读取每十行标一次行号，缓存读取 token 减少 1.6%。团队还减少了鼓励“凡探索必委派”的提示，认为子 Agent 的新上下文能节约 token，但会带来重复工作的协调成本。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对前端与 Agent 开发的影响：</strong>长任务成本常被重复发送的工具定义、系统提示和文件上下文推高。可将这篇文章转成可测的工程清单：区分稳定与任务态上下文、按需加载低频工具、显式评估缓存命中、比较委派前后的总 token 与完成质量。Cursor 的百分比是其产品流量实验结果，应用到自有 Agent 前仍需复测。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://cursor.com/blog/improved-token-efficiency">Cursor Research：Improved token efficiency for longer agent runs</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">Agent 可观测性 · GitHub Copilot App · 9 月 22 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Copilot App 支持 OpenTelemetry：把 Agent 步骤与工具调用接入团队监控</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://github.blog/wp-content/uploads/2026/09/656868336-bd15df17-d1d9-4a64-a109-cef31a4a41c0.jpg" height="200" alt="GitHub Copilot App OpenTelemetry 官方发布图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>企业管理员可通过托管的 <code>managed-settings.json</code> 配置 OTel，将 Agent 活动数据发送到兼容的监控系统。团队能追踪会话中模型请求与工具调用的执行链路、调查异常行为，并在组织层面统一配置。Prompt 与响应内容默认不包含在导出数据中；启用内容捕获前需要检查相应设置。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对 Agent 开发的影响：</strong>Agent 的问题往往发生在模型、工具和环境交界处，单看最终回答难以定位。采用标准 trace 便于把一次任务拆解为可检索的步骤，也让延迟、失败率和工具使用成本进入已有 SRE 看板。企业需要同步制定 trace 保留与敏感内容捕获策略。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://github.blog/changelog/2026-09-22-opentelemetry-in-the-github-copilot-app/">GitHub Changelog：OpenTelemetry in the GitHub Copilot app</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dbe5f4;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#4574c5;">04&nbsp;·&nbsp;前端开发与生态</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">安全更新 · Next.js · 9 月 22 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Next.js 修复 next/og 的 Node.js ImageResponse 严重远程代码执行风险</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://h8dxkfmaphn8o0p3.public.blob.vercel-storage.com/static/blog/nextjs-security-update-september-22-2026/twitter-card.png" height="200" alt="Next.js 严重安全问题更新官方发布图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>Next.js 发布 16.3.6（Active LTS）和 15.5.26（Maintenance LTS）安全更新。公告指出，Next.js 16.2.0 至 16.3.5 的 Node.js <code>ImageResponse</code> 实现受影响：特定条件下，Satori 生成 SVG 时的转义问题与上游依赖漏洞组合，可能导致远程代码执行。Edge 版 ImageResponse 不受影响；15.5.26 包含相关加固，但 15.x 并未受该 RCE 影响。官方建议升级对应维护版本。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对前端开发的影响：</strong>这类风险落在常见的 OG 图片生成路径，影响服务端渲染与动态分享卡片部署。Next.js 项目应核对实际版本及运行时实现，优先升级；若使用 Node.js ImageResponse，还要检查暴露给外部输入的生成逻辑。不要把“15.x 有加固版本”误读成“15.x 受同一 RCE 影响”。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://nextjs.org/blog/nextjs-security-update-september-22-2026">Next.js 官方安全公告</a> · <a href="https://github.com/vercel/next.js/security/advisories/GHSA-vcvr-r3jv-pc5j">GitHub Security Advisory</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">浏览器开发工具 · Chrome DevTools · 9 月 22 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Chrome DevTools 更新把更多真实页面调试能力交给 Agent</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://developer.chrome.com/static/blog/new-in-devtools-october-2026/images/elements.webp" height="200" alt="Chrome DevTools Elements 面板展示无效 CSS 规则" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>Chrome for Developers 的 9 月 22 日 DevTools 汇总介绍了近期进入稳定版的能力：DevTools for agents 增加更细粒度的 JavaScript 执行控制和 PWA 安装/生命周期自动化工具；AI 辅助可检查源代码并记录性能 trace；Performance 面板支持完整软导航与 CPU 性能档位覆盖；Application 面板增加广告脚本追踪。Chrome 同时改为每两周发布一次 Stable 版本，这一期汇总内容横跨 Chrome 153、154。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对前端开发的影响：</strong>前端 Agent 可在真实浏览器中执行、检查并留下性能与页面状态证据，减少只凭静态代码推断交互是否正常的情况。团队可以先把 DevTools MCP 接入一个低风险页面，尝试让 Agent 复现软导航问题、记录 trace、验证 PWA 生命周期，再由开发者确认诊断。两周节奏也意味着 Beta 回归检查应更频繁。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://developer.chrome.com/blog/new-in-devtools-october-2026">Chrome for Developers：New in DevTools – October 2026（发布于 9 月 22 日）</a> · <a href="https://developer.chrome.com/blog/chrome-two-week-start">Chrome 两周发布节奏说明</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dbe5f4;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#4574c5;">05&nbsp;·&nbsp;AI 产业与开发者生态</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">中国生态 · 阿里云栖大会 · 9 月 22 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">阿里公布全栈 AI 与 Agentic Cloud 路线：模型、Harness、Context 三层协同</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://img.alicdn.com/imgextra/i2/O1CN01v2G89ooKAOE9kF3i_!!6000000005439-2-tps-4800-3202.png" height="200" alt="阿里云栖大会基础设施规划官方现场图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;">&nbsp;</td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>阿里在云栖大会宣布 Qwen 4 正在训练，并公布 Qwen 4.5、Qwen 5 的后续路线；同时升级语音与多模态模型，推出面向手机跨应用任务的 Qwen Intelligence。云侧将 Agentic Cloud 拆成 AI Native Cloud（模型训练与推理）、Agent Native Cloud（Agent 构建、运行、安全与生命周期管理）和 Context Engine（实时数据与长期记忆）。具体服务包括 AgentCore、Agent Security Center、Agent Context；阿里称 Context 可在部分知识密集场景将 token 用量降低最高 67%。这些路线图与数字来自厂商发布，仍需等待产品交付和独立验证。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">为什么值得关注 / 对前端与 Agent 开发的影响：</strong>中国云厂商的竞争重心继续从单一模型扩展到推理基础设施、运行时安全、记忆和应用集成。做企业 Agent 的团队应比较数据接入、长期记忆、运行监控与权限控制的接口边界；前端侧则需要设计任务状态、审批与跨应用结果确认，而不只是聊天输入框。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://www.alibabacloud.com/blog/alibaba-unveils-roadmap-on-full-stack-ai-strategy-from-chips-cloud-infrastructure-models-to-agents_603589">Alibaba Cloud Community 官方公告</a> · <a href="https://www.alibabagroup.com/zh-CN/document-2039431633571938304">阿里集团 CEO 云栖大会主题演讲（中文）</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">产品发布 · 阿里云栖大会 · 9 月 22 日起陆续开售</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">Qwen Book、QwenNote A2 与新一代眼镜/耳机：Agent 进入电脑、会议和穿戴设备</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://alizila.oss-us-west-1.aliyuncs.com/uploads/2026/09/Qwen-Book-1.jpg" height="200" alt="Qwen Book AI Agent 电脑官方产品图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;"><img src="https://alizila.oss-us-west-1.aliyuncs.com/uploads/2026/09/QwenNote-A2-1.png" height="200" alt="QwenNote A2 AI 会议记录设备官方产品图" style="display:block;width:100%;height:200px;object-fit:cover;border:0;border-radius:7px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;">&nbsp;</td>
+</tr></table>
+<p style="margin:0 0 13px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>阿里发布多款由 Qwen 驱动的硬件。Qwen Book 将模型、Qwen Desktop OS、应用和云服务整合为 Agent-ready 电脑；官方示例是用户语音指示 Agent 定位演示文稿中的具体页并修改内容，再通过手机审核。QwenNote A2 主打线下会议记录与后续任务执行，可把转录交给 QwenWork 生成待办、安排后续会议或制作表格；官方称售价为人民币 1,199 元，9 月 22 日开售。Qwen Glasses N1 系列与 Qwen Clip 则围绕第一视角视觉、翻译、记事和语音任务展开，预售于 9 月 22 日开启，官方销售时间为 10 月 13 日。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">适用场景与理由：</strong>Qwen Book 适合频繁在桌面软件间操作、又需要移动端复核结果的办公流程；QwenNote A2 适合会议密集、需要把口头信息转成可执行事项的团队；眼镜和耳机适合第一视角采集、面对面翻译与随身语音任务。它们值得观察的共同点，是硬件承担上下文采集，Agent 负责跨应用执行，用户保留结果审核。企业采购前应确认音频保留策略、设备管理、权限审计和与现有办公系统的兼容性。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">对前端与 Agent 开发的影响：</strong>多设备 Agent 会要求应用提供清楚的任务确认、来源引用、跨端续办和可撤销操作；前端体验也要处理录音授权、离线状态、长任务进度和手机端审批。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://www.alibabacloud.com/blog/alibaba-unveils-agentic-computer-ai-wearables-and-more-at-2026-apsara-conference_603599">Alibaba Cloud Community：产品发布详情</a> · 官方图源：<a href="https://alizila.oss-us-west-1.aliyuncs.com/uploads/2026/09/Qwen-Book-1.jpg">Qwen Book</a>、<a href="https://alizila.oss-us-west-1.aliyuncs.com/uploads/2026/09/QwenNote-A2-1.png">QwenNote A2</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5eaf1;border-radius:10px;"><tr><td class="story" style="padding:14px 16px;">
+<div style="font-size:12px;line-height:18px;color:#71809a;font-weight:700;">Agent 开发平台 · 火山引擎 AgentKit · 9 月 21、23 日</div>
+<h2 style="margin:7px 0 11px;font-size:20px;line-height:28px;color:#17233b;">火山引擎 AgentKit 为 Skills 增加质量、安全、评测与版本 A/B 对照</h2>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">摘要：</strong>AgentKit 9 月 21 日更新包含 Skill 质量检查、安全扫描和基于测试用例的评测能力，可发现结构缺失、配置异常、实现不完整、敏感信息、危险操作及高风险依赖。9 月 23 日更新又为技能增加 A/B 对照评测，用来区分模型原生能力与 Skill 带来的增益、对比同一 Skill 的不同版本；模型网关也增加基于 Credits 的企业用量管理，官方说明 Credits 是内部治理单位，不等同余额、账单或模型价格。更新首先覆盖北京、上海地域。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">适用场景与理由：</strong>适合在 AgentKit 上构建企业 Agent、需要审核团队编写的技能并追踪版本变化的开发团队。可先为一项高频 Skill 建立测试集，比较变更前后的成功率和安全问题，再决定是否推广；若用 Credits 管理内部额度，不要把它当作真实 API 计费数据。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#34425b;"><strong style="color:#17233b;">对 Agent 工程的影响：</strong>Skill 开始具备和代码相似的质量门槛与回归评测流程，便于把提示/工具配置纳入版本治理，而不是只靠人工体验检查。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#52627b;"><strong>来源：</strong><a href="https://docs.volcengine.com/docs/agentkit/New_feature_release_notes?lang=zh">火山引擎 AgentKit 新特性发布记录</a></p>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 0;">
+<h2 style="margin:0 0 15px;font-size:20px;line-height:28px;font-weight:800;color:#19345f;">一句话趋势总结</h2>
+<p style="margin:0;font-size:20px;line-height:33px;font-weight:700;color:#000000;">Agent 的竞争焦点正从“能否生成代码”转向“能否以可控成本持续执行，并把安全、观测、浏览器验证和生产反馈纳入闭环”；中国厂商也在把模型、云基础设施、记忆和终端设备一起推向 Agent 化。</p>
+</td></tr>
+<tr><td class="pad" style="padding:20px 12px 0;">
+<h2 style="margin:0 0 17px;font-size:20px;line-height:28px;font-weight:800;color:#19345f;">本周动手验证</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:14px;line-height:23px;color:#34425b;">
+<li style="padding:0 0 12px;">为一个真实 coding Agent 任务比较 GPT-6 Sol、Luna 与当前模型的成本、完成率和视觉任务表现；对截图或浏览器操作任务单独测评修复后的图像输入。</li>
+<li style="padding:0 0 12px;">照 Cursor 的 harness 实践做一次小型 A/B：把低频工具改为按需注入，记录 token、延迟、工具错误率和任务成功率，确保省 token 没有换来漏工具。</li>
+<li style="padding:0;">选一个低风险 Next.js 页面，用 Chrome DevTools for agents 复现软导航或 PWA 问题并产出 trace；同时检查项目版本是否处于 Next.js 安全修复范围。</li>
+</ul>
+</td></tr>
+<tr><td class="pad" style="padding:20px 12px 0;">
+<h2 style="margin:0 0 17px;font-size:20px;line-height:28px;font-weight:800;color:#19345f;">团队行动建议</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:14px;line-height:23px;color:#34425b;">
+<li style="padding:0 0 12px;"><strong>确定模型路由规则：</strong>汇总 10–20 个真实前端与 Agent 任务的质量、耗时、token 成本和失败类型，确定高能力与低成本模型的使用边界，并约定何时重新评测。</li>
+<li style="padding:0 0 12px;"><strong>明确 Agent 的准入与审批规则：</strong>将文件、网络和凭据的最小权限、OpenTelemetry 执行记录、上线后监控与回滚人工审批写进团队流程，指定维护负责人。</li>
+<li style="padding:0;"><strong>固化安全与质量检查：</strong>指定负责人核对 Next.js 安全版本，并将常用 Skill 的可重复测试、安全扫描和版本对照评测纳入发布检查。</li>
+</ul>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #e6ebf2;padding-top:15px;font-size:11px;line-height:18px;color:#8490a3;">AI × Agent × 前端周报 · 2026.09.21–09.27<br>所有内容与数据按各发布方公开材料整理；厂商自报的效果数据已在正文标明。配图取自对应新闻的官方发布页面或官方社区；无可靠图片的资讯未使用占位图。</td></tr></table></td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
