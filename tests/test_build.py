@@ -35,7 +35,7 @@ class BuildSiteTests(unittest.TestCase):
             issues = build(output)
             self.assertEqual(len(issues), 1)
             homepage = (output / "index.html").read_text(encoding="utf-8")
-            self.assertIn("AI 开发雷达", homepage)
+            self.assertIn("Wiki Hub", homepage)
             self.assertIn("news/2026-09-21-to-2026-09-27/story-01.html", homepage)
             self.assertNotIn("{{", homepage)
 
@@ -48,7 +48,7 @@ class BuildSiteTests(unittest.TestCase):
 
             report = (output / "reports/2026/2026-09-21-to-2026-09-27.html").read_text(encoding="utf-8")
             self.assertIn('id="story-01"', report)
-            self.assertIn("返回 AI 开发雷达", report)
+            self.assertIn("返回 Wiki Hub", report)
 
             for page in [output / "index.html", *news_pages, output / "reports/2026/2026-09-21-to-2026-09-27.html"]:
                 parser = LinkParser()

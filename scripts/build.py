@@ -337,7 +337,7 @@ def render_report_page(issue: Issue) -> str:
         raise ValueError(f"Anchor count mismatch in {issue.source}")
     back_link = ('<nav aria-label="站点导航" style="max-width:960px;margin:0 auto;padding:12px 12px 0;'
                  'font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,sans-serif;">'
-                 '<a href="../../index.html" style="color:#155eef;text-decoration:none;">← 返回 AI 开发雷达</a></nav>')
+                 '<a href="../../index.html" style="color:#155eef;text-decoration:none;">← 返回 Wiki Hub</a></nav>')
     return re.sub(r"(<body\b[^>]*>)", lambda match: match.group(1) + back_link, source, count=1)
 
 

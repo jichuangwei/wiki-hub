@@ -1,4 +1,4 @@
-name: Publish AI Dev Radar
+name: Publish Wiki Hub
 
 on:
   push:

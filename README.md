@@ -1,6 +1,6 @@
-# AI 开发雷达
+# Wiki Hub
 
-AI、大模型、Coding Agent、Agent 工程、前端生态及开发者趋势的静态资讯站。首页展示最近 36 条资讯和完整周报归档；每条资讯有独立阅读页，并保留原始来源链接。
+公开知识库的静态网站草稿。当前收录 AI、大模型、Coding Agent、Agent 工程及前端生态周报；计划支持跨行业资讯、学习记录和经验文档。首页展示最近 36 条资讯和完整周报归档；每条资讯有独立阅读页，并保留原始来源链接。
 
 ## 内容结构
 
@@ -29,7 +29,7 @@ python3 -m http.server 8000 -d dist
 
 ## 每周更新
 
-1. 云端任务读取公开模板的原始内容：`https://raw.githubusercontent.com/jichuangwei/ai-dev-radar/main/template/weekly-email.html`。
+1. 云端任务读取公开模板的原始内容：`https://raw.githubusercontent.com/jichuangwei/wiki-hub/main/template/weekly-email.html`。
 2. 完成事实、日期、来源链接和图片校验，生成可发送的完整周报 HTML。
 3. 将该 HTML 作为一个新文件提交到 `content/reports/YYYY/YYYY-MM-DD-to-YYYY-MM-DD.html`。日期范围必须是完整的周一至周日。不要覆盖已有期数。
 4. `main` 分支收到提交后，GitHub Actions 自动校验、生成资讯页与归档首页，并发布 GitHub Pages。云端任务在确认发布成功后，再把 Pages 链接写入本期邮件或结果摘要。
@@ -47,6 +47,6 @@ python3 -m http.server 8000 -d dist
 
 仓库使用 `.github/workflows/pages.yml` 发布 `dist/`。首次部署时，在仓库 **Settings → Pages** 中选择 **GitHub Actions** 作为发布源。站点地址为：
 
-`https://jichuangwei.github.io/ai-dev-radar/`
+`https://jichuangwei.github.io/wiki-hub/`
 
-仓库与 Pages 页面均为公开内容。邮件收件人、发送凭证和云任务配置不应提交到这里。
+发布后，仓库与 Pages 页面均为公开内容。邮件收件人、发送凭证和云任务配置不应提交到这里。
