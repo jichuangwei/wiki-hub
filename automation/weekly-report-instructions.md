@@ -1,7 +1,7 @@
 为我制作每周 AI 资讯干货，使用同一份完整 HTML 发送 Gmail，并新增 Wiki Hub 当周归档。时区 Asia/Shanghai，范围为上一完整自然周（周一至周日）；START、END 使用 YYYY-MM-DD，YEAR 取 START 所在年。保留现有任务的时间和频率。
 
 【模板与仓库】
-仓库：jichuangwei/wiki-hub，分支：main，保持私有。
+仓库：jichuangwei/wiki-hub，分支：main。仓库可见性以实际设置为准，不修改可见性。
 每次新生成周报，先通过已连接 GitHub 读取 templates/reports/ai-agent-frontend-weekly-email.html 的完整内容，确认未被截断，并记录模板 blob SHA。该文件是唯一排版源；不读本机路径、file://，不自行重建模板。模板读取失败时保留收集结果并报告失败，不生成或发送替代版式。
 归档路径：content/news/reports/ai-agent-frontend/YEAR/ai-agent-frontend-weekly-START-to-END.html。
 Wiki Hub 直接展示邮件正文，上方仅增加分类、周次切换；不得另做卡片、弹窗、摘要截断或重新生成网站内容。
@@ -19,11 +19,11 @@ Wiki Hub 直接展示邮件正文，上方仅增加分类、周次切换；不�
 【归档、发送与重跑】
 1. 先确认 GitHub 仓库可访问，再查询当周归档；404 可能是权限错误，只有确认仓库可访问且文件不存在，才允许新增。已有归档则读取完整 HTML 复用，不重新生成、不覆盖。归档已有但内容不完整时报告需修正，停止发送该错误版本。
 2. 新生成时先固定完整内容，再复制模板中的 NEWS ITEM 到实际条数并填入内容。删除说明注释、所有未填占位符、空图片和不适用的产品段。校验日期范围、五类顺序及数量、每条完整内容、HTTPS 来源、图片、结尾三组内容，保留可下载 HTML。已有归档也执行这些校验。
-3. 使用 GitHub 文件新增工具，将该完整 UTF-8 HTML 写入目标路径，提交说明为 docs: archive AI weekly START to END，只新增这一期文件。不要写 dist、修改模板/页面/工作流或删除历史。工具超时或提示冲突时先重新读目标文件，不盲目重试；若内容相同则视为已归档，不同则报告冲突。读取成功写入的内容并核对，记录提交 SHA。
+3. 不使用 GitHub Connector create_file/update_file。发布端为 .github/workflows/archive-report.yml，workflow_dispatch 输入 start、end、html（同一份完整 UTF-8 HTML，合计最多 65535 字符）。只有运行环境实际提供已授权的 Actions dispatch 能力时才触发；没有该能力则交付 HTML 和日期并报告“待触发”，不要声称已提交。Actions 复用 archive_report.py，校验后只提交当周归档到 main，并调用现有 pages.yml 部署。重复相同内容不新增提交；已有内容不同则拒绝覆盖。操作超时先查询运行状态、目标文件和 SHA，不盲目重试；提交后读取归档核对内容。不要在 Prompt、HTML、仓库或运行结果中写入 PAT/token，不修改历史、模板或工作流。
 4. Gmail 主题：AI 资讯干货｜START—END。To 为已连接 Gmail 的发件人自己；BCC 为 2323176669@qq.com、lvxiaojie0925@gmail.com、1290819258@qq.com；CC 留空。收件人地址不写进正文或网站。用 text/html、UTF-8 发送同一份最终 HTML。
 5. 发送前查询已发送邮件，以周报标题和本期日期范围定位，并核实主题、时间与正文（也检查 YYYY.MM.DD 格式的历史主题）。已有本期已发送周报则跳过发送。查询失败、结果不明确、发送超时或返回状态不明确时先核实已发送记录，不盲目重发。成功后核实消息 ID 与 SENT 状态；任务通知邮件不算周报发送成功。
 6. 有有效 HTML 后，归档与邮件分别执行并记录结果：归档失败可继续邮件，邮件失败保留归档，重跑只补未完成步骤。模板读取或正文校验失败时，两项都不执行。
-7. 归档进入 main 后由既有 GitHub Actions 构建网站，保留历史周次，默认展示最新周。能访问 Actions/Pages 时，核实对应提交的构建和部署结果；不能核实时写“归档成功，部署未核实”。提交成功不能等同于网站已更新。
+7. Actions 使用 GITHUB_TOKEN 提交后的 push 不会自动启动另一个 workflow；归档入口显式调用 pages.yml。普通人工提交仍走现有 push 入口。构建网站后，保留历史周次，默认展示最新周。能访问 Actions/Pages 时，核实对应提交的构建和部署结果；不能核实时写“归档成功，部署未核实”。提交成功不能等同于网站已更新。
 
 【运行结果】
 简洁报告日期范围、五类数量、HTML 文件、模板 SHA、归档路径与提交 SHA、邮件消息 ID/是否跳过、部署状态及确认过的页面链接。缺少连接权限、失败或状态不明确逐项写清，给出补做步骤；不得声称未核实的发送或发布已成功。

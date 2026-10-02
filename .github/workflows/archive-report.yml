@@ -1,0 +1,68 @@
+name: Archive weekly report
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: Monday (YYYY-MM-DD)
+        required: true
+        type: string
+      end:
+        description: Sunday (YYYY-MM-DD)
+        required: true
+        type: string
+      html:
+        description: Complete UTF-8 report HTML (combined inputs limit 65535 characters)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: archive-weekly-report
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      revision: ${{ steps.commit.outputs.revision }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Validate and archive report
+        run: python3 scripts/archive_dispatch.py
+      - name: Check complete site before committing
+        run: |
+          python3 scripts/build_task_prompt.py --check
+          python3 -m unittest discover -s tests -v
+          python3 scripts/build_site.py
+      - name: Commit report to main
+        id: commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- content/news/reports/ai-agent-frontend/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: archive AI weekly ${REPORT_START} to ${REPORT_END}"
+            git push origin HEAD:main
+          fi
+          revision=$(git rev-parse HEAD)
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+          echo "Archived commit: $revision" >> "$GITHUB_STEP_SUMMARY"
+          echo 'Pages result is reported by the deployment job below.' >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: archive
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/pages.yml
+    with:
+      revision: ${{ needs.archive.outputs.revision }}
