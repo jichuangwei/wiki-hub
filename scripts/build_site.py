@@ -4,21 +4,24 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import html
+import json
 import re
 import shutil
 from dataclasses import dataclass, field
-from datetime import date
+from datetime import date, timedelta
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORTS = ROOT / "content" / "reports"
-WEB = ROOT / "web"
+REPORTS = ROOT / "content" / "news" / "reports"
+NEWS = ROOT / "content" / "news" / "items"
+SITE = ROOT / "site"
 DIST = ROOT / "dist"
-REPORT_NAME = re.compile(r"^(\d{4}-\d{2}-\d{2})-to-(\d{4}-\d{2}-\d{2})\.html$")
+REPORT_NAME = re.compile(r"^([a-z0-9-]+)-weekly-(\d{4}-\d{2}-\d{2})-to-(\d{4}-\d{2}-\d{2})\.html$")
 EXPECTED_CATEGORIES = (
     "AI/大模型",
     "Coding Agent/Agent 产品",
@@ -64,6 +67,7 @@ class Article:
 @dataclass
 class Issue:
     source: Path
+    topic: str
     start: date
     end: date
     title: str
@@ -74,7 +78,8 @@ class Issue:
 
     @property
     def slug(self) -> str:
-        return f"{self.start.isoformat()}-to-{self.end.isoformat()}"
+        dates = f"{self.start.isoformat()}-to-{self.end.isoformat()}"
+        return dates if self.topic == "ai-agent-frontend" else f"{self.topic}-{dates}"
 
     @property
     def report_href(self) -> str:
@@ -87,6 +92,42 @@ class Issue:
     @property
     def week_number(self) -> int:
         return self.start.isocalendar().week
+
+
+@dataclass
+class StandaloneNews:
+    source: Path
+    published: date
+    slug: str
+    article: Article
+
+    @property
+    def href(self) -> str:
+        return f"news/{self.published.year}/{self.slug}.html"
+
+
+def parse_standalone_news(path: Path) -> StandaloneNews:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    published = date.fromisoformat(data["date"])
+    if path.parent.name != str(published.year) or not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", path.stem):
+        raise ValueError(f"Invalid news path: {path}")
+    article = Article(category=data["category"].strip(), category_number="")
+    article.title = data["title"].strip()
+    article.meta = data.get("source_name", "").strip() + " · " + published.isoformat()
+    article.sections = [(section["title"].strip(), section["text"].strip()) for section in data["sections"]]
+    article.sources = [(item["label"].strip(), item["url"]) for item in data["sources"]]
+    image = data.get("image") or {}
+    article.image_url = image.get("url", "")
+    article.image_alt = image.get("alt", "")
+    if not article.category or not article.title or not article.summary or not article.sources:
+        raise ValueError(f"Incomplete news item: {path}")
+    if any(not label or not body for label, body in article.sections):
+        raise ValueError(f"Empty news section: {path}")
+    if any(not label or not valid_https(url) for label, url in article.sources):
+        raise ValueError(f"Invalid news source: {path}")
+    if article.image_url and (not valid_https(article.image_url) or not article.image_alt):
+        raise ValueError(f"Invalid news image: {path}")
+    return StandaloneNews(path, published, path.stem, article)
 
 
 class ReportParser(HTMLParser):
@@ -182,7 +223,7 @@ class ReportParser(HTMLParser):
             self.preheader_parts = None
         elif tag == "span" and self.section_parts is not None:
             section = clean("".join(self.section_parts))
-            match = re.match(r"^(0[1-5])\s*·\s*(.+)$", section)
+            match = re.match(r"^(\d{2})\s*·\s*(.+)$", section)
             if match:
                 self.category_number, self.category = match.groups()
                 self.categories.append(self.category)
@@ -232,18 +273,21 @@ def parse_issue(path: Path) -> Issue:
     match = REPORT_NAME.fullmatch(path.name)
     if not match:
         raise ValueError(f"Unexpected report filename: {path}")
-    start, end = (date.fromisoformat(part) for part in match.groups())
+    topic, start_text, end_text = match.groups()
+    start, end = date.fromisoformat(start_text), date.fromisoformat(end_text)
     if start.weekday() != 0 or end.weekday() != 6 or (end - start).days != 6:
         raise ValueError(f"Report range must be a full Monday–Sunday week: {path}")
-    if path.parent.name != str(start.year):
-        raise ValueError(f"Report is in the wrong year directory: {path}")
+    if path.parent.name != str(start.year) or path.parent.parent.name != topic:
+        raise ValueError(f"Report is in the wrong topic/year directory: {path}")
     source = path.read_text(encoding="utf-8")
     if re.search(r"\{\{[^}]+\}\}", source):
         raise ValueError(f"Unfilled template placeholder: {path}")
     parser = ReportParser()
     parser.feed(source)
-    if parser.categories != list(EXPECTED_CATEGORIES):
-        raise ValueError(f"Missing or out-of-order categories in {path}: {parser.categories}")
+    if topic == "ai-agent-frontend" and parser.categories != list(EXPECTED_CATEGORIES):
+        raise ValueError(f"Missing or out-of-order AI categories in {path}: {parser.categories}")
+    if not parser.categories:
+        raise ValueError(f"No categories found in {path}")
     if not parser.articles:
         raise ValueError(f"No news articles found in {path}")
     for article in parser.articles:
@@ -253,7 +297,7 @@ def parse_issue(path: Path) -> Issue:
             raise ValueError(f"Non-HTTPS source link in {path}: {article.title}")
     if not parser.preheader:
         raise ValueError(f"Missing report preheader in {path}")
-    return Issue(path, start, end, parser.title, parser.preheader, parser.highlights, parser.articles, parser.categories)
+    return Issue(path, topic, start, end, parser.title, parser.preheader, parser.highlights, parser.articles, parser.categories)
 
 
 def render(template: str, values: dict[str, str]) -> str:
@@ -264,127 +308,120 @@ def render(template: str, values: dict[str, str]) -> str:
     return template
 
 
-def issue_link(issue: Issue, prefix: str = "") -> str:
-    return prefix + issue.report_href
+
+def week_start(day: date) -> date:
+    return day - timedelta(days=day.weekday())
 
 
-def article_link(issue: Issue, article: Article, prefix: str = "") -> str:
-    return f"{prefix}news/{issue.slug}/{article.anchor}.html"
+def render_mail_body(source: str, categories: list[str]) -> str:
+    """Preserve the complete mail layout and annotate its rows for filtering."""
+    body = re.search(r"<body\b[^>]*>(.*?)</body>", source, flags=re.S | re.I)
+    if not body:
+        raise ValueError("Report is missing an HTML body")
+    content = re.sub(r"<!--.*?-->", "", body.group(1), flags=re.S)
+    if re.search(r"<(?:script|iframe|object|embed|form|base)\b|\son\w+\s*=", content, flags=re.I):
+        raise ValueError("Report body must contain passive email markup")
+    chunks = re.split(r'(?=<tr><td\s+class="pad")', content)
+    category = ""
+    result = []
+    for chunk in chunks:
+        label = re.search(r"<span\b[^>]*>(.*?)</span>", chunk, flags=re.S)
+        kind = "news" if 'class="story"' in chunk else "section"
+        if label:
+            heading = clean(html.unescape(re.sub(r"<[^>]+>", "", label.group(1))))
+            for candidate in categories:
+                if heading.endswith(candidate):
+                    category = candidate
+                    break
+        if re.search(r"<h2[^>]*>\s*(?:一句话趋势总结|本周动手验证|团队行动建议)", chunk):
+            category = ""
+        if category:
+            chunk = chunk.replace("<tr>", f'<tr data-category="{escape(category)}" data-kind="{kind}">', 1)
+        result.append(chunk)
+    content = "".join(result)
+    # Older issues retain their text and images while adopting the current palette.
+    for old, new in {
+        "#f2f5f8": "#f6f8fc", "#155eef": "#2456cd", "#101b32": "#17233b",
+        "#19345f": "#17233b", "#4574c5": "#2456cd", "#34425b": "#607089",
+        "#52627b": "#607089", "#71809a": "#8090a6", "#8490a3": "#8090a6",
+        "#dbe5f4": "#dde5f0", "#e6ebf2": "#dde5f0", "#e5eaf1": "#e7edf5",
+        "max-width:960px": "max-width:1180px", "padding:14px 16px": "padding:19px 20px",
+        "border:1px solid #e7edf5;border-radius:10px": "border:1px solid #e7edf5;border-radius:16px",
+        "font-size:20px;line-height:28px;color:#17233b": "font-size:18px;line-height:26px;color:#17233b",
+    }.items():
+        content = content.replace(old, new)
+    return content
 
 
-def render_article_card(issue: Issue, article: Article) -> str:
-    image = (
-        f'<img src="{escape(article.image_url)}" alt="{escape(article.image_alt)}" loading="lazy">'
-        if article.image_url else '<span class="card-art-mark" aria-hidden="true">AI / DEV</span>'
-    )
-    summary = article.summary[:150] + ("…" if len(article.summary) > 150 else "")
-    return f'''<article class="news-card" data-category="{escape(article.category_number)}" data-search="{escape(clean(article.title + ' ' + article.meta + ' ' + article.summary).lower())}">
-      <a class="card-link" href="{escape(article_link(issue, article))}" aria-label="阅读：{escape(article.title)}">
-        <div class="card-art">{image}</div>
-        <div class="card-content"><div class="card-kicker"><span>{escape(article.category)}</span><span>{escape(issue.date_label)}</span></div>
-        <h3>{escape(article.title)}</h3><p>{escape(summary)}</p><span class="card-more">阅读资讯 <span aria-hidden="true">↗</span></span></div>
-      </a>
-    </article>'''
+def email_styles() -> str:
+    template = (ROOT / "templates/reports/ai-agent-frontend-weekly-email.html").read_text(encoding="utf-8")
+    css = re.search(r"<style>(.*?)</style>", template, flags=re.S).group(1)
+    for selector in ("body", "table", "img", "a"):
+        replacement = ".weekly-report" if selector == "body" else f".weekly-report {selector}"
+        css = re.sub(rf"(?<![\w.-]){selector}\s*\{{", replacement + "{", css)
+    return css
 
 
-def render_issue_row(issue: Issue) -> str:
-    return f'''<a class="issue-row" href="{escape(issue_link(issue))}">
-      <span class="issue-week">第 {issue.week_number:02d} 周</span>
-      <span class="issue-copy"><strong>{escape(issue.date_label)}</strong><small>{escape(issue.summary)}</small></span>
-      <span class="issue-count">{len(issue.articles)} 条资讯</span><span class="issue-arrow" aria-hidden="true">↗</span>
-    </a>'''
-
-
-def render_article_page(issue: Issue, article: Article, template: str) -> str:
-    image = (
-        f'<figure class="article-image"><img src="{escape(article.image_url)}" alt="{escape(article.image_alt)}" loading="eager"></figure>'
-        if article.image_url else ""
-    )
-    sections = "\n".join(
-        f'<section class="article-section"><h2>{escape(label)}</h2><p>{escape(body)}</p></section>'
-        for label, body in article.sections
-    )
-    sources = "\n".join(
-        f'<li><a href="{escape(url)}" target="_blank" rel="noopener noreferrer">{escape(label or url)} <span aria-hidden="true">↗</span></a></li>'
-        for label, url in article.sources
-    )
-    return render(template, {
-        "PAGE_TITLE": escape(article.title),
-        "DESCRIPTION": escape(article.summary[:155]),
-        "CATEGORY": escape(article.category),
-        "ARTICLE_META": escape(article.meta),
-        "ARTICLE_TITLE": escape(article.title),
-        "ARTICLE_IMAGE": image,
-        "ARTICLE_SECTIONS": sections,
-        "SOURCE_LINKS": sources,
-        "ISSUE_LABEL": escape(issue.date_label),
-        "ISSUE_URL": escape("../../" + issue.report_href),
-        "YEAR": str(issue.start.year),
-    })
-
-
-def render_report_page(issue: Issue) -> str:
-    source = issue.source.read_text(encoding="utf-8")
-    index = 0
-
-    def add_anchor(match: re.Match[str]) -> str:
-        nonlocal index
-        index += 1
-        return match.group(0).replace('class="story"', f'id="story-{index:02d}" class="story"', 1)
-
-    source = re.sub(r'<td\s+class="story"', add_anchor, source)
-    if index != len(issue.articles):
-        raise ValueError(f"Anchor count mismatch in {issue.source}")
-    back_link = ('<nav aria-label="站点导航" style="max-width:960px;margin:0 auto;padding:12px 12px 0;'
-                 'font:600 13px -apple-system,BlinkMacSystemFont,Segoe UI,PingFang SC,sans-serif;">'
-                 '<a href="../../index.html" style="color:#155eef;text-decoration:none;">← 返回 Wiki Hub</a></nav>')
-    return re.sub(r"(<body\b[^>]*>)", lambda match: match.group(1) + back_link, source, count=1)
+def standalone_mail(items: list[StandaloneNews]) -> str:
+    rows = []
+    for item in items:
+        article = item.article
+        image = (f'<img src="{escape(article.image_url)}" alt="{escape(article.image_alt)}" height="200" style="width:33.33%;height:200px;object-fit:cover;margin-bottom:13px;">' if article.image_url else "")
+        sections = "".join(f'<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">{escape(label)}：</strong>{escape(body)}</p>' for label, body in article.sections)
+        links = " · ".join(f'<a href="{escape(url)}">{escape(label)}</a>' for label, url in article.sources)
+        rows.append(f'<tr data-category="{escape(article.category)}" data-kind="news"><td style="padding:10px 12px 0;"><table width="100%" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td style="padding:19px 20px;"><div style="font-size:12px;color:#8090a6;">{escape(article.meta)}</div><h2 style="font-size:18px;line-height:26px;">{escape(article.title)}</h2>{image}{sections}<p style="font-size:13px;color:#607089;"><strong>来源：</strong>{links}</p></td></tr></table></td></tr>')
+    return '<table role="presentation" width="100%">' + "".join(rows) + '</table>'
 
 
 def build(output: Path) -> list[Issue]:
-    paths = sorted(REPORTS.glob("*/*.html"), reverse=True)
-    if not paths:
-        raise ValueError("No weekly reports found in content/reports")
-    issues = [parse_issue(path) for path in paths]
+    issues = [parse_issue(path) for path in REPORTS.glob("*/*/*.html")]
+    issues.sort(key=lambda issue: (issue.start, issue.topic), reverse=True)
+    standalone = [parse_standalone_news(path) for path in sorted(NEWS.glob("*/*.json"))]
+    if not issues and not standalone:
+        raise ValueError("No content found in content/news/items or content/news/reports")
     slugs = [issue.slug for issue in issues]
     if len(slugs) != len(set(slugs)):
         raise ValueError("Duplicate report date range")
+
+    entries = [(issue.start, article, issue.date_label) for issue in issues for article in issue.articles]
+    entries += [(week_start(item.published), item.article, item.published.isoformat()) for item in standalone]
+    entries.sort(key=lambda entry: entry[0], reverse=True)
+    weeks = sorted({week for week, _, _ in entries}, reverse=True)
+    latest_week = weeks[0]
+    categories = list(dict.fromkeys(article.category for _, article, _ in entries))
+    tabs = ['<button class="category-tab is-active" type="button" data-filter="all" aria-pressed="true">全部 <span></span></button>']
+    tabs += [f'<button class="category-tab" type="button" data-filter="{escape(category)}" aria-pressed="false">'
+             f'{escape(category)} <span></span></button>' for category in categories]
+    def week_label(week: date) -> str:
+        return f'第 {week.isocalendar().week:02d} 周 · {week:%Y.%m.%d}—{week + timedelta(days=6):%m.%d}'
+
+    options = "\n".join(
+        f'<button class="week-option" type="button" role="option" data-week="{week.isoformat()}" '
+        f'aria-selected="{str(week == latest_week).lower()}">{week_label(week)}</button>'
+        for week in weeks
+    )
+    reports = []
+    for week in weeks:
+        documents = [render_mail_body(issue.source.read_text(encoding="utf-8"), issue.categories)
+                     for issue in issues if issue.start == week]
+        extra = [item for item in standalone if week_start(item.published) == week]
+        if extra:
+            documents.append(standalone_mail(extra))
+        hidden = "" if week == latest_week else " hidden"
+        reports.append(f'<section class="weekly-report" data-week="{week.isoformat()}" aria-label="{week_label(week)}"{hidden}>' + "".join(documents) + '</section>')
+
     if output.exists():
         shutil.rmtree(output)
     output.mkdir(parents=True)
-    shutil.copytree(WEB / "assets", output / "assets")
-    shutil.copytree(ROOT / "template", output / "template")
+    shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
-
-    article_template = (WEB / "article.html").read_text(encoding="utf-8")
-    for issue in issues:
-        report_output = output / issue.report_href
-        report_output.parent.mkdir(parents=True, exist_ok=True)
-        report_output.write_text(render_report_page(issue), encoding="utf-8")
-        for article in issue.articles:
-            article_output = output / article_link(issue, article)
-            article_output.parent.mkdir(parents=True, exist_ok=True)
-            article_output.write_text(render_article_page(issue, article, article_template), encoding="utf-8")
-
-    latest = issues[0]
-    recent = [(issue, article) for issue in issues for article in issue.articles][:36]
-    cards = "\n".join(render_article_card(issue, article) for issue, article in recent)
-    rows = "\n".join(render_issue_row(issue) for issue in issues)
-    highlights = "\n".join(f"<li>{escape(item)}</li>" for item in latest.highlights[:3])
-    counts = {str(n): sum(article.category_number == f"{n:02d}" for _, article in recent) for n in range(1, 6)}
-    home = render((WEB / "index.html").read_text(encoding="utf-8"), {
-        "LATEST_ISSUE_URL": escape(issue_link(latest)),
-        "LATEST_ISSUE_DATE": escape(latest.date_label),
-        "LATEST_ISSUE_WEEK": f"{latest.week_number:02d}",
-        "LATEST_ISSUE_SUMMARY": escape(latest.summary),
-        "LATEST_ISSUE_COUNT": str(len(latest.articles)),
-        "LATEST_HIGHLIGHTS": highlights,
-        "NEWS_CARDS": cards,
-        "ISSUE_ROWS": rows,
-        "NEWS_COUNT": str(len(recent)),
-        "ISSUE_COUNT": str(len(issues)),
-        **{f"CATEGORY_{n}_COUNT": str(counts[str(n)]) for n in range(1, 6)},
-        "YEAR": str(date.today().year),
+    home = render((SITE / "pages" / "home.html").read_text(encoding="utf-8"), {
+        "ASSET_REV": hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes()).hexdigest()[:12],
+        "WEEK_OPTIONS": options,
+        "CURRENT_WEEK": week_label(latest_week),
+        "CATEGORY_TABS": "\n".join(tabs),
+        "WEEKLY_REPORTS": "\n".join(reports),
+        "EMAIL_STYLES": email_styles(),
     })
     (output / "index.html").write_text(home, encoding="utf-8")
     return issues
@@ -395,7 +432,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DIST)
     args = parser.parse_args()
     issues = build(args.output.resolve())
-    print(f"Built {len(issues)} issues and {sum(len(issue.articles) for issue in issues)} article pages at {args.output.resolve()}")
+    print(f"Built one homepage from {len(issues)} weekly reports at {args.output.resolve()}")
 
 
 if __name__ == "__main__":
