@@ -8,6 +8,7 @@ from unittest.mock import Mock
 import zipfile
 
 from publisher.service import Publisher
+from scripts.build_site import DEEP_CATEGORY, render_mail_body
 from test_deep_reports import deep_html
 
 
@@ -88,7 +89,10 @@ class PublisherTests(unittest.TestCase):
         status = self.publisher.status(request_id)
         self.assertEqual(status["commit_sha"], revision)
         self.assertEqual(status["state"], "deployed_unverified")
-        self.client.get.return_value = response(text=f'<section class="weekly-report" data-week="2026-08-31">{self.html}</section>')
+        rendered = render_mail_body(self.html, [DEEP_CATEGORY])
+        self.client.get.return_value = response(text=f'<section class="weekly-report" data-week="2026-08-31">{rendered}</section>')
         self.assertEqual(self.publisher.status(request_id)["state"], "published")
+        self.client.get.side_effect = TimeoutError()
+        self.assertEqual(self.publisher.status(request_id)["state"], "deployed_unverified")
         run["conclusion"] = "failure"
         self.assertEqual(self.publisher.status(request_id)["pages"], "unverified")

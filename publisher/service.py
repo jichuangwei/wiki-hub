@@ -15,7 +15,7 @@ import zipfile
 
 from scripts.archive_report import archive_report
 from scripts.archive_dispatch import read_inputs
-from scripts.build_site import ReportParser
+from scripts.build_site import ReportParser, parse_issue, render_mail_body
 
 REPO = "jichuangwei/wiki-hub"
 WORKFLOW = "archive-report.yml"
@@ -71,7 +71,8 @@ class Publisher:
             root = Path(directory)
             source = root / "input.html"
             source.write_bytes(html.encode("utf-8"))
-            archive_report(source, start, end, root=root / "reports")
+            archived, _ = archive_report(source, start, end, root=root / "reports")
+            render_mail_body(html, parse_issue(archived).categories)
         digest = hashlib.sha256(html.encode("utf-8")).hexdigest()
         request_id = uuid.uuid4().hex
         if sum(map(len, (start, end, html, request_id))) > 65535:
@@ -169,20 +170,21 @@ class Publisher:
             return result
         result["pages"] = "deployed"
         result["state"] = "deployed_unverified"
-        online = self.client.get(PAGE)
+        try:
+            online = self.client.get(PAGE)
+        except Exception:
+            result["message"] = "Pages deployed; online request failed. Query status again."
+            return result
         if online.status_code != 200:
             return result
         match = re.search(r'<section class="weekly-report" data-week="' + row["start"] +
                           r'"[^>]*>(.*?)</section>', online.text, re.S)
         if not match:
             return result
-        expected, actual = ReportParser(), ReportParser()
+        expected = ReportParser()
         expected.feed(body.decode("utf-8"))
-        actual.feed(match.group(1))
-        def articles(parser):
-            return [(a.category, a.title, a.meta, a.sections, a.sources, a.image_url, a.image_alt)
-                    for a in parser.articles]
-        result["online_verified"] = bool(expected.articles) and articles(expected) == articles(actual)
+        rendered = render_mail_body(body.decode("utf-8"), expected.categories)
+        result["online_verified"] = bool(expected.articles) and match.group(1).strip() == rendered.strip()
         result["page_url"] = PAGE
         result["state"] = "published" if result["online_verified"] else "deployed_unverified"
         return result
