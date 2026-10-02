@@ -8,10 +8,12 @@ from scripts.archive_report import archive_report
 from scripts.build_site import REPORTS, build, parse_issue, render, EXPECTED_CATEGORIES
 from scripts.build_task_prompt import build_prompt, template_fragments
 
+CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-21-to-2026-09-27.html"
+
 
 class WeeklyPipelineTests(unittest.TestCase):
     def test_archive_retry_preserves_bytes_and_rejects_overwrite(self):
-        source = next(REPORTS.glob("*/*/*.html"))
+        source = CURRENT_REPORT
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "reports"
             path, created = archive_report(source, "2026-09-21", "2026-09-27", root=root)
@@ -25,7 +27,7 @@ class WeeklyPipelineTests(unittest.TestCase):
             self.assertEqual(path.read_bytes(), source.read_bytes())
 
     def test_invalid_week_is_not_archived(self):
-        source = next(REPORTS.glob("*/*/*.html"))
+        source = CURRENT_REPORT
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "reports"
             with self.assertRaises(ValueError):
@@ -60,7 +62,7 @@ class WeeklyPipelineTests(unittest.TestCase):
             reports = root / "reports"
             archived, _ = archive_report(source, "2026-09-28", "2026-10-04", root=reports)
             self.assertEqual(len(parse_issue(archived).articles), 10)
-            archive_report(next(REPORTS.glob("*/*/*.html")), "2026-09-21", "2026-09-27", root=reports)
+            archive_report(CURRENT_REPORT, "2026-09-21", "2026-09-27", root=reports)
             with patch("scripts.build_site.REPORTS", reports):
                 build(root / "site")
             home = (root / "site/index.html").read_text()

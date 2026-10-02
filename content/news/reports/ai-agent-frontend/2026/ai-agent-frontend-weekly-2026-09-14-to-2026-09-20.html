@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>AI × Agent × 前端周报｜2026.09.14–09.20</title>
+<style>
+  body{margin:0;padding:0;background:#f6f8fc;color:#17233b;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  table{border-collapse:collapse;border-spacing:0;}
+  img{border:0;display:block;max-width:100%;height:auto;}
+  a{color:#2456cd;text-decoration:underline;}
+  @media only screen and (max-width:640px){.pad{padding-left:12px!important;padding-right:12px!important}.story{padding:12px!important}.hero-title{font-size:27px!important;line-height:1.25!important}}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f6f8fc;">
+
+<div style="display:none;font-size:1px;color:#f6f8fc;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">Qwen 本周发布实时同传与开源图像模型，推动语音交互和视觉素材工程。 Coding Agent 强化模型路由、运行环境和评审验证，团队需用真实任务衡量成本与返工。 Worker 级授权、npm 分阶段发布与 AI 爬虫策略共同细化 Agent 的执行边界。</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#f6f8fc;">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:1180px;">
+<tr><td class="pad" style="padding:20px 12px 14px;">
+<div style="font-size:13px;line-height:20px;font-weight:700;letter-spacing:.5px;color:#17233b;">2026.09.14–09.20&nbsp;&nbsp;/&nbsp;&nbsp;第 38 周</div>
+<h1 class="hero-title" style="margin:12px 0 0;font-size:34px;line-height:1.2;font-weight:750;color:#17233b;">AI × Agent × 前端周报</h1>
+</td></tr>
+<tr><td class="pad" style="padding:14px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background:#eef4ff;border-left:3px solid #79a7ff;border-radius:6px;"><tr><td style="padding:12px 14px;font-size:14px;line-height:22px;color:#17233b;"><strong style="font-weight:700;">本期聚焦</strong><ul style="margin:8px 0 0;padding-left:20px;"><li style="padding:0 0 4px;">Qwen 本周发布实时同传与开源图像模型，推动语音交互和视觉素材工程。</li><li style="padding:0 0 4px;">Coding Agent 强化模型路由、运行环境和评审验证，团队需用真实任务衡量成本与返工。</li><li style="padding:0;">Worker 级授权、npm 分阶段发布与 AI 爬虫策略共同细化 Agent 的执行边界。</li></ul></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dde5f0;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#2456cd;">01&nbsp;·&nbsp;AI/大模型</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Qwen / 阿里 · 2026-09-18</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Qwen3.8-LiveTranslate 发布：说话人区分、双语同步与上下文消歧</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Qwen 发布实时同传模型，采用音频与文本交错处理，新增说话人区分、原文与译文同步输出及长上下文消歧。官方报告平均滞后由 2.8 秒降至 2.3 秒；该数字属于厂商评测，未作独立验证。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>语音前端可以直接关联说话人、原文和译文；会议 Agent 应评估多人切换、术语一致性及端到端延迟。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合多语会议字幕与实时同传产品，因接口能同时提供说话人标识及源语言文本。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://qwen.ai/blog?id=qwen3.8-livetranslate">Qwen / 阿里 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Qwen / 阿里 · 2026-09-20</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Qwen-Image-2.1 开源：统一图像生成、编辑与透明素材输出</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Qwen 开源 Qwen-Image-2.1，视觉生成部分为 7B 参数，统一文生图和图像编辑，原生支持透明图像、主体提取及最多 10 张参考图。官方展示了局部编辑和人物、商品一致性案例；质量优势仍需按具体任务评测。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>前端素材工作流可以把生成、抠图和局部修改接入同一模型；采用前应核查模型许可、推理资源与透明通道处理。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合电商素材、透明插画及可复用视觉资产制作，因单个模型覆盖生成和编辑流程。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://qwen.ai/blog?id=qwen-image-2.1">Qwen / 阿里 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dde5f0;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#2456cd;">02&nbsp;·&nbsp;Coding Agent/Agent 产品</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">GitHub · 2026-09-14</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Copilot Auto 新增 Efficiency、Balance、Intelligence 三档策略</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Copilot 自动模型选择新增成本优先、平衡及质量优先三档。三档共享模型池，按每个 prompt 路由；本次逐步向 VS Code、Copilot CLI 和 Copilot app 推出。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>团队可以把成本与质量偏好写入默认配置，但实际耗时、费用与返工量仍需用相同任务比较。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合日常研发与复杂修复的差异化配置，因策略可减少手工选模型的操作。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://github.blog/changelog/2026-09-14-configure-cost-and-quality-in-copilot-auto-model-selection/">GitHub 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">GitHub · 2026-09-18</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Copilot 周更：代码评审验证、Sentry 排错与 Dev Container 工作流</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Copilot code review 可解决后续评审中已处理的评论，并使用 shell 工具验证变更。Copilot app 新增 Sentry canvas；VS Code Agents 支持逐步推出的本地 Dev Containers 和会话内创建 PR。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>Agent 可从错误上下文进入代码修复与验证；团队仍应记录运行环境和测试证据，避免把自动关闭评论等同于全部问题解决。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合生产错误排查与使用 Dev Container 的研发团队，因日志上下文、依赖环境和 PR 准备能在同一工作流衔接。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://github.blog/changelog/2026-09-18-github-copilot-weekly-releases-september-14/">GitHub 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dde5f0;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#2456cd;">03&nbsp;·&nbsp;Agent 开发技术与工程</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Vercel · 2026-09-14</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">AI SDK Harness 支持底层 Coding Agent 的原生订阅认证</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>AI SDK harness layer 可在底层支持时使用原生订阅认证，统一通过 HarnessAgent 调用不同 Coding Agent。direct 和默认 auto 模式在指定条件下读取主机凭据，ai-gateway 模式不读取原生订阅。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>统一调度层可切换 Agent，同时把真实凭据保留在主机边界；集成时需要核查认证模式、优先级与沙箱支持条件。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合已有多个 Agent 订阅的内部调度工具，因适配器统一接口而认证仍由主机负责。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://vercel.com/changelog/ai-sdk-harness-native-subscription-authentication">Vercel 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Cloudflare · 2026-09-15</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Cloudflare 支持按单个 Worker 向成员、Agent 和 CI 分配权限</h2>
+
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 4px 0 0;"><img src="https://developers.cloudflare.com/_astro/individual-worker-permission-roles.Cn5i9cW0.png" height="200" alt="Cloudflare 单个 Worker 的四种权限角色配置" style="display:block;width:100%;height:200px;object-fit:cover;border:0;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 2px;"></td>
+<td width="33.33%" valign="top" style="width:33.33%;padding:0 0 0 4px;"></td>
+</tr></table>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Cloudflare 新增 Worker 级访问控制，提供 Metadata Read-Only、Content Read-Only、Editor、Admin 四种角色。Editor 可以更新和部署，但不能删除；可通过控制台、API 或 Terraform 配置。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>调试、评审和部署 Agent 可获得不同资源权限；Durable Objects 继承所属 Worker 权限，配置时应一并检查。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合多 Worker 项目的 Agent 与 CI 权限隔离，因授权可收敛到特定 Worker。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://developers.cloudflare.com/changelog/post/2026-09-15-granular-worker-permissions/">Cloudflare 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dde5f0;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#2456cd;">04&nbsp;·&nbsp;前端开发与生态</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Node.js · 2026-09-16</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Node.js 26.9.0 Current 发布</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Node.js 官方发布 26.9.0 Current，并提供变更记录与各平台发行包。这是 Current 版本线的次版本更新；生产环境升级仍应结合项目支持策略与依赖兼容性。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>前端工具链、CLI 和 Agent runtime 可以在测试环境验证构建与原生依赖，不能仅按版本号判断性能或稳定性提升。</p>
+
+
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://nodejs.org/en/blog/release/v26.9.0">Node.js 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">npm / GitHub · 2026-09-18</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">npm 新增 Stage-only Token：自动准备版本，维护者以 2FA 批准发布</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>npm granular token 新增 Read and write (stage only)。自动化用 npm stage publish 提交版本，由维护者通过 2FA 审核发布；该 token 不能直接 npm publish，但仍拥有移动 dist-tag 和废弃版本等写权限。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>组件库可把准备与正式发布分开授权。试点需 npm CLI 11.15.0 或以上、Node.js 22.14.0 或以上，以及发布权限和已启用的 2FA。</p>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>适合需要人工审批的组件库发布流程，因自动化可准备版本而正式发布仍由维护者批准。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://github.blog/changelog/2026-09-18-stage-only-npm-tokens-for-safer-automation/">npm / GitHub 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:22px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-bottom:2px solid #dde5f0;padding:0 0 10px;"><span style="font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;color:#2456cd;">05&nbsp;·&nbsp;AI 产业与开发者生态</span></td></tr></table></td></tr>
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Google · 2026-09-14</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">DevFest 2026 公布 Agentic Era 主题与开发者活动安排</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Google 公布 DevFest 2026，活动季为 10 月 1 日至 12 月 31 日，主题围绕 Agentic Era 中的构建、安全与扩展。技术栈覆盖 Gemini、AI Studio、Cloud、Firebase、Angular 和 Web MCP，并设置实践工作坊。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>前端与 Agent 学习可结合本地 GDG 活动验证完整应用流程；公告日期属于本周，活动实际举办时间在第四季度。</p>
+
+
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://blog.google/innovation-and-ai/technology/developers-tools/devfest2026/">Google 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:10px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td class="story" style="padding:19px 20px;">
+<div style="font-size:12px;line-height:18px;color:#8090a6;font-weight:700;">Cloudflare · 2026-09-15</div>
+<h2 style="margin:7px 0 11px;font-size:18px;line-height:26px;color:#17233b;">Cloudflare 推出 Disallow AI Training：保留搜索可发现性并拒绝混合爬虫训练</h2>
+
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">摘要：</strong>Cloudflare 公布 Disallow AI Training 设置，旨在允许搜索索引同时表达拒绝训练的偏好。官方表示 Apple、Google、Microsoft 已遵守或承诺在指定时间遵守；同时更新 Search、Training、Agent 控制及旧设置迁移。</p>
+<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>站点所有者应区分表达训练偏好与完全阻断爬虫，后者也可能影响搜索索引；浏览器 Agent 集成需要尊重站点访问策略。</p>
+
+
+<p style="margin:0;font-size:13px;line-height:21px;color:#607089;"><strong>来源：</strong><a href="https://blog.cloudflare.com/accountable-mixed-use-ai-crawlers/">Cloudflare 官方发布</a></p>
+</td></tr></table>
+</td></tr>
+
+
+
+<tr><td class="pad" style="padding:22px 12px 0;">
+<h2 style="margin:0 0 15px;font-size:20px;line-height:28px;font-weight:800;color:#17233b;">一句话趋势总结</h2>
+<p style="margin:0;font-size:20px;line-height:33px;font-weight:700;color:#000000;">第 38 周的共同变化是：Agent 从能力展示走向可配置路由、资源级授权和可审核的开发与发布流程。</p>
+</td></tr>
+<tr><td class="pad" style="padding:20px 12px 0;">
+<h2 style="margin:0 0 17px;font-size:20px;line-height:28px;font-weight:800;color:#17233b;">本周动手验证</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:14px;line-height:23px;color:#607089;">
+<li style="padding:0 0 12px;">用同一前端 Bug 分别运行 Copilot Auto 三档策略，记录所选模型、耗时、费用与人工返工量。</li>
+<li style="padding:0 0 12px;">在测试项目以 HarnessAgent 切换两个已登录的 Coding Agent，检查认证优先级及真实凭据是否留在主机边界。</li>
+<li style="padding:0;">给测试 Worker 分别配置 Content Read-Only 与 Editor，尝试读取代码、部署和删除，记录各项授权结果。</li>
+</ul>
+</td></tr>
+<tr><td class="pad" style="padding:20px 12px 0;">
+<h2 style="margin:0 0 17px;font-size:20px;line-height:28px;font-weight:800;color:#17233b;">团队行动建议</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:14px;line-height:23px;color:#607089;">
+<li style="padding:0 0 12px;"><strong>维护评测负责人：</strong>建议指定负责人维护真实研发任务样本，以成功率、成本和返工量评估默认路由策略。</li>
+<li style="padding:0 0 12px;"><strong>试点分阶段发布：</strong>建议选择一个非关键组件包试行 stage-only token 与人工 2FA 审批，并记录发布等待时间。</li>
+<li style="padding:0;"><strong>建立权限矩阵：</strong>建议逐项登记 Agent 的代码、日志、部署、删除与凭据访问需求，由服务负责人评估最小授权。</li>
+</ul>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #dde5f0;padding-top:15px;font-size:11px;line-height:18px;color:#8090a6;">AI × Agent × 前端周报 · 2026.09.14–09.20<br>按 Asia/Shanghai 第 38 周筛选；日期与事实回查官方来源，影响与适用场景为分析。npm 与 Copilot 为相互独立的重要发布，因此 GitHub 生态本期收录三条。</td></tr></table></td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

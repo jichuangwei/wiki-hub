@@ -1,3 +1,4 @@
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -5,10 +6,13 @@ from unittest.mock import patch
 
 from scripts.build_site import REPORTS, ReportParser, build, parse_issue, render_mail_body
 
+CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-21-to-2026-09-27.html"
+WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-14-to-2026-09-20.html"
+
 
 class BuildSiteTests(unittest.TestCase):
     def test_existing_report_contains_twelve_verified_items(self):
-        issue = parse_issue(next(REPORTS.glob("*/*/*.html")))
+        issue = parse_issue(CURRENT_REPORT)
         self.assertEqual(issue.slug, "2026-09-21-to-2026-09-27")
         self.assertEqual(len(issue.categories), 5)
         self.assertEqual(len(issue.articles), 12)
@@ -21,7 +25,8 @@ class BuildSiteTests(unittest.TestCase):
             pages = list(output.rglob("*.html"))
             self.assertEqual(pages, [output / "index.html"])
             home = pages[0].read_text(encoding="utf-8")
-            self.assertEqual(home.count('data-kind="news"'), 12)
+            expected = sum(len(parse_issue(path).articles) for path in REPORTS.glob("*/*/*.html"))
+            self.assertEqual(home.count('data-kind="news"'), expected)
             self.assertIn('class="week-option" type="button" role="option" data-week="2026-09-21"', home)
             self.assertNotIn("<select", home)
             self.assertIn('data-category="AI/大模型"', home)
@@ -43,7 +48,7 @@ class BuildSiteTests(unittest.TestCase):
             self.assertNotIn("{{", home)
 
     def test_week_switch_has_two_sets_of_items(self):
-        source = next(REPORTS.glob("*/*/*.html"))
+        source = CURRENT_REPORT
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             reports = root / "reports" / "ai-agent-frontend" / "2026"
@@ -62,7 +67,7 @@ class BuildSiteTests(unittest.TestCase):
             self.assertIn('role="option" data-week="2026-09-21"', home)
 
     def test_mail_layout_preserves_every_article_and_source(self):
-        source = next(REPORTS.glob("*/*/*.html"))
+        source = CURRENT_REPORT
         issue = parse_issue(source)
         body = render_mail_body(source.read_text(encoding="utf-8"), issue.categories)
         parser = ReportParser()
@@ -71,6 +76,25 @@ class BuildSiteTests(unittest.TestCase):
                          [(a.title, a.sections, a.sources) for a in issue.articles])
         self.assertEqual(body.count('data-kind="news"'), 12)
         self.assertEqual(body.count('data-kind="section"'), 5)
+
+    def test_week38_mail_keeps_content_and_filters_all_articles(self):
+        original = WEEK38_REPORT.read_bytes()
+        issue = parse_issue(WEEK38_REPORT)
+        self.assertEqual(len(issue.articles), 10)
+        self.assertEqual(len(issue.categories), 5)
+        self.assertEqual(len(issue.highlights), 3)
+        self.assertEqual(issue.summary, " ".join(issue.highlights))
+        body = render_mail_body(original.decode("utf-8"), issue.categories)
+        parser = ReportParser()
+        parser.feed(body)
+        self.assertEqual([(a.title, a.sections, a.sources) for a in parser.articles],
+                         [(a.title, a.sections, a.sources) for a in issue.articles])
+        self.assertEqual(body.count('data-kind="news"'), 10)
+        self.assertEqual(body.count('data-kind="section"'), 5)
+        conclusion = re.search(r'<h2\b[^>]*>一句话趋势总结', body)
+        self.assertIsNotNone(conclusion)
+        self.assertNotIn('data-category=', body[conclusion.start():])
+        self.assertEqual(WEEK38_REPORT.read_bytes(), original)
 
     def test_independent_news_can_supply_a_week_without_reports(self):
         with tempfile.TemporaryDirectory() as directory:
