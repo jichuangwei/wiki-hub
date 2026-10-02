@@ -57,6 +57,7 @@ weekTrigger.addEventListener("keydown", (event) => {
 weekOptions.forEach((option, index) => {
   option.addEventListener("click", () => {
     activeWeek = option.dataset.week;
+    activeCategory = "all";
     weekCurrent.textContent = option.textContent;
     weekOptions.forEach((item) => item.setAttribute("aria-selected", String(item === option)));
     setWeekMenuOpen(false);
