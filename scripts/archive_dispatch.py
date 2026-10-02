@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 import tempfile
 
@@ -18,7 +19,10 @@ def read_inputs(event: dict) -> tuple[str, str, str]:
     result = tuple(values.get(key) for key in ("start", "end", "html"))
     if any(not isinstance(value, str) or not value.strip() for value in result):
         raise ValueError("start, end and html must be non-empty strings")
-    if sum(len(value) for value in result) > 65535:
+    request_id = values.get("request_id", "")
+    if not isinstance(request_id, str) or (request_id and not re.fullmatch(r"[a-f0-9]{32}", request_id)):
+        raise ValueError("Invalid publication request ID")
+    if sum(len(value) for value in result) + len(request_id) > 65535:
         raise ValueError("Combined workflow inputs exceed 65535 characters")
     # Dates are validated by archive_report before use in paths or git messages.
     return result

@@ -2,3 +2,8 @@
 __pycache__/
 *.py[cod]
 dist/
+publication.json
+.venv/
+*.sqlite3
+*.pem
+.env

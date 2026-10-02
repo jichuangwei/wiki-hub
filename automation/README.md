@@ -1,41 +1,34 @@
-# 每周周报归档与发布
+# 深度周报定时发布
 
-模板源为 `templates/reports/ai-agent-frontend-weekly-email.html`。周报正文保持邮件与网站一致，历史归档不覆盖。修改任务要求后运行 `python3 scripts/build_task_prompt.py`；生成 prompt 少于 20,000 字符。
+正式任务：每周一 09:00（Asia/Shanghai），筛选 3–5 篇 AI 编程助手 / Code Agent 深度资料，分析证据强弱及前端实践，生成 HTML，归档并部署 Pages。不发送 Gmail。
 
-## Actions 发布入口
+## 云端链路
 
-`.github/workflows/archive-report.yml` 接收 `workflow_dispatch` 输入 `start`、`end`、`html`。日期必须为完整周一至周日；三个输入合计最多 65,535 字符。HTML 当作数据读取，不插入 shell 脚本。入口仅在 main 执行，复用 `archive_report.py`，运行现有测试和完整构建后由 `github-actions[bot]` 提交到 main。只有归档 job 声明 `contents: write`；无 PAT 或额外仓库写凭证。
+Scheduled Task → `publish_weekly_report(start, end, html)` → `archive-report.yml` → bot 提交 main → 复用 `pages.yml` → `get_publication_status(request_id)` 核实线上内容。
 
-相同 HTML 重跑不会新增提交；同周不同内容拒绝覆盖。并发归档串行执行，遇到外部并发提交时普通 push 会失败，重新运行前先核实归档，禁止强推。失败不会报告成功。
+发布工具代码、容器和完整部署/授权配置见 [publisher/README.md](../publisher/README.md)。发布工具需要部署到常驻 HTTPS 服务，安装仅 Actions write、Contents read 的 GitHub App，配置外部 OAuth 授权，并将该远程 MCP 连接提供给云任务。Contents write 仅在 Action 的归档 job 中使用。
 
-Actions 的 GITHUB_TOKEN 提交产生的 push 不会启动其他 workflow。因此归档 job 输出真实 commit SHA，deploy job 使用 `workflow_call` 调用现有 `pages.yml` 并检出该 SHA。普通人工提交和手动 Pages 运行仍保留。提交和部署分别报告；部署失败时归档可能已成功，重跑同一 HTML 可重试部署。
+`weekly-report-instructions.md` 是完整任务要求；运行 `python3 scripts/build_task_prompt.py` 同步 `weekly-report-prompt.txt`，再更新现有云任务。仓库修改不会自动修改 ChatGPT 云任务的 Prompt、时间或连接。没有发布工具时仅改 Prompt 仍不能自动发布。
 
-已有本地授权的操作员可以触发（身份由现有 GitHub CLI 登录管理，不在命令中填写 token）：
+## HTML 格式
 
-```sh
-gh workflow run archive-report.yml --repo jichuangwei/wiki-hub --ref main \
-  -f start=2026-09-07 -f end=2026-09-13 -F html=@/path/to/report.html
-gh run list --repo jichuangwei/wiki-hub --workflow archive-report.yml
-gh run view RUN_ID --repo jichuangwei/wiki-hub
-```
+唯一排版源：`templates/reports/ai-agent-frontend-weekly-email.html`。深度报告复用模板外壳、栏目、story 资讯块，唯一栏目为 `01 · AI 编程助手 / Code Agent 深度资料`。必须有 3–5 篇，每篇保留完整摘要、HTTPS 来源、非空“证据强弱”和“前端实践”分析段；保留三个结尾段。历史五栏目报告继续按每栏 2–4 条校验，不修改历史正文。日期必须是完整周一至周日。
 
-也可在 GitHub Actions 页面选择 **Archive weekly report → Run workflow**，填写日期和完整 HTML。不要向输入或正文放入账号、收件人或凭证。部署结果以 deploy job 和实际页面核验为准。
+## 工作流与运行证据
 
-## Scheduled Task 的连接边界
+`archive-report.yml` 接收 start、end、html 和可选 request_id（32 位小写十六进制）。输入合计最多 65,535 字符，仅在 main 执行。完整 HTML 作为数据读取，不插入 shell。相同周报字节不新增提交，已有不同正文拒绝覆盖；归档并发串行执行，禁止强推。
 
-仓库入口不代表 ChatGPT Scheduled Task 已接通。当前聊天的可用 GitHub 工具未提供新运行的 dispatch；Scheduled Task 自身工具和授权须在实际运行中核实，不能从当前聊天直接推断。仅添加 workflow_dispatch 或改写 Prompt 无法补出运行时缺少的工具。
+GITHUB_TOKEN 提交产生的 push 不会启动另一个 workflow，所以归档入口显式调用现有 pages.yml，检出归档 job 输出的真实 revision。普通提交仍走 Pages 的 push 入口。
 
-最小可行连接：Scheduled Task 生成并交付完整 HTML，操作员用上述命令或 Actions 页面手动触发一次；仓库写入和 Pages 均由 Actions 完成。当前无需新 token 或中转服务。
+运行名包含 request_id，成功归档后上传 publication.json 证据（请求、日期、revision、正文 SHA-256，保存 90 天）。发布工具依据本请求对应的运行及证据核对内容，不把启动工作流的 head SHA 当作新归档 commit SHA，不使用最近历史运行冒充本次运行。提交、部署和线上核验分别报告。
 
-无人值守时，先验证 Scheduled Task 可用的输出通道。若任务能发送 Gmail，可由一个外部执行器读取指定周报邮件并调用 dispatch；它使用托管的 GitHub App 安装凭证，仅授予本仓库 Actions write，Contents read，仓库 Contents write 仍只给 Actions。执行器的邮箱读取授权和 GitHub App 私钥放入服务的 secret 存储，不能放 Prompt 或仓库。若运行环境支持已授权 HTTP/MCP 发布工具，同一执行器也可接收该工具请求。当前未配置此执行器，也未修改现有云任务，不声称端到端自动发布成功。
-
-## 本地验证
+## 验证
 
 ```sh
-python3 scripts/archive_report.py --input /path/to/report.html --start 2026-09-07 --end 2026-09-13
 python3 scripts/build_task_prompt.py --check
 python3 -m unittest discover -s tests -v
 python3 scripts/build_site.py
+uv run --python 3.11 --with-requirements publisher/requirements.lock python -m unittest publisher.test_server -v
 ```
 
-2026-10-03 实时检查：仓库公开，Pages 来源为 GitHub Actions，pages.yml 已启用。之前关于私有仓库无法启用 Pages 的记录不再代表当前设置。
+开发测试使用合成 HTML 夹具；正式第 36 周验收必须用云任务生成的真实完整 HTML。代码测试通过不代表远程服务部署、账号连接或云任务端到端发布成功。

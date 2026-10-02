@@ -1,29 +1,17 @@
-为我制作每周 AI 资讯干货，使用同一份完整 HTML 发送 Gmail，并新增 Wiki Hub 当周归档。时区 Asia/Shanghai，范围为上一完整自然周（周一至周日）；START、END 使用 YYYY-MM-DD，YEAR 取 START 所在年。保留现有任务的时间和频率。
+每周一 09:00（Asia/Shanghai）执行 AI 编程助手 / Code Agent 深度周报，不发送 Gmail。使用上一完整自然周（周一至周日）；测试指定周次时使用指定日期，保持正式任务定时设置不变。
 
-【模板与仓库】
-仓库：jichuangwei/wiki-hub，分支：main。仓库可见性以实际设置为准，不修改可见性。
-每次新生成周报，先通过已连接 GitHub 读取 templates/reports/ai-agent-frontend-weekly-email.html 的完整内容，确认未被截断，并记录模板 blob SHA。该文件是唯一排版源；不读本机路径、file://，不自行重建模板。模板读取失败时保留收集结果并报告失败，不生成或发送替代版式。
-归档路径：content/news/reports/ai-agent-frontend/YEAR/ai-agent-frontend-weekly-START-to-END.html。
-Wiki Hub 直接展示邮件正文，上方仅增加分类、周次切换；不得另做卡片、弹窗、摘要截断或重新生成网站内容。
+【资料筛选与分析】
+先搜索本期资料，最终精选 3–5 篇有实践价值的一手公告、技术文档、论文或工程案例。覆盖中国与国际生态；不足时扩大搜索，仍不足则报告缺口，不凑数或编造。核实事件日期和发布日期，每篇保留可点击 HTTPS 一手来源。每篇包括完整标题、机构与日期、摘要、工程影响，以及两个独立分析段：证据强弱、前端实践。厂商 benchmark 明确标注为厂商评测，机制说明与独立实验证据分开；前端实践给出可执行的实验及判定标准。
 
-【收集与筛选】
-先广泛搜索本期资讯，再按事件聚类去重。国际优先 OpenAI、Anthropic、Google/DeepMind、GitHub、Microsoft、Vercel、Cloudflare、Cursor；中国优先阿里/Qwen、DeepSeek、智谱、MiniMax、Moonshot/Kimi、字节/火山、腾讯、百度、华为、ModelScope。机器之心、InfoQ 中文、SegmentFault、掘金、OSCHINA、量子位用于发现，关键事实回查官方公告、文档、changelog、论文或发布页。
-区分事件日期和文章发布日期，核实发布日、机构、官方 URL、关键事实。发布时间或关键事实无法核实则不入选；厂商测试与性能宣称明确标注来源，不写成独立验证结论。
-五类顺序固定：AI/大模型；Coding Agent/Agent 产品；Agent 开发技术与工程；前端开发与生态；AI 产业与开发者生态。每类 2–4 条，共 10–20 条。必须覆盖国际及中国生态。同一公司通常最多两条，只有独立且重大的事件才可例外。数量不足时继续扩大一手来源；仍不足则交付候选与缺口说明，不编造、不以普通 patch 凑数，不发送或归档不完整周报。
-每条含完整标题、机构及日期、摘要、为什么值得关注/对前端或 Agent 开发的影响、全部可点击的一手来源。产品类补充适用场景/理由，非产品类删除该段。栏目保留序号和中点，资讯标题不加序号。
+【模板和格式】
+通过已连接 GitHub 读取 jichuangwei/wiki-hub/main 的 templates/reports/ai-agent-frontend-weekly-email.html，读取完整内容并记录 blob SHA；这是唯一排版源，读取失败则停止发布。复用模板的外壳、栏目行与 story 资讯块，删除旧五栏目示例，改为唯一栏目“01 · AI 编程助手 / Code Agent 深度资料”，添加 3–5 个完整 story 块。在每块中以模板现有段落样式增加“证据强弱：”和“前端实践：”两个 strong 标签段落，保留“摘要：”及“来源：”段落。不要把分析放在 story 块外，不要使用 Markdown 冒充 HTML。无可靠图片则删除整块图片区域。保留结尾：一句话趋势总结、本周动手验证、团队行动建议。删除所有未填占位符，保留完整 UTF-8 HTML。
 
-【图片与结尾】
-尽量为每条查找直接相关的官方发布图、截图、架构图或数据图，使用稳定 HTTPS PNG/JPEG/WebP，每条最多三张，不用 Logo 或无关图片凑数。无可靠图片则删除整张配图表格；一至两张时保持三列等宽、空列无占位内容，图片铺满所在列、高度 200px，不加图下说明。其余样式严格沿用读取到的模板。
-结尾依次为一句话趋势总结、本周动手验证（3 条可复现小实验）、团队行动建议（3 条待评估的规则或流程建议）。行动建议使用加粗短标题加冒号，描述紧随其后放同一行；与实验不重复，不表述为已经执行的决定。
+【发布】
+目标仓库 jichuangwei/wiki-hub，main 分支；归档路径 content/news/reports/ai-agent-frontend/YEAR/ai-agent-frontend-weekly-START-to-END.html，YEAR 取 START 所在年。确认仓库可访问再检查本期归档；已有完整归档则复用，不重新生成或覆盖，不把权限错误当成文件不存在。
+调用已连接 Wiki Hub weekly publisher 的 publish_weekly_report(start=START, end=END, html=完整HTML)。保存返回的 request_id，再调用 get_publication_status(request_id)。持续查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
+仅当 get_publication_status 返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true，才报告“提交并部署成功”。dispatched 仅表示已触发；deployed_unverified 表示部署成功但线上内容尚未核实；归档成功与部署失败分别说明。相同内容重试复用同一请求，同周不同内容停止并报告需人工审核修正。
+不要调用 create_file/update_file，不直接提交文件，不发送 Gmail，不把 PAT/token、登录凭据或个人收件人写进 Prompt、HTML 或仓库。文件写入仅由 Action 的 GITHUB_TOKEN 完成。
+如果当前任务没有 publish_weekly_report/get_publication_status 工具，保留完整 HTML 并明确报告“发布工具未连接，未触发”，不得声称已提交或部署，也不得要求每周手动触发来代替自动链路。
 
-【归档、发送与重跑】
-1. 先确认 GitHub 仓库可访问，再查询当周归档；404 可能是权限错误，只有确认仓库可访问且文件不存在，才允许新增。已有归档则读取完整 HTML 复用，不重新生成、不覆盖。归档已有但内容不完整时报告需修正，停止发送该错误版本。
-2. 新生成时先固定完整内容，再复制模板中的 NEWS ITEM 到实际条数并填入内容。删除说明注释、所有未填占位符、空图片和不适用的产品段。校验日期范围、五类顺序及数量、每条完整内容、HTTPS 来源、图片、结尾三组内容，保留可下载 HTML。已有归档也执行这些校验。
-3. 不使用 GitHub Connector create_file/update_file。发布端为 .github/workflows/archive-report.yml，workflow_dispatch 输入 start、end、html（同一份完整 UTF-8 HTML，合计最多 65535 字符）。只有运行环境实际提供已授权的 Actions dispatch 能力时才触发；没有该能力则交付 HTML 和日期并报告“待触发”，不要声称已提交。Actions 复用 archive_report.py，校验后只提交当周归档到 main，并调用现有 pages.yml 部署。重复相同内容不新增提交；已有内容不同则拒绝覆盖。操作超时先查询运行状态、目标文件和 SHA，不盲目重试；提交后读取归档核对内容。不要在 Prompt、HTML、仓库或运行结果中写入 PAT/token，不修改历史、模板或工作流。
-4. Gmail 主题：AI 资讯干货｜START—END。To 为已连接 Gmail 的发件人自己；BCC 为 2323176669@qq.com、lvxiaojie0925@gmail.com、1290819258@qq.com；CC 留空。收件人地址不写进正文或网站。用 text/html、UTF-8 发送同一份最终 HTML。
-5. 发送前查询已发送邮件，以周报标题和本期日期范围定位，并核实主题、时间与正文（也检查 YYYY.MM.DD 格式的历史主题）。已有本期已发送周报则跳过发送。查询失败、结果不明确、发送超时或返回状态不明确时先核实已发送记录，不盲目重发。成功后核实消息 ID 与 SENT 状态；任务通知邮件不算周报发送成功。
-6. 有有效 HTML 后，归档与邮件分别执行并记录结果：归档失败可继续邮件，邮件失败保留归档，重跑只补未完成步骤。模板读取或正文校验失败时，两项都不执行。
-7. Actions 使用 GITHUB_TOKEN 提交后的 push 不会自动启动另一个 workflow；归档入口显式调用 pages.yml。普通人工提交仍走现有 push 入口。构建网站后，保留历史周次，默认展示最新周。能访问 Actions/Pages 时，核实对应提交的构建和部署结果；不能核实时写“归档成功，部署未核实”。提交成功不能等同于网站已更新。
-
-【运行结果】
-简洁报告日期范围、五类数量、HTML 文件、模板 SHA、归档路径与提交 SHA、邮件消息 ID/是否跳过、部署状态及确认过的页面链接。缺少连接权限、失败或状态不明确逐项写清，给出补做步骤；不得声称未核实的发送或发布已成功。
+【结果】
+报告日期、资料条数、模板 blob SHA、归档路径、request_id、真实归档 commit SHA、Action 链接及状态、Pages 状态、线上核验结果及链接。运行未完成时保留 request_id，供继续查询；不得把本地生成、归档前校验或任务通知当作部署成功。

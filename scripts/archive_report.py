@@ -10,9 +10,9 @@ import re
 import tempfile
 
 try:
-    from .build_site import REPORTS, parse_issue
+    from .build_site import REPORTS, DEEP_CATEGORY, parse_issue
 except ImportError:
-    from build_site import REPORTS, parse_issue
+    from build_site import REPORTS, DEEP_CATEGORY, parse_issue
 
 
 def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-frontend",
@@ -27,7 +27,7 @@ def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-fr
         candidate.parent.mkdir(parents=True)
         candidate.write_bytes(content)
         issue = parse_issue(candidate)
-        if topic == "ai-agent-frontend":
+        if topic == "ai-agent-frontend" and issue.categories != [DEEP_CATEGORY]:
             counts = Counter(article.category for article in issue.articles)
             if any(not 2 <= count <= 4 for count in counts.values()):
                 raise ValueError("Each AI category must have 2–4 articles")

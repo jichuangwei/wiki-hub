@@ -29,6 +29,7 @@ EXPECTED_CATEGORIES = (
     "前端开发与生态",
     "AI 产业与开发者生态",
 )
+DEEP_CATEGORY = "AI 编程助手 / Code Agent 深度资料"
 
 
 def clean(value: str) -> str:
@@ -284,8 +285,16 @@ def parse_issue(path: Path) -> Issue:
         raise ValueError(f"Unfilled template placeholder: {path}")
     parser = ReportParser()
     parser.feed(source)
-    if topic == "ai-agent-frontend" and parser.categories != list(EXPECTED_CATEGORIES):
+    deep = parser.categories == [DEEP_CATEGORY]
+    if topic == "ai-agent-frontend" and not deep and parser.categories != list(EXPECTED_CATEGORIES):
         raise ValueError(f"Missing or out-of-order AI categories in {path}: {parser.categories}")
+    if deep:
+        if not 3 <= len(parser.articles) <= 5:
+            raise ValueError("Deep reports must contain 3–5 articles")
+        for article in parser.articles:
+            labels = {label for label, _ in article.sections}
+            if not {"证据强弱", "前端实践"}.issubset(labels):
+                raise ValueError(f"Missing deep analysis sections: {article.title}")
     if not parser.categories:
         raise ValueError(f"No categories found in {path}")
     if not parser.articles:
