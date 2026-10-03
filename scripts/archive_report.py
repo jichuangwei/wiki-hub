@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from collections import Counter
 from datetime import date
 from pathlib import Path
@@ -16,7 +17,7 @@ except ImportError:
 
 
 def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-frontend",
-                   root: Path = REPORTS) -> tuple[Path, bool]:
+                   root: Path = REPORTS, expected_sha256: str | None = None) -> tuple[Path, bool]:
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", topic):
         raise ValueError("Invalid report topic")
     first, last = date.fromisoformat(start), date.fromisoformat(end)
@@ -35,6 +36,13 @@ def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-fr
             if heading not in content.decode("utf-8"):
                 raise ValueError(f"Missing report section: {heading}")
     target = root / topic / str(first.year) / name
+    if expected_sha256 is not None:
+        if not re.fullmatch(r"[a-f0-9]{64}", expected_sha256):
+            raise ValueError("Invalid expected archive digest")
+        if not target.is_file() or hashlib.sha256(target.read_bytes()).hexdigest() != expected_sha256:
+            raise ValueError("Archive changed or is missing; reviewed update refused")
+        target.write_bytes(content)
+        return target, True
     if target.exists():
         if target.read_bytes() == content:
             return target, False

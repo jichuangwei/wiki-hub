@@ -68,6 +68,7 @@ class RemoteServerTests(unittest.TestCase):
                                    if tool["name"] == "publish_weekly_report")
                     self.assertIn("replace_failed_request_id", publish["inputSchema"]["properties"])
                     self.assertIn("review_reason", publish["inputSchema"]["properties"])
+                    self.assertIn("replace_published_request_id", publish["inputSchema"]["properties"])
                     self.assertNotIn("replace_failed_request_id", publish["inputSchema"]["required"])
 
 

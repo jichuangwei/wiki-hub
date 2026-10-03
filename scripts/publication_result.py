@@ -15,6 +15,10 @@ def main():
     result = {"request_id": inputs.get("request_id", ""), "start": start, "end": end,
               "revision": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
               "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    if inputs.get("expected_sha256"):
+        result["previous_sha256"] = inputs["expected_sha256"]
+        result["previous_revision"] = inputs["expected_revision"]
+        result["review_reason"] = inputs["review_reason"]
     Path("publication.json").write_text(json.dumps(result), encoding="utf-8")
 
 

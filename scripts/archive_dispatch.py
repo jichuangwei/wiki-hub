@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import hashlib
+import subprocess
 import os
 import re
 from pathlib import Path
@@ -22,7 +24,14 @@ def read_inputs(event: dict) -> tuple[str, str, str]:
     request_id = values.get("request_id", "")
     if not isinstance(request_id, str) or (request_id and not re.fullmatch(r"[a-f0-9]{32}", request_id)):
         raise ValueError("Invalid publication request ID")
-    if sum(len(value) for value in result) + len(request_id) > 65535:
+    correction = tuple(values.get(key, "") for key in ("expected_sha256", "expected_revision", "review_reason"))
+    if any(correction):
+        digest, revision, reason = correction
+        if (not all(isinstance(value, str) for value in correction) or
+                not re.fullmatch(r"[a-f0-9]{64}", digest) or
+                not re.fullmatch(r"[a-f0-9]{40}", revision) or not reason.strip() or len(reason) > 500):
+            raise ValueError("An update requires expected digest, revision and review reason")
+    if sum(len(value) for value in result) + len(request_id) + sum(map(len, correction)) > 65535:
         raise ValueError("Combined workflow inputs exceed 65535 characters")
     # Dates are validated by archive_report before use in paths or git messages.
     return result
@@ -34,7 +43,19 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as directory:
         source = Path(directory) / "report.html"
         source.write_bytes(content.encode("utf-8"))
-        path, created = archive_report(source, start, end)
+        # Validate HTML and dates before using dates in a Git path.
+        archive_report(source, start, end, root=Path(directory) / "validated")
+        digest = event["inputs"].get("expected_sha256", "")
+        if digest:
+            revision = event["inputs"]["expected_revision"]
+            relative = (f"content/news/reports/ai-agent-frontend/{start[:4]}/"
+                        f"ai-agent-frontend-weekly-{start}-to-{end}.html")
+            old = subprocess.check_output(["git", "show", f"{revision}:{relative}"])
+            if hashlib.sha256(old).hexdigest() != digest:
+                raise ValueError("Reviewed revision does not match the expected archive")
+            path, created = archive_report(source, start, end, expected_sha256=digest)
+        else:
+            path, created = archive_report(source, start, end)
     with Path(os.environ["GITHUB_ENV"]).open("a", encoding="utf-8") as output:
         output.write(f"REPORT_START={start}\nREPORT_END={end}\n")
     print(f"{'Archived' if created else 'Already archived'}: {path}")

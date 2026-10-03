@@ -4,7 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 import zipfile
 
 from publisher.service import Publisher
@@ -138,6 +138,43 @@ class PublisherTests(unittest.TestCase):
         self.github.request.side_effect = legacy
         newer = self.publisher.publish("2026-08-31", "2026-09-06", self.html, old, "Approved retry on fixed workflow")
         self.assertEqual(newer["run_id"], 43)
+
+    def test_published_update_is_reviewed_correlated_and_idempotent(self):
+        old = self.publish()["request_id"]
+        self.github.request.reset_mock()
+        self.github.request.side_effect = lambda method, path, **kwargs: (
+            response({"workflow_run_id": 43}) if method == "POST" else
+            response({"content": base64.b64encode(self.html.encode()).decode()}))
+        with patch.object(self.publisher, "status", return_value={"state": "published", "commit_sha": "a" * 40}):
+            newer = self.publisher.publish("2026-08-31", "2026-09-06", self.html + "\n",
+                review_reason="Human approved updated report", replace_published_request_id=old)
+            again = self.publisher.publish("2026-08-31", "2026-09-06", self.html + "\n",
+                review_reason="Human approved updated report", replace_published_request_id=old)
+        self.assertEqual(newer["request_id"], again["request_id"])
+        posts = [call for call in self.github.request.call_args_list if call.args[0] == "POST"]
+        self.assertEqual(len(posts), 1)
+        self.assertEqual(posts[0].kwargs["json"]["inputs"]["expected_revision"], "a" * 40)
+        self.assertEqual(len(posts[0].kwargs["json"]["inputs"]["expected_sha256"]), 64)
+        self.assertEqual(self.publisher.status(old)["state"], "superseded")
+
+    def test_published_update_refuses_unverified_or_changed_archive(self):
+        old = self.publish()["request_id"]
+        for state, body in (("action_failed", self.html), ("pending", self.html),
+                            ("deployed_unverified", self.html), ("published", self.html + "changed")):
+            self.github.request.reset_mock()
+            self.github.request.side_effect = None
+            self.github.request.return_value = response({"content": base64.b64encode(body.encode()).decode()})
+            with patch.object(self.publisher, "status", return_value={"state": state, "commit_sha": "a" * 40}):
+                with self.assertRaises(ValueError):
+                    self.publisher.publish("2026-08-31", "2026-09-06", self.html + "\n",
+                        review_reason="Approved", replace_published_request_id=old)
+            self.assertFalse(any(call.args[0] == "POST" for call in self.github.request.call_args_list))
+            with self.publisher.connect() as db:
+                self.assertEqual(db.execute("SELECT request_id FROM publications").fetchone()[0], old)
+        with self.assertRaises(ValueError):
+            self.publisher.publish("2026-08-31", "2026-09-06", self.html, replace_published_request_id=old)
+        with self.assertRaises(ValueError):
+            self.publisher.publish("2026-08-31", "2026-09-06", self.html, old, "Approved", old)
 
     def test_historical_run_cannot_be_reported_as_this_publication(self):
         request = self.publish()

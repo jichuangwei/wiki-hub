@@ -8,6 +8,18 @@ on:
         description: Publication correlation ID (optional for manual runs)
         required: false
         type: string
+      expected_sha256:
+        description: Reviewed archive SHA-256 (only for an approved published update)
+        required: false
+        type: string
+      expected_revision:
+        description: Verified previous archive commit (only for an approved published update)
+        required: false
+        type: string
+      review_reason:
+        description: Human review reason for a published update
+        required: false
+        type: string
       start:
         description: Monday (YYYY-MM-DD)
         required: true
@@ -40,6 +52,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
       - name: Validate and archive report
         run: python3 scripts/archive_dispatch.py
       - name: Check complete site before committing

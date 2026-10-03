@@ -51,3 +51,17 @@ Railway 的具体部署步骤见 [RAILWAY.md](RAILWAY.md)。在部署平台指�
 ## 审核恢复失败且未归档的请求
 
 用户明确批准后，调用 `publish_weekly_report` 并提供 `replace_failed_request_id` 和非空 `review_reason`。仅允许替换已结束且失败、没有归档 commit 且 main 无该周文件的请求；已有归档仍拒绝修改。创建新 request_id 前用 SQLite 事务保留旧记录、旧运行状态、审核原因和新 digest。旧请求返回 `superseded` 及 `replacement_request_id`；同一替代正文重试复用新请求，超时保留 `dispatch_unknown`，不能盲目再次派发。该功能不删除数据库、不放宽 GitHub 权限、不触发邮件。线上核验访问对应的 `/news/YYYY-week-N/` 页面。
+
+### Reviewed updates of published reports
+
+`publish_weekly_report` also accepts `replace_published_request_id` and a nonempty
+`review_reason`, exclusively when a human explicitly approves a revised report.
+This option cannot be combined with `replace_failed_request_id`. The previous
+request must be verified `published`, and the archive on main must still have its
+recorded digest. The Action receives the expected digest and previous commit,
+validates both against the archive before writing, and retains the revision in
+Git history. The publisher reserves a new request and stores the previous record,
+verified result and review reason in its replacement audit. Identical retries
+reuse that new request. Query its result through to `published` before claiming
+that the revision is online. Refresh the developer-mode connection's metadata
+after deploying; changing server code does not prove host schema discovery.
