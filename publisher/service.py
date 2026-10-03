@@ -15,7 +15,8 @@ import zipfile
 
 from scripts.archive_report import archive_report
 from scripts.archive_dispatch import read_inputs
-from scripts.build_site import ReportParser, parse_issue, render_mail_body
+from scripts.build_site import ReportParser, parse_issue, render_mail_body, week_slug
+from datetime import date
 
 REPO = "jichuangwei/wiki-hub"
 WORKFLOW = "archive-report.yml"
@@ -58,13 +59,24 @@ class Publisher:
         with self.connect() as db:
             db.execute("CREATE TABLE IF NOT EXISTS publications (request_id TEXT PRIMARY KEY, "
                        "start TEXT UNIQUE, end TEXT, digest TEXT, state TEXT, run_id INTEGER)")
+            db.execute("CREATE TABLE IF NOT EXISTS publication_replacements ("
+                       "previous_request_id TEXT PRIMARY KEY, new_request_id TEXT, "
+                       "previous_record TEXT, new_digest TEXT, review_reason TEXT, created_at INTEGER)")
 
     def connect(self):
         db = sqlite3.connect(self.database, timeout=30)
         db.row_factory = sqlite3.Row
         return db
 
-    def publish(self, start: str, end: str, html: str) -> dict:
+    def publish(self, start: str, end: str, html: str,
+                replace_failed_request_id: str | None = None, review_reason: str = "") -> dict:
+        if replace_failed_request_id is not None:
+            if not re.fullmatch(r"[a-f0-9]{32}", replace_failed_request_id):
+                raise ValueError("Invalid previous request ID")
+            if not review_reason.strip() or len(review_reason) > 500:
+                raise ValueError("A review reason of 1–500 characters is required")
+        elif review_reason:
+            raise ValueError("A review reason requires an explicit failed request ID")
         read_inputs({"inputs": {"start": start, "end": end, "html": html}})
         # Reuse precisely the validation that runs inside Actions. Temporary HTML only.
         with tempfile.TemporaryDirectory() as directory:
@@ -77,16 +89,52 @@ class Publisher:
         request_id = uuid.uuid4().hex
         if sum(map(len, (start, end, html, request_id))) > 65535:
             raise ValueError("Combined workflow inputs exceed 65535 characters")
+        if replace_failed_request_id is not None:
+            # Resolve legacy 204 dispatches before acquiring the write lock; status may save run_id.
+            self.status(replace_failed_request_id)
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             previous = db.execute("SELECT * FROM publications WHERE start=?", (start,)).fetchone()
+            if replace_failed_request_id is not None:
+                reviewed = db.execute("SELECT * FROM publication_replacements WHERE previous_request_id=?",
+                                      (replace_failed_request_id,)).fetchone()
+                if reviewed:
+                    if (previous is None or previous["request_id"] != reviewed["new_request_id"] or
+                            previous["digest"] != digest or previous["end"] != end):
+                        raise ValueError("Replacement already exists with different content; query its status")
+                    return {"request_id": previous["request_id"], "state": previous["state"],
+                            "run_id": previous["run_id"], "next_tool": "get_publication_status"}
+                if (previous is None or previous["request_id"] != replace_failed_request_id or
+                        previous["end"] != end):
+                    raise ValueError("The failed request must match this exact week")
+                status = self.status(replace_failed_request_id)
+                if status["state"] != "action_failed" or status.get("commit_sha"):
+                    raise ValueError("Only a completed failed publication without an archive commit can be replaced")
+                # Distinguish a missing report from a repository-access failure.
+                if self.github.request("GET", "").status_code != 200:
+                    raise RuntimeError("Repository access must be verified before replacement")
+                path = (f"content/news/reports/ai-agent-frontend/{start[:4]}/"
+                        f"ai-agent-frontend-weekly-{start}-to-{end}.html")
+                if self.github.request("GET", f"contents/{path}", params={"ref": "main"}).status_code != 404:
+                    raise ValueError("An archived report exists or absence is unconfirmed; replacement refused")
+                db.execute("INSERT INTO publication_replacements VALUES (?, ?, ?, ?, ?, ?)",
+                           (replace_failed_request_id, request_id,
+                            json.dumps({"publication": dict(previous), "verified_status": status}), digest,
+                            review_reason.strip(), int(time.time())))
+                db.execute("UPDATE publications SET request_id=?, digest=?, state='dispatch_unknown', run_id=NULL "
+                           "WHERE request_id=?", (request_id, digest, replace_failed_request_id))
+                previous = None
+                reserved_replacement = True
+            else:
+                reserved_replacement = False
             if previous:
                 if previous["digest"] != digest or previous["end"] != end:
                     raise ValueError("This week already has a different publication; correction requires review")
                 return {"request_id": previous["request_id"], "state": previous["state"],
                         "run_id": previous["run_id"], "next_tool": "get_publication_status"}
-            db.execute("INSERT INTO publications VALUES (?, ?, ?, ?, 'dispatch_unknown', NULL)",
-                       (request_id, start, end, digest))
+            if not reserved_replacement:
+                db.execute("INSERT INTO publications VALUES (?, ?, ?, ?, 'dispatch_unknown', NULL)",
+                           (request_id, start, end, digest))
         # Reserve before the HTTP request. Lost responses and concurrent retries cannot double-dispatch.
         try:
             response = self.github.request("POST", f"actions/workflows/{WORKFLOW}/dispatches",
@@ -110,7 +158,14 @@ class Publisher:
             raise ValueError("Invalid request ID")
         with self.connect() as db:
             row = db.execute("SELECT * FROM publications WHERE request_id=?", (request_id,)).fetchone()
+            replacement = db.execute("SELECT new_request_id FROM publication_replacements WHERE previous_request_id=?",
+                                     (request_id,)).fetchone()
         if row is None:
+            if replacement:
+                return {"request_id": request_id, "state": "superseded",
+                        "replacement_request_id": replacement["new_request_id"],
+                        "commit_sha": None, "online_verified": False,
+                        "next_tool": "get_publication_status"}
             raise ValueError("Unknown request ID")
         run_id = row["run_id"]
         if run_id is None:
@@ -171,7 +226,8 @@ class Publisher:
         result["pages"] = "deployed"
         result["state"] = "deployed_unverified"
         try:
-            online = self.client.get(PAGE)
+            page_url = PAGE + "news/" + week_slug(date.fromisoformat(row["start"])) + "/"
+            online = self.client.get(page_url)
         except Exception:
             result["message"] = "Pages deployed; online request failed. Query status again."
             return result
@@ -185,6 +241,6 @@ class Publisher:
         expected.feed(body.decode("utf-8"))
         rendered = render_mail_body(body.decode("utf-8"), expected.categories)
         result["online_verified"] = bool(expected.articles) and match.group(1).strip() == rendered.strip()
-        result["page_url"] = PAGE
+        result["page_url"] = page_url
         result["state"] = "published" if result["online_verified"] else "deployed_unverified"
         return result

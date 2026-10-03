@@ -16,6 +16,9 @@
 不要调用 create_file/update_file，不直接提交文件，不把 PAT/token 或登录凭据写进 Prompt、HTML 或仓库；收件邮箱只允许存在于下方 Prompt 邮件发送配置中，不得写入生成 HTML、publish_weekly_report 的任何参数或仓库归档 HTML。文件写入仅由 Action 的 GITHUB_TOKEN 完成。
 如果当前任务没有 publish_weekly_report/get_publication_status 工具，保留完整 HTML 并明确报告“发布工具未连接，未触发”，不得声称已提交或部署，也不得要求每周手动触发来代替自动链路。
 
+【失败请求的审核恢复】
+同周不同 HTML 默认停止，不自动覆盖。仅当用户明确批准替换失败且未归档的请求，并提供已审核的新 HTML 时，可调用同一个 publish_weekly_report(start=START, end=END, html=完整HTML, replace_failed_request_id=旧请求ID, review_reason=用户批准及修正原因)。服务会核实旧 Action 已结束且失败、没有归档 commit、main 没有该周归档；满足全部条件才创建新 request_id，保留旧请求证据。不得用于已归档、已成功、运行中或触发状态不明的请求。保存并查询新 request_id，旧请求 state=superseded 时按 replacement_request_id 查询；超时或同参数重试不重复创建请求。邮件去重以最终新请求及归档正文为准，恢复发布不表示邮件已发送。
+
 【HTML 邮件与 BCC】
 邮件发送配置：服务固定为 Gmail；收件方式仅 BCC；当前测试 bcc 固定为 2323176669@qq.com；To 和 CC 留空。测试邮箱仅保存在本段配置中，不得复制到 HTML、publish_weekly_report 参数、归档 HTML、邮件主题或公开结果报告。
 只有本次 get_publication_status(request_id) 同时返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true 后，才允许发送邮件；发布失败、发布未完成或线上未核验时不发送。

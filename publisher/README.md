@@ -47,3 +47,7 @@ docker build -f publisher/Dockerfile -t wiki-hub-publisher .
 Railway 的具体部署步骤见 [RAILWAY.md](RAILWAY.md)。在部署平台指定 Dockerfile、单实例及 /health 检查，运行时遵守平台 PORT；/health 仅证明进程就绪，不证明 GitHub 或 OAuth 已连通。
 
 实现参考：[GitHub dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event)、[MCP Python SDK authorization](https://github.com/modelcontextprotocol/python-sdk/blob/main/docs/run/authorization.md)。
+
+## 审核恢复失败且未归档的请求
+
+用户明确批准后，调用 `publish_weekly_report` 并提供 `replace_failed_request_id` 和非空 `review_reason`。仅允许替换已结束且失败、没有归档 commit 且 main 无该周文件的请求；已有归档仍拒绝修改。创建新 request_id 前用 SQLite 事务保留旧记录、旧运行状态、审核原因和新 digest。旧请求返回 `superseded` 及 `replacement_request_id`；同一替代正文重试复用新请求，超时保留 `dispatch_unknown`，不能盲目再次派发。该功能不删除数据库、不放宽 GitHub 权限、不触发邮件。线上核验访问对应的 `/news/YYYY-week-N/` 页面。

@@ -85,12 +85,16 @@ def create_server():
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=False,
                                              idempotentHint=True, openWorldHint=True))
-    def publish_weekly_report(start: str, end: str, html: str) -> dict:
+    def publish_weekly_report(start: str, end: str, html: str,
+                              replace_failed_request_id: str | None = None, review_reason: str = "") -> dict:
         """Publish validated HTML to wiki-hub/main through Actions. Return request_id, not deployment success.
         This tool changes the public website. Retry the same payload safely; query status after ambiguity.
         Dates must cover one Monday–Sunday week. Never pass credentials or email addresses in HTML.
+        Only with explicit human approval: replace_failed_request_id and review_reason recover a failed,
+        unarchived week using reviewed HTML. A new request is created; old evidence remains queryable.
+        Existing archives, pending runs and ambiguous dispatches cannot be replaced.
         """
-        return publisher.publish(start, end, html)
+        return publisher.publish(start, end, html, replace_failed_request_id, review_reason)
 
     @server.tool(annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True, openWorldHint=True))
     def get_publication_status(request_id: str) -> dict:

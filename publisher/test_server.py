@@ -64,6 +64,11 @@ class RemoteServerTests(unittest.TestCase):
                     self.assertEqual(response.status_code, 200, response.text)
                     self.assertEqual({tool["name"] for tool in response.json()["result"]["tools"]},
                                      {"publish_weekly_report", "get_publication_status"})
+                    publish = next(tool for tool in response.json()["result"]["tools"]
+                                   if tool["name"] == "publish_weekly_report")
+                    self.assertIn("replace_failed_request_id", publish["inputSchema"]["properties"])
+                    self.assertIn("review_reason", publish["inputSchema"]["properties"])
+                    self.assertNotIn("replace_failed_request_id", publish["inputSchema"]["required"])
 
 
 if __name__ == "__main__":
