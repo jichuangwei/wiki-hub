@@ -5,7 +5,7 @@ from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.build_site import REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
+from scripts.build_site import NOTES, REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
 
 CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
 WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/week-38.html"
@@ -32,10 +32,13 @@ class BuildSiteTests(unittest.TestCase):
                 output / f"news/{week_slug(parse_issue(path).start)}/index.html"
                 for path in REPORTS.glob("*/*/*.html")
             }
+            expected_note_pages = {
+                output / f"notes/{path.stem}/index.html"
+                for path in NOTES.glob("*.md")
+            }
             self.assertEqual(set(pages), {
                 output / "index.html", output / "news/index.html", output / "notes/index.html",
-                output / "notes/github-pages-subpath-assets/index.html",
-            } | expected_week_pages)
+            } | expected_week_pages | expected_note_pages)
             self.assertIn('content="0;url=news/"', (output / "index.html").read_text(encoding="utf-8"))
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
