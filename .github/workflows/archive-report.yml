@@ -44,6 +44,7 @@ jobs:
         run: python3 scripts/archive_dispatch.py
       - name: Check complete site before committing
         run: |
+          python3 -m pip install -r requirements-site.txt
           python3 scripts/build_task_prompt.py --check
           python3 -m unittest discover -s tests -v
           python3 scripts/build_site.py
