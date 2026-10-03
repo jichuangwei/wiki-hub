@@ -43,7 +43,7 @@ def template_fragments() -> dict[str, str]:
 
 
 def build_prompt() -> str:
-    prompt = f"""每周一 09:00（Asia/Shanghai）制作上一完整自然周（周一至周日）的完整 AI × Agent × 前端周报：五类资讯各 2–4 条，另设第六栏目 AI 编程助手 / Code Agent 深度资料 3–5 篇。不得只生成深度栏目。测试指定周次时使用指定日期，不改正式任务定时设置。
+    prompt = f"""每周一 09:00（Asia/Shanghai）制作上一完整自然周（周一至周日）的 AI × Agent × 前端周报：沿用模板固定五类，每类 2–4 条，共 10–20 条；重点资讯的深入分析放在对应资讯内，不追加独立深度栏目。测试指定周次时使用指定日期，不改正式任务定时设置。
 
 开始前，通过已连接的 GitHub 读取 jichuangwei/wiki-hub 的 main 分支中 {SKILL.relative_to(ROOT)} 的完整内容，并按该 skill 执行；再读取 {TEMPLATE.relative_to(ROOT)} 的完整 HTML，记录模板 blob SHA。仓库中的 skill 和模板是本次运行的规则与排版源，不使用旧缓存或记忆代替。任一文件读取失败，停止发布和发信并说明原因。
 
