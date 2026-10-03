@@ -13,13 +13,16 @@
 目标仓库 jichuangwei/wiki-hub，main 分支；归档路径 content/news/reports/ai-agent-frontend/YEAR/ai-agent-frontend-weekly-START-to-END.html，YEAR 取 START 所在年。确认仓库可访问再检查本期归档；已有完整归档则复用，不重新生成或覆盖，不把权限错误当成文件不存在。
 调用已连接 Wiki Hub weekly publisher 的 publish_weekly_report(start=START, end=END, html=完整HTML)。保存返回的 request_id，再调用 get_publication_status(request_id)。持续查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
 仅当 get_publication_status 返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true，才报告“提交并部署成功”。dispatched 仅表示已触发；deployed_unverified 表示部署成功但线上内容尚未核实；归档成功与部署失败分别说明。相同内容重试复用同一请求，同周不同内容停止并报告需人工审核修正。
-不要调用 create_file/update_file，不直接提交文件，不把 PAT/token、登录凭据或个人收件人写进公开 Prompt、HTML 或仓库；邮件服务、To、BCC 只从现有云任务的用户明确指定的私有任务指令读取，不猜测地址。文件写入仅由 Action 的 GITHUB_TOKEN 完成。
+不要调用 create_file/update_file，不直接提交文件，不把 PAT/token 或登录凭据写进 Prompt、HTML 或仓库；收件邮箱只允许存在于下方 Prompt 邮件发送配置中，不得写入生成 HTML、publish_weekly_report 的任何参数或仓库归档 HTML。文件写入仅由 Action 的 GITHUB_TOKEN 完成。
 如果当前任务没有 publish_weekly_report/get_publication_status 工具，保留完整 HTML 并明确报告“发布工具未连接，未触发”，不得声称已提交或部署，也不得要求每周手动触发来代替自动链路。
 
 【HTML 邮件与 BCC】
-仅在本期 state=published、commit_sha 非空、action_conclusion=success、online_verified=true 后发送邮件。通过现有云任务已连接且获授权的邮件工具，将本次已归档的完整 HTML 作为 text/html 正文，主题为“AI 资讯干货｜START 至 END｜第 N 周”。不得改成纯文本、Markdown 或只有网页链接，不得重新生成另一版正文。
-发送前读取用户明确指定的邮件服务、To 和 BCC 私有任务指令；To 按用户设置填写（仅密送时以用户明确配置为准），BCC 必须作为邮件工具独立 bcc 参数传入，不能写到 To、CC、主题或正文中。校验日期范围和 HTML 与本次归档一致，并确认实际发送工具支持 HTML 正文和 BCC；任一必需配置或能力缺失，则保留完整 HTML、报告“部署成功，邮件未发送”及缺失项，不绕过 BCC 或猜测收件人。
-每个周期的同一正文只发送一次。重试前依据已保存的邮件 message_id 或已发送邮件记录核实是否已经发送；已发送则复用证据，不再发送。发送超时或结果不明确时先查同一封邮件记录，不能直接重发。只有发送工具返回真实成功结果和邮件标识才报告“邮件已发送（含 BCC）”；草稿创建、生成成功或部署成功都不能当作邮件已发送。不自动发送历史所有周报，只发送本次指定周期。
+邮件发送配置：服务固定为 Gmail；收件方式仅 BCC；当前测试 bcc 固定为 2323176669@qq.com；To 和 CC 留空。测试邮箱仅保存在本段配置中，不得复制到 HTML、publish_weekly_report 参数、归档 HTML、邮件主题或公开结果报告。
+只有本次 get_publication_status(request_id) 同时返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true 后，才允许发送邮件；发布失败、发布未完成或线上未核验时不发送。
+使用已连接且获授权的 Gmail 发送工具，必须将配置中的测试地址作为独立 bcc 参数传入，不得放入 To、CC、主题或正文。邮件主题为“AI 资讯干货｜START 至 END｜第 N 周”；正文必须为本次生成、最终发布且线上核验通过的完整 UTF-8 HTML，以 text/html; charset=UTF-8 发送。发送前核对日期范围及正文与本次 request_id 对应 commit_sha 的归档 HTML 和线上核验内容一致；复用归档时使用该请求最终发布并核验通过的归档 HTML，不重新生成另一版。不得改成纯文本、Markdown、摘要或只有网页链接。
+发送前确认 Gmail 工具实际支持完整 HTML 正文、独立 BCC 参数及 To/CC 留空。工具未连接、未获授权、必需能力缺失或正文无法确认一致时，保留完整 HTML，报告“部署成功，Gmail/BCC 邮件未发送”及原因，不绕过 BCC、不猜测收件人或切换其他服务。
+以 request_id 为防重复发送键：同一 request_id 成功后只发送一次。发送前读取持久化发送记录或 Gmail 已发送邮件证据，记录 request_id、commit_sha、HTML 内容摘要及真实 message_id 的对应关系；该记录不得写入周报 HTML 或发布参数。已确认发送成功则复用记录并报告“已发送，跳过重复发送”。并发执行须使用同一 request_id 的互斥发送记录；无法可靠查询或保存记录时不发送，并报告无法保证防重复。
+发送超时或结果不明确时先查询同一请求对应的已发送邮件记录；无法确认时报告“发送状态待核实”，不得直接重发。只有 Gmail 返回真实发送成功结果和 message_id（或等效邮件标识），并保存对应发送记录后，才报告“Gmail 邮件已发送（BCC）”；若发送成功但记录保存失败，报告实际发送证据并停止自动重发。草稿创建、生成成功或部署成功均不能当作邮件发送成功。不自动发送历史所有周报，只发送本次指定周期。
 
 【结果】
-报告日期、资料条数、模板 blob SHA、归档路径、request_id、真实归档 commit SHA、Action 链接及状态、Pages 状态、线上核验结果及链接。另外单独报告邮件状态、发送服务、真实 message_id（或邮件工具返回的等效标识）及 BCC 参数是否已设置，不在公开报告中显示密送地址。运行未完成时保留 request_id，供继续查询；不得把本地生成、归档前校验或任务通知当作部署成功。
+报告日期、资料条数、模板 blob SHA、归档路径、request_id、真实归档 commit SHA、Action 链接及状态、Pages 状态、线上核验结果及链接。另外单独报告 Gmail/BCC 发送状态（已发送、已发送并跳过重复、未发送或待核实）、原因、对应 request_id、真实 message_id（或等效标识）及 BCC 参数是否已设置，不显示密送地址或任何凭据。运行未完成时保留 request_id，供继续查询；不得把本地生成、归档前校验或任务通知当作部署成功。
