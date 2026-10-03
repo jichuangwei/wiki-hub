@@ -106,6 +106,13 @@ def create_server():
         """
         return publisher.status(request_id)
 
+    @server.tool(annotations=ToolAnnotations(readOnlyHint=True, idempotentHint=True, openWorldHint=True))
+    def get_publication_by_week(start: str, end: str) -> dict:
+        """Find the current publication and reviewed replacement history for one Monday–Sunday week.
+        Returns request IDs and publication status metadata only; it never returns archived HTML.
+        """
+        return publisher.publication_by_week(start, end)
+
     return server
 
 

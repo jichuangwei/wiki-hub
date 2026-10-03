@@ -268,3 +268,51 @@ class Publisher:
         result["page_url"] = page_url
         result["state"] = "published" if result["online_verified"] else "deployed_unverified"
         return result
+
+    def publication_by_week(self, start: str, end: str) -> dict:
+        """Look up current and superseded publication metadata for one ISO week."""
+        try:
+            first = date.fromisoformat(start)
+            last = date.fromisoformat(end)
+        except (TypeError, ValueError):
+            raise ValueError("Dates must use YYYY-MM-DD format") from None
+        if first.weekday() != 0 or (last - first).days != 6:
+            raise ValueError("Dates must cover exactly one Monday–Sunday week")
+
+        with self.connect() as db:
+            current = db.execute("SELECT * FROM publications WHERE start=? AND end=?",
+                                 (start, end)).fetchone()
+            replacements = db.execute(
+                "SELECT new_request_id, previous_record, review_reason, created_at "
+                "FROM publication_replacements ORDER BY created_at", ()).fetchall()
+
+        history = []
+        for replacement in replacements:
+            try:
+                audit = json.loads(replacement["previous_record"])
+                publication = audit["publication"]
+                verified = audit.get("verified_status", {})
+            except (TypeError, ValueError, KeyError):
+                continue
+            if publication.get("start") != start or publication.get("end") != end:
+                continue
+            history.append({key: value for key, value in {
+                "request_id": publication.get("request_id"),
+                "state": verified.get("state", publication.get("state")),
+                "run_id": verified.get("run_id", publication.get("run_id")),
+                "action_url": verified.get("action_url"),
+                "action_conclusion": verified.get("action_conclusion"),
+                "commit_sha": verified.get("commit_sha"),
+                "pages": verified.get("pages"),
+                "online_verified": verified.get("online_verified"),
+                "page_url": verified.get("page_url"),
+                "replacement_request_id": replacement["new_request_id"],
+                "review_reason": replacement["review_reason"],
+                "replaced_at": replacement["created_at"],
+            }.items() if value is not None})
+
+        if current is None:
+            return {"start": start, "end": end, "found": bool(history),
+                    "current": None, "history": history}
+        return {"start": start, "end": end, "found": True,
+                "current": self.status(current["request_id"]), "history": history}

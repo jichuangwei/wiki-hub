@@ -22,10 +22,12 @@ description: 生成 AI 编程助手与 Code Agent 深度周报，按 Wiki Hub �
 ## 发布
 
 目标仓库 jichuangwei/wiki-hub，main 分支；归档路径 content/news/reports/ai-agent-frontend/YEAR/week-N.html，YEAR 与 N 取 START 的 ISO 周年份和周序号。确认仓库可访问再检查本期归档；默认已有完整归档则复用；只有用户明确要求修订已发布周报时，才按下述审核更新流程重新生成并替换，不把权限错误当成文件不存在。
-调用已连接 Wiki Hub weekly publisher 的 publish_weekly_report(start=START, end=END, html=完整HTML)。保存返回的 request_id，再调用 get_publication_status(request_id)。持续查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
+确认仓库可访问后，先调用 get_publication_by_week(start=START, end=END) 查该周当前 publication 与替换历史，再检查 main 上的归档文件。该工具只返回请求与状态元数据，不返回 HTML。若当前 publication 内容与目标归档一致，复用它并按 request_id 调用 get_publication_status；若该周没有 publication 且归档不存在，才调用 publish_weekly_report(start=START, end=END, html=完整HTML)。若存在不同内容的记录，先用其 request_id 查询状态：dispatch_unknown、pending 或状态不明时停止并继续查原请求；action_failed 且未归档时，只有用户明确批准修正后才可传 replace_failed_request_id 与 review_reason；已 published 时，只有用户明确批准更新后才可传 replace_published_request_id 与 review_reason。没有明确批准就停止并报告需要审核，不得普通重试或覆盖。
+
+发布后保存返回的 request_id，再调用 get_publication_status(request_id)。持续查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
 仅当 get_publication_status 返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true，才报告“提交并部署成功”。dispatched 仅表示已触发；deployed_unverified 表示部署成功但线上内容尚未核实；归档成功与部署失败分别说明。相同内容重试复用同一请求，同周不同内容停止并报告需人工审核修正。
 不要调用 create_file/update_file，不直接提交文件，不把 PAT/token 或登录凭据写进 Prompt、HTML 或仓库；收件邮箱只允许存在于云任务私有 Prompt 邮件发送配置中，不得写入生成 HTML、publish_weekly_report 的任何参数或仓库归档 HTML。文件写入仅由 Action 的 GITHUB_TOKEN 完成。
-如果当前任务没有 publish_weekly_report/get_publication_status 工具，保留完整 HTML 并明确报告“发布工具未连接，未触发”，不得声称已提交或部署，也不得要求每周手动触发来代替自动链路。
+如果当前任务没有 publish_weekly_report、get_publication_status 或 get_publication_by_week 工具，保留完整 HTML 并明确报告“发布工具未连接，未触发”，不得声称已提交或部署，也不得要求每周手动触发来代替自动链路。
 
 ## 失败请求的审核恢复
 

@@ -26,7 +26,7 @@ class RemoteServerTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_private_key()
 
-    def test_oauth_blocks_anonymous_and_other_users_and_exposes_only_two_tools(self):
+    def test_oauth_blocks_anonymous_and_other_users_and_exposes_publication_tools(self):
         key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
         pem = key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
                                 serialization.NoEncryption())
@@ -63,13 +63,17 @@ class RemoteServerTests(unittest.TestCase):
                     response = client.post("/mcp", json=request, headers={**headers, "Authorization": f"Bearer {token}"})
                     self.assertEqual(response.status_code, 200, response.text)
                     self.assertEqual({tool["name"] for tool in response.json()["result"]["tools"]},
-                                     {"publish_weekly_report", "get_publication_status"})
+                                     {"publish_weekly_report", "get_publication_status",
+                                      "get_publication_by_week"})
                     publish = next(tool for tool in response.json()["result"]["tools"]
                                    if tool["name"] == "publish_weekly_report")
                     self.assertIn("replace_failed_request_id", publish["inputSchema"]["properties"])
                     self.assertIn("review_reason", publish["inputSchema"]["properties"])
                     self.assertIn("replace_published_request_id", publish["inputSchema"]["properties"])
                     self.assertNotIn("replace_failed_request_id", publish["inputSchema"]["required"])
+                    lookup = next(tool for tool in response.json()["result"]["tools"]
+                                  if tool["name"] == "get_publication_by_week")
+                    self.assertEqual(set(lookup["inputSchema"]["required"]), {"start", "end"})
 
 
 if __name__ == "__main__":

@@ -39,6 +39,30 @@ class PublisherTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.publisher.publish("2026-08-31", "2026-09-06", self.html + "\n")
 
+    def test_publication_by_week_returns_current_record_and_replacement_history(self):
+        old = {"request_id": "a" * 32, "start": "2026-08-31", "end": "2026-09-06",
+               "digest": "b" * 64, "state": "action_failed", "run_id": 7}
+        verified = {"request_id": old["request_id"], "state": "action_failed", "run_id": 7,
+                    "action_conclusion": "failure", "commit_sha": None, "pages": "unverified",
+                    "online_verified": False}
+        with self.publisher.connect() as db:
+            db.execute("INSERT INTO publications VALUES (?, ?, ?, ?, ?, ?)",
+                       ("c" * 32, "2026-08-31", "2026-09-06", "d" * 64, "dispatched", 8))
+            db.execute("INSERT INTO publication_replacements VALUES (?, ?, ?, ?, ?, ?)",
+                       (old["request_id"], "c" * 32,
+                        json.dumps({"publication": old, "verified_status": verified}),
+                        "d" * 64, "Approved correction", 1234))
+        with patch.object(self.publisher, "status", return_value={
+                "request_id": "c" * 32, "state": "pending", "run_id": 8}):
+            result = self.publisher.publication_by_week("2026-08-31", "2026-09-06")
+        self.assertEqual(result["current"]["request_id"], "c" * 32)
+        self.assertEqual(result["history"][0]["request_id"], old["request_id"])
+        self.assertEqual(result["history"][0]["replacement_request_id"], "c" * 32)
+        self.assertNotIn("html", result)
+        self.assertEqual(self.publisher.publication_by_week("2026-09-07", "2026-09-13")["found"], False)
+        with self.assertRaises(ValueError):
+            self.publisher.publication_by_week("2026-08-30", "2026-09-06")
+
     def test_timeout_is_not_success_and_retry_does_not_dispatch(self):
         self.github.request.side_effect = TimeoutError()
         first = self.publisher.publish("2026-08-31", "2026-09-06", self.html)
