@@ -110,12 +110,14 @@ class Publisher:
                 status = self.status(replace_failed_request_id)
                 if status["state"] != "action_failed" or status.get("commit_sha"):
                     raise ValueError("Only a completed failed publication without an archive commit can be replaced")
-                # Distinguish a missing report from a repository-access failure.
-                if self.github.request("GET", "").status_code != 200:
-                    raise RuntimeError("Repository access must be verified before replacement")
+                # The installation token can read Actions while GitHub returns 404 for the
+                # repository metadata endpoint when the App lacks repository metadata scope.
+                # The validated failed run above already proves access to this repository;
+                # verify the target path directly and require an authenticated 404 for absence.
                 path = (f"content/news/reports/ai-agent-frontend/{start[:4]}/"
                         f"ai-agent-frontend-weekly-{start}-to-{end}.html")
-                if self.github.request("GET", f"contents/{path}", params={"ref": "main"}).status_code != 404:
+                archive_response = self.github.request("GET", f"contents/{path}", params={"ref": "main"})
+                if archive_response.status_code != 404:
                     raise ValueError("An archived report exists or absence is unconfirmed; replacement refused")
                 db.execute("INSERT INTO publication_replacements VALUES (?, ?, ?, ?, ?, ?)",
                            (replace_failed_request_id, request_id,

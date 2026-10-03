@@ -85,10 +85,16 @@ class PublisherTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.publisher.publish("2026-08-31", "2026-09-06", self.html + "\n\n", old, "Changed again")
 
+    def test_replacement_accepts_authenticated_missing_repo_metadata(self):
+        old = self.publish()["request_id"]
+        self.replacement_api(old, "failure", 404, 404)
+        newer = self.publisher.publish("2026-08-31", "2026-09-06", self.html + "\n", old, "Approved retry")
+        self.assertNotEqual(old, newer["request_id"])
+
     def test_replacement_refuses_pending_success_archived_and_access_errors(self):
         old = self.publish()["request_id"]
         for conclusion, archive_status, repo_status in [(None, 404, 200), ("success", 404, 200),
-                ("failure", 200, 200), ("failure", 403, 200), ("failure", 404, 404)]:
+                ("failure", 200, 200), ("failure", 403, 200)]:
             with self.subTest(conclusion=conclusion, archive_status=archive_status, repo_status=repo_status):
                 self.replacement_api(old, conclusion, archive_status, repo_status)
                 with self.assertRaises((ValueError, RuntimeError)):
