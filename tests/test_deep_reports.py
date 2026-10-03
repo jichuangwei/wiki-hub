@@ -39,7 +39,7 @@ class DeepReportTests(unittest.TestCase):
             self.assertEqual(len(parse_issue(path).articles), 3)
             with patch("scripts.build_site.REPORTS", reports):
                 build(root / "site")
-            output = (root / "site/index.html").read_text()
+            output = (root / "site/news/index.html").read_text()
             self.assertIn('data-week="2026-08-31"', output)
             self.assertIn("证据强弱", output)
             self.assertIn("前端实践", output)

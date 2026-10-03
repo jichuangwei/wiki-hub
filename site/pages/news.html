@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8fc">
+  <meta name="description" content="Wiki Hub 按周整理值得关注的资讯，支持分类与周次筛选。">
+  <title>资讯干货 · Wiki Hub</title>
+  <link rel="stylesheet" href="../assets/wiki-hub.css?v={{ASSET_REV}}">
+  <style>{{EMAIL_STYLES}}</style>
+  <script src="../assets/news-filter.js?v={{ASSET_REV}}" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="shell site-header-inner">
+      <a class="site-brand" href="../news/" aria-label="Wiki Hub 首页"><span class="brand-mark" aria-hidden="true">W</span><span>Wiki Hub</span></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a class="site-nav-link is-active" href="../news/" aria-current="page">资讯干货</a>
+        <a class="site-nav-link" href="../notes/">踩坑记录</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="shell">
+    <section class="news-section" aria-label="资讯列表">
+      <div class="filters-row">
+        <div class="category-tabs" role="group" aria-label="按分类筛选资讯">{{CATEGORY_TABS}}</div>
+        <div class="week-picker">
+          <button class="week-trigger" id="week-trigger" type="button" aria-label="选择周次" aria-expanded="false" aria-controls="week-menu"><span id="week-current">{{CURRENT_WEEK}}</span><span class="week-chevron" aria-hidden="true"></span></button>
+          <div class="week-menu" id="week-menu" role="listbox" aria-label="周次" hidden>{{WEEK_OPTIONS}}</div>
+        </div>
+      </div>
+      <div class="weekly-reports">{{WEEKLY_REPORTS}}</div>
+      <div class="content-empty" id="empty-state" hidden>
+        <svg class="content-empty-icon" width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+          <rect x="9" y="6" width="24" height="30" rx="4" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M15 16h12M15 22h12M15 28h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <p>暂无匹配的资讯</p>
+        <span>试试其他分类或周次。</span>
+      </div>
+    </section>
+  </main>
+
+</body>
+</html>

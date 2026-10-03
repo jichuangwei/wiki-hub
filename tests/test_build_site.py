@@ -18,13 +18,15 @@ class BuildSiteTests(unittest.TestCase):
         self.assertEqual(len(issue.articles), 12)
         self.assertTrue(all(article.summary and article.sources for article in issue.articles))
 
-    def test_build_generates_only_a_homepage_with_the_latest_week(self):
+    def test_build_generates_news_and_notes_with_the_latest_week(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "site"
             build(output)
             pages = list(output.rglob("*.html"))
-            self.assertEqual(pages, [output / "index.html"])
-            home = pages[0].read_text(encoding="utf-8")
+            self.assertEqual(set(pages), {output / "index.html", output / "news/index.html", output / "notes/index.html"})
+            self.assertIn('content="0;url=news/"', (output / "index.html").read_text(encoding="utf-8"))
+            home = (output / "news/index.html").read_text(encoding="utf-8")
+            notes = (output / "notes/index.html").read_text(encoding="utf-8")
             expected = sum(len(parse_issue(path).articles) for path in REPORTS.glob("*/*/*.html"))
             self.assertEqual(home.count('data-kind="news"'), expected)
             self.assertIn('class="week-option" type="button" role="option" data-week="2026-09-21"', home)
@@ -32,7 +34,16 @@ class BuildSiteTests(unittest.TestCase):
             self.assertIn('data-category="AI/大模型"', home)
             self.assertNotIn('class="detail-dialog"', home)
             self.assertNotIn('class="news-card"', home)
-            self.assertNotIn('class="site-header"', home)
+            self.assertIn('class="site-header"', home)
+            self.assertIn('href="../news/" aria-current="page"', home)
+            self.assertIn('href="../notes/"', home)
+            self.assertIn('href="../news/"', notes)
+            self.assertIn('href="../notes/" aria-current="page"', notes)
+            self.assertIn("暂无记录", notes)
+            self.assertIn('class="content-empty" id="empty-state" hidden', home)
+            self.assertIn('class="content-empty"', notes)
+            self.assertIn('class="content-empty-icon"', home)
+            self.assertIn('class="content-empty-icon"', notes)
             self.assertIn("一句话趋势总结", home)
             self.assertIn("本周动手验证", home)
             self.assertIn("团队行动建议", home)
@@ -45,6 +56,7 @@ class BuildSiteTests(unittest.TestCase):
             self.assertNotIn('class="detail-open"', home)
             self.assertLess(home.index('class="category-tabs"'), home.index('id="week-trigger"'))
             self.assertIn("OpenAI 发布公告", home)
+            self.assertLess(home.index('>AI 资讯干货</h1>'), home.index('第 39 周</div>'))
             self.assertNotIn("{{", home)
 
     def test_week_switch_has_two_sets_of_items(self):
@@ -58,7 +70,7 @@ class BuildSiteTests(unittest.TestCase):
             next_week.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
             with patch("scripts.build_site.REPORTS", root / "reports"):
                 build(root / "site")
-            home = (root / "site/index.html").read_text(encoding="utf-8")
+            home = (root / "site/news/index.html").read_text(encoding="utf-8")
             self.assertEqual(home.count('data-kind="news"'), 24)
             self.assertEqual(home.count('class="weekly-report"'), 2)
             self.assertIn('data-week="2026-09-28" aria-label="第 40 周 · 2026.09.28—10.04">', home)
@@ -111,10 +123,10 @@ class BuildSiteTests(unittest.TestCase):
             reports.mkdir()
             with patch("scripts.build_site.NEWS", news.parent), patch("scripts.build_site.REPORTS", reports):
                 build(root / "site")
-            home = (root / "site/index.html").read_text(encoding="utf-8")
+            home = (root / "site/news/index.html").read_text(encoding="utf-8")
             self.assertIn('data-week="2026-09-28"', home)
             self.assertIn('data-category="产业观察"', home)
-            self.assertEqual(len(list((root / "site").rglob("*.html"))), 1)
+            self.assertEqual(len(list((root / "site").rglob("*.html"))), 3)
 
 
 if __name__ == "__main__":

@@ -330,6 +330,17 @@ def render_mail_body(source: str, categories: list[str]) -> str:
     content = re.sub(r"<!--.*?-->", "", body.group(1), flags=re.S)
     if re.search(r"<(?:script|iframe|object|embed|form|base)\b|\son\w+\s*=", content, flags=re.I):
         raise ValueError("Report body must contain passive email markup")
+    # Keep archived emails intact while displaying their heading above the week.
+    def title_before_date(match: re.Match[str]) -> str:
+        date_line, title = match.groups()
+        date_line = date_line.replace('style="', 'style="margin-top:12px;', 1)
+        title = title.replace("margin:12px 0 0", "margin:0", 1)
+        return title + date_line
+
+    content = re.sub(
+        r'(<div\b[^>]*>[^<]*第\s*\d+\s*周</div>)\s*(<h1\b[^>]*class="hero-title"[^>]*>.*?</h1>)',
+        title_before_date, content, flags=re.S,
+    )
     chunks = re.split(r'(?=<tr><td\s+class="pad")', content)
     category = ""
     result = []
@@ -424,15 +435,21 @@ def build(output: Path) -> list[Issue]:
     output.mkdir(parents=True)
     shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
-    home = render((SITE / "pages" / "home.html").read_text(encoding="utf-8"), {
-        "ASSET_REV": hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes()).hexdigest()[:12],
+    asset_rev = hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes()).hexdigest()[:12]
+    news_page = render((SITE / "pages" / "news.html").read_text(encoding="utf-8"), {
+        "ASSET_REV": asset_rev,
         "WEEK_OPTIONS": options,
         "CURRENT_WEEK": week_label(latest_week),
         "CATEGORY_TABS": "\n".join(tabs),
         "WEEKLY_REPORTS": "\n".join(reports),
         "EMAIL_STYLES": email_styles(),
     })
-    (output / "index.html").write_text(home, encoding="utf-8")
+    (output / "news").mkdir()
+    (output / "news/index.html").write_text(news_page, encoding="utf-8")
+    (output / "notes").mkdir()
+    notes_page = render((SITE / "pages" / "notes.html").read_text(encoding="utf-8"), {"ASSET_REV": asset_rev})
+    (output / "notes/index.html").write_text(notes_page, encoding="utf-8")
+    (output / "index.html").write_text((SITE / "pages" / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
     return issues
 
 
@@ -441,7 +458,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DIST)
     args = parser.parse_args()
     issues = build(args.output.resolve())
-    print(f"Built one homepage from {len(issues)} weekly reports at {args.output.resolve()}")
+    print(f"Built news and notes pages from {len(issues)} weekly reports at {args.output.resolve()}")
 
 
 if __name__ == "__main__":
