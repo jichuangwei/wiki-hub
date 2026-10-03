@@ -32,7 +32,7 @@ docker build -f publisher/Dockerfile -t wiki-hub-publisher .
 
 ## 连接云任务
 
-在 ChatGPT 中按账号支持的自定义 MCP/插件连接流程添加 HTTPS MCP 地址，完成 OAuth 登录，在普通云聊天确认两个工具可用，再将该连接提供给正式 Scheduled Task。使用 automation/weekly-report-prompt.txt 更新已有任务；每周一 09:00，Asia/Shanghai，线上核验成功后由云任务已连接的邮件工具发送 HTML 邮件并密送 BCC。Publisher 本身不发送邮件，邮件服务与收件人只配置在云任务私有任务指令中。仓库文件更新不代表云任务 Prompt 或连接已更新。若账号/工作区不允许自定义连接或定时执行写操作，需要先处理管理员/平台限制，不能宣称自动发布已接通。
+在 ChatGPT 中按账号支持的自定义 MCP/插件连接流程添加 HTTPS MCP 地址，完成 OAuth 登录，在普通云聊天确认两个工具可用，再将该连接提供给正式 Scheduled Task。使用 skills/ai-agent-frontend-weekly/cloud-task-prompt.txt 更新已有任务；每周一 09:00，Asia/Shanghai，线上核验成功后由云任务已连接的邮件工具发送 HTML 邮件并密送 BCC。Publisher 本身不发送邮件，邮件服务与收件人只配置在云任务私有任务指令中。仓库文件更新不代表云任务 Prompt 或连接已更新。若账号/工作区不允许自定义连接或定时执行写操作，需要先处理管理员/平台限制，不能宣称自动发布已接通。
 
 ## 新格式与验收
 

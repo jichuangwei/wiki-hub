@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Generate a cloud prompt that reads the email template through GitHub."""
+"""Generate the cloud task launcher for the repository skill."""
 import argparse
 from pathlib import Path
 import re
 
 ROOT = Path(__file__).resolve().parents[1]
-TEMPLATE = ROOT / "templates/reports/ai-agent-frontend-weekly-email.html"
-OUTPUT = ROOT / "automation/weekly-report-prompt.txt"
+TEMPLATE = ROOT / "templates/news/ai-agent-frontend-weekly-email.html"
+SKILL = ROOT / "skills/ai-agent-frontend-weekly/SKILL.md"
+OUTPUT = ROOT / "skills/ai-agent-frontend-weekly/cloud-task-prompt.txt"
 
 
 def compact(value: str) -> str:
@@ -30,11 +31,11 @@ def template_fragments() -> dict[str, str]:
     tail = source.index("<!-- END NEWS ITEM: S5, item 1 -->")
     shell = compact(source[:section_start] + "{{SECTIONS_HTML}}" + source[tail:])
     scenario = '<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>{{PRODUCT_SCENARIO}}</p>'
-    images = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;table-layout:fixed;margin:0 0 13px;"><tr>'
-    for index, padding in enumerate(("0 4px 0 0", "0 2px", "0 0 0 4px"), 1):
-        images += f'<td width="33.33%" valign="top" style="width:33.33%;padding:{padding};">{{{{IMAGE_{index}}}}}</td>'
-    images += "</tr></table>"
-    image = '<img src="{{IMAGE_URL}}" height="200" alt="{{IMAGE_ALT}}" style="display:block;width:100%;height:200px;object-fit:cover;border:0;">'
+    images = '<div style="width:100%;font-size:0;line-height:0;margin:0 0 13px;">'
+    for index, padding in enumerate(("0 4px 4px 0", "0 0 4px 4px"), 1):
+        images += f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:{padding};">{{{{IMAGE_{index}}}}}</div></div>'
+    images += "</div>"
+    image = '<img src="{{IMAGE_URL}}" height="200" alt="{{IMAGE_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;">'
     return dict((
         ("邮件主模板", shell), ("栏目模板", section), ("NEWS ITEM 资讯模板", item),
         ("产品适用场景模板", scenario), ("配图模板", images), ("单张图片模板", image),
@@ -42,7 +43,14 @@ def template_fragments() -> dict[str, str]:
 
 
 def build_prompt() -> str:
-    prompt = (ROOT / "automation/weekly-report-instructions.md").read_text(encoding="utf-8")
+    prompt = f"""每周一 09:00（Asia/Shanghai）制作上一完整自然周（周一至周日）的 AI 编程助手 / Code Agent 深度周报。测试指定周次时使用指定日期，不改正式任务定时设置。
+
+开始前，通过已连接的 GitHub 读取 jichuangwei/wiki-hub 的 main 分支中 {SKILL.relative_to(ROOT)} 的完整内容，并按该 skill 执行；再读取 {TEMPLATE.relative_to(ROOT)} 的完整 HTML，记录模板 blob SHA。仓库中的 skill 和模板是本次运行的规则与排版源，不使用旧缓存或记忆代替。任一文件读取失败，停止发布和发信并说明原因。
+
+发布、线上核验和 HTML 邮件发送均遵守 skill。邮件服务为 Gmail，仅使用独立 BCC 字段，To 和 CC 留空。BCC 收件人只从此云任务的私有配置获取，不从仓库、周报正文或历史邮件猜测；缺少明确私有收件配置时，可完成发布，但不得发送邮件，并报告原因。不要将收件地址写入仓库、HTML、发布参数或公开结果。
+
+本提示词不包含私有收件地址。更新云任务时，在任务的私有配置中保留或填写 BCC 收件人；仓库文件的变动不会自动更新云任务提示词或连接。
+"""
     if len(prompt) > 20000:
         raise ValueError(f"Cloud task prompt exceeds 20000 characters: {len(prompt)}")
     return prompt

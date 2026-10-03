@@ -385,7 +385,7 @@ def render_mail_body(source: str, categories: list[str]) -> str:
 
 
 def email_styles() -> str:
-    template = (ROOT / "templates/reports/ai-agent-frontend-weekly-email.html").read_text(encoding="utf-8")
+    template = (ROOT / "templates/news/ai-agent-frontend-weekly-email.html").read_text(encoding="utf-8")
     css = re.search(r"<style>(.*?)</style>", template, flags=re.S).group(1)
     for selector in ("body", "table", "img", "a"):
         replacement = ".weekly-report" if selector == "body" else f".weekly-report {selector}"

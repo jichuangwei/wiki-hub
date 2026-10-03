@@ -33,7 +33,7 @@ Railway 封存变量会提供给运行环境，且官方也说明会提供给构
 - 未登录访问 /mcp 被拒绝；保护元数据必须可读。
 - ChatGPT 普通云聊天添加 MCP 地址并完成 OAuth，确认 publish_weekly_report、get_publication_status 可调用。
 - 使用云任务实际第 36 周 HTML 发布；通过 request_id 查询直到 state=published，取得真实 commit SHA、Action 链接、Pages 和完整线上正文核验。不能使用测试夹具做正式归档。
-- 最后才连接原有每周一 09:00 Scheduled Task，使用仓库 automation/weekly-report-prompt.txt，并执行 Run now。普通聊天成功不能证明定时环境拥有同样的连接、写操作授权或 token 续期能力。
+- 最后才连接原有每周一 09:00 Scheduled Task，使用仓库 skills/ai-agent-frontend-weekly/cloud-task-prompt.txt，并执行 Run now。普通聊天成功不能证明定时环境拥有同样的连接、写操作授权或 token 续期能力。
 
 当前会话未配置 Railway/Auth0 登录连接；代码已准备不等于远程服务已启动。不要向我发送私钥、PAT 或 Auth0 secret；在对应平台管理界面配置。
 

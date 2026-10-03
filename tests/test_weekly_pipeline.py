@@ -38,8 +38,14 @@ class WeeklyPipelineTests(unittest.TestCase):
         prompt = build_prompt()
         self.assertLessEqual(len(prompt), 20000)
         self.assertNotIn("<!doctype", prompt)
-        self.assertIn("templates/reports/ai-agent-frontend-weekly-email.html", prompt)
+        self.assertIn("skills/ai-agent-frontend-weekly/SKILL.md", prompt)
+        self.assertIn("templates/news/ai-agent-frontend-weekly-email.html", prompt)
         fragments = template_fragments()
+        self.assertIn("{{IMAGE_1}}", fragments["配图模板"])
+        self.assertIn("{{IMAGE_2}}", fragments["配图模板"])
+        self.assertNotIn("IMAGE_3", fragments["配图模板"])
+        self.assertIn("max-width:420px", fragments["配图模板"])
+        self.assertIn("max-width:420px", fragments["单张图片模板"])
         def snippet(label):
             return fragments[label]
         values = {name: "测试内容" for name in re.findall(r"\{\{([^}]+)\}\}", snippet("邮件主模板"))}

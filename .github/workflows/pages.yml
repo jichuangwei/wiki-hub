@@ -10,7 +10,7 @@ on:
       - "site/**"
       - "scripts/**"
       - "tests/**"
-      - "automation/**"
+      - "skills/**"
       - "requirements-site.txt"
   workflow_dispatch:
   workflow_call:
