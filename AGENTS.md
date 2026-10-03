@@ -1,6 +1,6 @@
 # Wiki Hub 内容维护
 
-本站从仓库内容生成静态页面。编辑 `content/` 中的源文件，不直接修改 `dist/`；`dist/` 是 `scripts/build_site.py` 的生成结果。根路径进入 `/news/`，踩坑记录列表位于 `/notes/`。
+本站从仓库内容生成静态页面。编辑 `content/` 中的源文件，不直接修改 `dist/`；`dist/` 是 `scripts/build_site.py` 的生成结果。根路径进入 `/news/`，踩坑记录列表位于 `/notes/`，通用实践经验位于 `/practices/`。
 
 ## 新增资讯干货
 
@@ -17,6 +17,10 @@
 
 Markdown 开头必须有 `title`、`date`（`YYYY-MM-DD`）和 `summary` 三个字段，后面写正文。按“现象、原因、解决方法、验证”组织内容，写清可复现的步骤和证据；命令、配置与日志用代码块。`content/notes/github-pages-subpath-assets.md` 是标明为示例的完整记录。构建脚本会按日期倒序生成 `/notes/` 列表，并将 Markdown 渲染为详情 HTML。正文支持常用 Markdown、围栏代码块和表格；不要依赖原生 HTML 或未纳入构建的本地图片文件。
 
+## 新增实践经验
+
+在 `content/practices/unique-slug.md` 中使用相同的 `title`、`date`、`summary` 元数据，详情页位于 `/practices/unique-slug/`。实践经验侧重流程、工具分工、设计取舍与可迁移的经验；具体故障的复现与修复仍放在踩坑记录。两类文章共用 Markdown 渲染与样式。文章迁移分类时，在构建脚本的 `ARTICLE_REDIRECTS` 中保留旧路径跳转，避免已发布链接失效。
+
 ## 本地验证与发布
 
 首次使用先执行 `python3 -m venv .venv` 和 `.venv/bin/python -m pip install -r requirements-site.txt`。内容变更后运行：
@@ -27,4 +31,4 @@ Markdown 开头必须有 `title`、`date`（`YYYY-MM-DD`）和 `summary` 三个�
 .venv/bin/python scripts/build_site.py
 ```
 
-可用 `python3 -m http.server 8765 --bind 127.0.0.1 --directory dist` 预览 `/news/`、`/notes/` 和新增详情页。推送到 `main` 后，`.github/workflows/pages.yml` 会重新测试、构建并部署 GitHub Pages；提交或本地构建本身不代表线上已更新。
+可用 `python3 -m http.server 8765 --bind 127.0.0.1 --directory dist` 预览 `/news/`、`/notes/`、`/practices/` 和新增详情页。推送到 `main` 后，`.github/workflows/pages.yml` 会重新测试、构建并部署 GitHub Pages；提交或本地构建本身不代表线上已更新。

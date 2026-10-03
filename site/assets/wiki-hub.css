@@ -80,3 +80,8 @@ img { display: block; max-width: 100%; }
 .weekly-report { min-width: 0; }
 .weekly-reports { padding-top: 4px; }
 @media (max-width: 640px) { .shell { width: calc(100% - 16px); } .site-header-inner { gap: 10px; min-height: 58px; } .site-brand { gap: 7px; font-size: 15px; } .brand-mark { width: 26px; height: 26px; border-radius: 7px; font-size: 15px; } .site-nav { gap: 0; } .site-nav-link { padding: 0 10px; font-size: 13px; } .site-nav-link.is-active::after { right: 10px; left: 10px; } .news-section { padding-top: 16px; } .notes-section { min-height: calc(100vh - 58px); padding: 24px 8px 64px; } .notes-section.has-notes { padding-top: 26px; } .note-card { grid-template-columns: minmax(0, 1.3fr) minmax(0, .8fr) 74px; gap: 8px; min-height: 60px; padding: 12px; } .note-card h2 { font-size: 13px; } .note-card p { font-size: 12px; } .note-card time { font-size: 11px; } .note-detail { padding: 22px 8px 64px; } .note-heading h1 { font-size: 28px; } .filters-row { gap: 12px; } .week-picker { width: 165px; } #week-current { overflow: hidden; text-overflow: ellipsis; } }
+
+@media (max-width: 400px) {
+  .site-header-inner { flex-wrap: wrap; gap: 0; padding-top: 10px; }
+  .site-nav { width: 100%; min-height: 44px; }
+}

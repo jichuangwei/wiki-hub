@@ -5,7 +5,7 @@ from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.build_site import NOTES, REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
+from scripts.build_site import ARTICLE_REDIRECTS, NOTES, PRACTICES, REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
 
 CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
 WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/week-38.html"
@@ -36,9 +36,17 @@ class BuildSiteTests(unittest.TestCase):
                 output / f"notes/{path.stem}/index.html"
                 for path in NOTES.glob("*.md")
             }
+            expected_practice_pages = {
+                output / f"practices/{path.stem}/index.html"
+                for path in PRACTICES.glob("*.md")
+            }
+            expected_redirect_pages = {
+                output / old_path / "index.html" for old_path, new_path in ARTICLE_REDIRECTS.items()
+                if output / new_path / "index.html" in expected_practice_pages
+            }
             self.assertEqual(set(pages), {
-                output / "index.html", output / "news/index.html", output / "notes/index.html",
-            } | expected_week_pages | expected_note_pages)
+                output / "index.html", output / "news/index.html", output / "notes/index.html", output / "practices/index.html",
+            } | expected_week_pages | expected_note_pages | expected_practice_pages | expected_redirect_pages)
             self.assertIn('content="0;url=news/"', (output / "index.html").read_text(encoding="utf-8"))
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
@@ -79,6 +87,22 @@ class BuildSiteTests(unittest.TestCase):
             self.assertIn("OpenAI 发布公告", home)
             self.assertLess(home.index('>AI 资讯干货</h1>'), home.index('第 39 周</div>'))
             self.assertNotIn("{{", home)
+
+    def test_practice_navigation_and_migrated_article_link(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory)
+            build(output)
+            listing = (output / "practices/index.html").read_text(encoding="utf-8")
+            detail = (output / "practices/chatgpt-automated-content-publishing/index.html").read_text(encoding="utf-8")
+            redirect = (output / "notes/chatgpt-scheduled-weekly-report-publishing/index.html").read_text(encoding="utf-8")
+            self.assertIn('href="../practices/" aria-current="page">实践经验', listing)
+            self.assertIn('href="../" aria-current="page">实践经验', detail)
+            self.assertIn('href="../../notes/">踩坑记录', detail)
+            self.assertIn('href="chatgpt-automated-content-publishing/"', listing)
+            self.assertIn('content="0;url=../../practices/chatgpt-automated-content-publishing/"', redirect)
+            self.assertNotIn('chatgpt-scheduled-weekly-report-publishing/',
+                             (output / "notes/index.html").read_text(encoding="utf-8"))
+            self.assertNotIn("{{", detail)
 
     def test_week_switch_has_two_sets_of_items(self):
         source = CURRENT_REPORT
@@ -145,12 +169,12 @@ class BuildSiteTests(unittest.TestCase):
             }''', encoding="utf-8")
             reports = root / "reports"
             reports.mkdir()
-            with patch("scripts.build_site.NEWS", news.parent), patch("scripts.build_site.REPORTS", reports), patch("scripts.build_site.NOTES", root / "notes"):
+            with patch("scripts.build_site.NEWS", news.parent), patch("scripts.build_site.REPORTS", reports), patch("scripts.build_site.NOTES", root / "notes"), patch("scripts.build_site.PRACTICES", root / "practices"):
                 build(root / "site")
             home = (root / "site/news/index.html").read_text(encoding="utf-8")
             self.assertIn('data-week="2026-09-28"', home)
             self.assertIn('data-category="产业观察"', home)
-            self.assertEqual(len(list((root / "site").rglob("*.html"))), 4)
+            self.assertEqual(len(list((root / "site").rglob("*.html"))), 5)
             self.assertIn('class="content-empty"', (root / "site/notes/index.html").read_text(encoding="utf-8"))
 
 

@@ -25,6 +25,11 @@ ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "content" / "news" / "reports"
 NEWS = ROOT / "content" / "news" / "items"
 NOTES = ROOT / "content" / "notes"
+PRACTICES = ROOT / "content" / "practices"
+ARTICLE_REDIRECTS = {
+    "notes/chatgpt-scheduled-weekly-report-publishing":
+        "practices/chatgpt-automated-content-publishing",
+}
 SITE = ROOT / "site"
 DIST = ROOT / "dist"
 REPORT_NAME = re.compile(r"^([a-z0-9-]+)-weekly-(\d{4}-\d{2}-\d{2})-to-(\d{4}-\d{2}-\d{2})\.html$")
@@ -416,8 +421,6 @@ def build(output: Path) -> list[Issue]:
     issues = [parse_issue(path) for path in REPORTS.glob("*/*/*.html")]
     issues.sort(key=lambda issue: (issue.start, issue.topic), reverse=True)
     standalone = [parse_standalone_news(path) for path in sorted(NEWS.glob("*/*.json"))]
-    notes = [parse_note(path) for path in NOTES.glob("*.md")]
-    notes.sort(key=lambda note: (note.published, note.slug), reverse=True)
     if not issues and not standalone:
         raise ValueError("No content found in content/news/items or content/news/reports")
     slugs = [issue.slug for issue in issues]
@@ -476,40 +479,60 @@ def build(output: Path) -> list[Issue]:
         week_dir = news_dir / week_slug(week)
         week_dir.mkdir()
         (week_dir / "index.html").write_text(news_page(week, "../../"), encoding="utf-8")
-    (output / "notes").mkdir()
-    if notes:
-        cards = "\n".join(
-            f'<li><a class="note-card" href="{escape(note.slug)}/">'
-            f'<h2>{escape(note.title)}</h2><p>{escape(note.summary)}</p>'
-            f'<time datetime="{note.published.isoformat()}">{note.published:%Y.%m.%d}</time>'
-            '</a></li>' for note in notes
-        )
-        notes_content = f'<ol class="notes-list">{cards}</ol>'
-    else:
-        notes_content = '''<div class="content-empty">
-        <svg class="content-empty-icon" width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true">
-          <rect x="9" y="6" width="24" height="30" rx="4" stroke="currentColor" stroke-width="1.8"/>
-          <path d="M15 16h12M15 22h12M15 28h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <p>暂无记录</p>
-        <span>遇到的问题和解决过程会陆续整理在这里。</span>
-      </div>'''
-    notes_page = render((SITE / "pages" / "notes.html").read_text(encoding="utf-8"), {
-        "ASSET_REV": asset_rev,
-        "NOTES_SECTION_CLASS": " has-notes" if notes else "",
-    }).replace("<!--NOTES_CONTENT-->", notes_content)
-    (output / "notes/index.html").write_text(notes_page, encoding="utf-8")
-    for note in notes:
-        note_page = render((SITE / "pages" / "note.html").read_text(encoding="utf-8"), {
+    for section, source, detail_template, empty_description in (
+        ("notes", NOTES, "note.html", "遇到的问题和解决过程会陆续整理在这里。"),
+        ("practices", PRACTICES, "practice.html", "工具协作、流程设计与实践经验会陆续整理在这里。"),
+    ):
+        notes = sorted((parse_note(path) for path in source.glob("*.md")),
+                       key=lambda note: (note.published, note.slug), reverse=True)
+        (output / section).mkdir()
+        if notes:
+            cards = "\n".join(
+                f'<li><a class="note-card" href="{escape(note.slug)}/">'
+                f'<h2>{escape(note.title)}</h2><p>{escape(note.summary)}</p>'
+                f'<time datetime="{note.published.isoformat()}">{note.published:%Y.%m.%d}</time>'
+                '</a></li>' for note in notes
+            )
+            notes_content = f'<ol class="notes-list">{cards}</ol>'
+        else:
+            notes_content = f'''<div class="content-empty">
+            <svg class="content-empty-icon" width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+              <rect x="9" y="6" width="24" height="30" rx="4" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M15 16h12M15 22h12M15 28h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+            <p>暂无记录</p>
+            <span>{empty_description}</span>
+          </div>'''
+        notes_page = render((SITE / "pages" / f"{section}.html").read_text(encoding="utf-8"), {
             "ASSET_REV": asset_rev,
-            "NOTE_TITLE": escape(note.title),
-            "NOTE_SUMMARY": escape(note.summary),
-            "NOTE_DATE_ISO": note.published.isoformat(),
-            "NOTE_DATE": f"{note.published:%Y.%m.%d}",
-        }).replace("<!--NOTE_BODY-->", render_note_body(note))
-        note_dir = output / "notes" / note.slug
-        note_dir.mkdir()
-        (note_dir / "index.html").write_text(note_page, encoding="utf-8")
+            "NOTES_SECTION_CLASS": " has-notes" if notes else "",
+        }).replace("<!--NOTES_CONTENT-->", notes_content)
+        (output / section / "index.html").write_text(notes_page, encoding="utf-8")
+        for note in notes:
+            note_page = render((SITE / "pages" / detail_template).read_text(encoding="utf-8"), {
+                "ASSET_REV": asset_rev,
+                "NOTE_TITLE": escape(note.title),
+                "NOTE_SUMMARY": escape(note.summary),
+                "NOTE_DATE_ISO": note.published.isoformat(),
+                "NOTE_DATE": f"{note.published:%Y.%m.%d}",
+            }).replace("<!--NOTE_BODY-->", render_note_body(note))
+            note_dir = output / section / note.slug
+            note_dir.mkdir()
+            (note_dir / "index.html").write_text(note_page, encoding="utf-8")
+    for old_path, new_path in ARTICLE_REDIRECTS.items():
+        if not (output / new_path / "index.html").exists():
+            continue
+        redirect_dir = output / old_path
+        redirect_dir.mkdir(parents=True, exist_ok=True)
+        target = "../../" + new_path + "/"
+        redirect_page = f'''<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="0;url={escape(target)}">
+<title>文章已移至实践经验 · Wiki Hub</title>
+<link rel="canonical" href="{escape(target)}"></head>
+<body><p><a href="{escape(target)}">阅读实践经验文章</a></p></body></html>'''
+        (redirect_dir / "index.html").write_text(redirect_page, encoding="utf-8")
     (output / "index.html").write_text((SITE / "pages" / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
     return issues
 
@@ -519,7 +542,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=DIST)
     args = parser.parse_args()
     issues = build(args.output.resolve())
-    print(f"Built news and notes pages from {len(issues)} weekly reports at {args.output.resolve()}")
+    print(f"Built news, notes and practices pages from {len(issues)} weekly reports at {args.output.resolve()}")
 
 
 if __name__ == "__main__":
