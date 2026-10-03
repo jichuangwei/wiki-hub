@@ -1,5 +1,6 @@
 """Run with publisher/requirements.lock installed (separate from stdlib-only Action tests)."""
 import os
+import base64
 import tempfile
 import time
 import unittest
@@ -11,10 +12,20 @@ from cryptography.hazmat.primitives import serialization
 import jwt
 from starlette.testclient import TestClient
 
-from publisher.server import create_server
+from publisher.server import create_server, load_private_key
 
 
 class RemoteServerTests(unittest.TestCase):
+    def test_sealed_key_is_runtime_only_and_conflicting_configuration_fails(self):
+        with patch.dict(os.environ, {"GITHUB_APP_PRIVATE_KEY_BASE64": base64.b64encode(b"test-key").decode()}, clear=True):
+            self.assertEqual(load_private_key(), "test-key")
+            with patch.dict(os.environ, {"GITHUB_APP_PRIVATE_KEY_FILE": "/unused"}):
+                with self.assertRaises(ValueError):
+                    load_private_key()
+        with patch.dict(os.environ, {}, clear=True):
+            with self.assertRaises(ValueError):
+                load_private_key()
+
     def test_oauth_blocks_anonymous_and_other_users_and_exposes_only_two_tools(self):
         key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
         pem = key.private_bytes(serialization.Encoding.PEM, serialization.PrivateFormat.PKCS8,
@@ -26,10 +37,16 @@ class RemoteServerTests(unittest.TestCase):
                 "OAUTH_ISSUER": "https://auth.example.com/", "OAUTH_JWKS_URL": "https://auth.example.com/jwks",
                 "OAUTH_ALLOWED_SUBJECTS": "owner", "GITHUB_APP_ID": "123", "GITHUB_INSTALLATION_ID": "456",
                 "GITHUB_APP_PRIVATE_KEY_FILE": str(path), "PUBLISHER_DB": str(Path(directory) / "db")}
+            settings["PORT"] = "9000"
             with patch.dict(os.environ, settings), patch("publisher.server.jwt.PyJWKClient") as jwks:
                 jwks.return_value.get_signing_key_from_jwt.return_value = Mock(key=key.public_key())
                 server = create_server()
+                self.assertEqual(server.settings.port, 9000)
                 with TestClient(server.streamable_http_app(), base_url="https://publisher.example.com") as client:
+                    self.assertEqual(client.get("/health").json(), {"status": "ok"})
+                    metadata = client.get("/.well-known/oauth-protected-resource/mcp")
+                    self.assertEqual(metadata.status_code, 200, metadata.text)
+                    self.assertEqual(metadata.json()["resource"], settings["PUBLISHER_URL"])
                     request = {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
                     headers = {"Accept": "application/json, text/event-stream"}
                     self.assertEqual(client.post("/mcp", json=request, headers=headers).status_code, 401)
