@@ -11,8 +11,10 @@ import re
 import tempfile
 
 try:
+    from .report_paths import report_paths
     from .build_site import REPORTS, DEEP_CATEGORY, parse_issue
 except ImportError:
+    from report_paths import report_paths
     from build_site import REPORTS, DEEP_CATEGORY, parse_issue
 
 
@@ -21,10 +23,12 @@ def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-fr
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", topic):
         raise ValueError("Invalid report topic")
     first, last = date.fromisoformat(start), date.fromisoformat(end)
-    name = f"{topic}-weekly-{first.isoformat()}-to-{last.isoformat()}.html"
+    if first.weekday() != 0 or last.weekday() != 6 or (last - first).days != 6:
+        raise ValueError("Report range must be a full Monday–Sunday week")
+    canonical, legacy = report_paths(start, end, topic)
     content = source.read_bytes()
     with tempfile.TemporaryDirectory() as directory:
-        candidate = Path(directory) / topic / str(first.year) / name
+        candidate = Path(directory) / canonical
         candidate.parent.mkdir(parents=True)
         candidate.write_bytes(content)
         issue = parse_issue(candidate)
@@ -35,7 +39,9 @@ def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-fr
         for heading in ("一句话趋势总结", "本周动手验证", "团队行动建议"):
             if heading not in content.decode("utf-8"):
                 raise ValueError(f"Missing report section: {heading}")
-    target = root / topic / str(first.year) / name
+    target = root / canonical
+    if not target.exists() and (root / legacy).exists():
+        target = root / legacy
     if expected_sha256 is not None:
         if not re.fullmatch(r"[a-f0-9]{64}", expected_sha256):
             raise ValueError("Invalid expected archive digest")

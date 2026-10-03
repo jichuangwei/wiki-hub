@@ -277,15 +277,21 @@ class ReportParser(HTMLParser):
 
 
 def parse_issue(path: Path) -> Issue:
-    match = REPORT_NAME.fullmatch(path.name)
-    if not match:
-        raise ValueError(f"Unexpected report filename: {path}")
-    topic, start_text, end_text = match.groups()
-    start, end = date.fromisoformat(start_text), date.fromisoformat(end_text)
+    week_match = re.fullmatch(r"week-([1-9][0-9]?)\.html", path.name)
+    if week_match:
+        topic = path.parent.parent.name
+        start = date.fromisocalendar(int(path.parent.name), int(week_match[1]), 1)
+        end = start + timedelta(days=6)
+    else:
+        match = REPORT_NAME.fullmatch(path.name)
+        if not match:
+            raise ValueError(f"Unexpected report filename: {path}")
+        topic, start_text, end_text = match.groups()
+        start, end = date.fromisoformat(start_text), date.fromisoformat(end_text)
+        if path.parent.name != str(start.year) or path.parent.parent.name != topic:
+            raise ValueError(f"Report is in the wrong topic/year directory: {path}")
     if start.weekday() != 0 or end.weekday() != 6 or (end - start).days != 6:
         raise ValueError(f"Report range must be a full Monday–Sunday week: {path}")
-    if path.parent.name != str(start.year) or path.parent.parent.name != topic:
-        raise ValueError(f"Report is in the wrong topic/year directory: {path}")
     source = path.read_text(encoding="utf-8")
     if re.search(r"\{\{[^}]+\}\}", source):
         raise ValueError(f"Unfilled template placeholder: {path}")

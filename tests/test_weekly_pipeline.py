@@ -8,7 +8,7 @@ from scripts.archive_report import archive_report
 from scripts.build_site import REPORTS, build, parse_issue, render, EXPECTED_CATEGORIES
 from scripts.build_task_prompt import build_prompt, template_fragments
 
-CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-21-to-2026-09-27.html"
+CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
 
 
 class WeeklyPipelineTests(unittest.TestCase):

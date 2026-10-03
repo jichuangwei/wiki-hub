@@ -4,6 +4,7 @@ from pathlib import Path
 from unittest.mock import patch
 import json
 import hashlib
+import subprocess
 
 from scripts.archive_dispatch import main, read_inputs
 from scripts.build_site import REPORTS
@@ -17,7 +18,7 @@ class ArchiveDispatchTests(unittest.TestCase):
                 read_inputs({"inputs": values})
 
     def test_dispatch_preserves_html_and_retry_does_not_overwrite(self):
-        source = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-21-to-2026-09-27.html"
+        source = REPORTS / "ai-agent-frontend/2026/week-39.html"
         original = source.read_bytes()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -90,7 +91,14 @@ class ArchiveDispatchTests(unittest.TestCase):
                 main()
                 self.assertEqual(target.read_text(), values["html"])
                 git_show.assert_called_with(["git", "show", "a" * 40 +
-                    ":content/news/reports/ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-08-31-to-2026-09-06.html"])
+                    ":content/news/reports/ai-agent-frontend/2026/week-36.html"], stderr=subprocess.DEVNULL)
+                target.write_bytes(original)
+                git_show.side_effect = [subprocess.CalledProcessError(128, "git show"), original]
+                main()
+                self.assertEqual(target.read_text(), values["html"])
+                git_show.assert_called_with(["git", "show", "a" * 40 +
+                    ":content/news/reports/ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-08-31-to-2026-09-06.html"],
+                    stderr=subprocess.DEVNULL)
 
     def test_incomplete_update_metadata_is_rejected(self):
         inputs = {"start": "2026-08-31", "end": "2026-09-06", "html": "body", "expected_sha256": "f" * 64}

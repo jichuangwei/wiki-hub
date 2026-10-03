@@ -65,3 +65,9 @@ verified result and review reason in its replacement audit. Identical retries
 reuse that new request. Query its result through to `published` before claiming
 that the revision is online. Refresh the developer-mode connection's metadata
 after deploying; changing server code does not prove host schema discovery.
+
+## 周次归档路径
+
+新归档使用 `content/news/reports/ai-agent-frontend/ISO_YEAR/week-N.html`，年份采用 ISO 周年份。发布器读取归档时先查新路径，只有 404 才回退到旧日期文件名，并始终使用发布记录中的原始 revision。网站周页面路径保持 `/news/YYYY-week-N/`。
+
+上线本次迁移时需先部署新版 Publisher，再推送归档改名。旧服务仍使用旧文件名，迁移后可能无法审核更新 main 上的历史周报。历史提交和发布记录保留，HTML 字节未改变；main 分支的旧原始文件链接会改为新路径。

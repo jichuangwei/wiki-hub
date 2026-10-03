@@ -11,8 +11,10 @@ from pathlib import Path
 import tempfile
 
 try:
+    from .report_paths import repository_paths
     from .archive_report import archive_report
 except ImportError:
+    from report_paths import repository_paths
     from archive_report import archive_report
 
 
@@ -48,9 +50,15 @@ def main() -> None:
         digest = event["inputs"].get("expected_sha256", "")
         if digest:
             revision = event["inputs"]["expected_revision"]
-            relative = (f"content/news/reports/ai-agent-frontend/{start[:4]}/"
-                        f"ai-agent-frontend-weekly-{start}-to-{end}.html")
-            old = subprocess.check_output(["git", "show", f"{revision}:{relative}"])
+            old = None
+            for relative in repository_paths(start, end):
+                try:
+                    old = subprocess.check_output(["git", "show", f"{revision}:{relative}"], stderr=subprocess.DEVNULL)
+                    break
+                except subprocess.CalledProcessError:
+                    continue
+            if old is None:
+                raise ValueError("Reviewed archive is missing from the previous revision")
             if hashlib.sha256(old).hexdigest() != digest:
                 raise ValueError("Reviewed revision does not match the expected archive")
             path, created = archive_report(source, start, end, expected_sha256=digest)

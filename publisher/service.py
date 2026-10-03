@@ -13,6 +13,7 @@ import time
 import uuid
 import zipfile
 
+from scripts.report_paths import repository_paths
 from scripts.archive_report import archive_report
 from scripts.archive_dispatch import read_inputs
 from scripts.build_site import ReportParser, parse_issue, render_mail_body, week_slug
@@ -53,6 +54,13 @@ class GitHub:
 
 
 class Publisher:
+    def archive_response(self, start, end, revision):
+        for path in repository_paths(start, end):
+            response = self.github.request("GET", f"contents/{path}", params={"ref": revision})
+            if response.status_code != 404:
+                return response
+        return response
+
     def __init__(self, github, client, database: Path):
         self.github, self.client, self.database = github, client, database
         database.parent.mkdir(parents=True, exist_ok=True)
@@ -113,9 +121,7 @@ class Publisher:
                         previous["end"] != end):
                     raise ValueError("The replacement request must match this exact week")
                 status = self.status(replacement_id)
-                path = (f"content/news/reports/ai-agent-frontend/{start[:4]}/"
-                        f"ai-agent-frontend-weekly-{start}-to-{end}.html")
-                archive_response = self.github.request("GET", f"contents/{path}", params={"ref": "main"})
+                archive_response = self.archive_response(start, end, "main")
                 if replace_published_request_id is not None:
                     if status["state"] != "published" or not status.get("commit_sha"):
                         raise ValueError("Only a verified published request can be updated")
@@ -231,9 +237,10 @@ class Publisher:
                 metadata.get("start") != row["start"] or metadata.get("end") != row["end"] or
                 not re.fullmatch(r"[a-f0-9]{40}", revision)):
             raise RuntimeError("Publication metadata mismatch")
-        path = (f"content/news/reports/ai-agent-frontend/{row['start'][:4]}/"
-                f"ai-agent-frontend-weekly-{row['start']}-to-{row['end']}.html")
-        content = self.github.request("GET", f"contents/{path}", params={"ref": revision}).json()
+        archive_response = self.archive_response(row["start"], row["end"], revision)
+        if archive_response.status_code != 200:
+            raise RuntimeError("Archived content is missing")
+        content = archive_response.json()
         body = base64.b64decode(content["content"])
         if hashlib.sha256(body).hexdigest() != row["digest"]:
             raise RuntimeError("Archived content mismatch")

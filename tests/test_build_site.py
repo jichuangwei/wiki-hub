@@ -7,8 +7,8 @@ from unittest.mock import patch
 
 from scripts.build_site import REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
 
-CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-21-to-2026-09-27.html"
-WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-14-to-2026-09-20.html"
+CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
+WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/week-38.html"
 
 
 class BuildSiteTests(unittest.TestCase):
@@ -84,7 +84,7 @@ class BuildSiteTests(unittest.TestCase):
             reports = root / "reports" / "ai-agent-frontend" / "2026"
             reports.mkdir(parents=True)
             (reports / source.name).write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
-            next_week = reports / "ai-agent-frontend-weekly-2026-09-28-to-2026-10-04.html"
+            next_week = reports / "week-40.html"
             next_week.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
             with patch("scripts.build_site.REPORTS", root / "reports"):
                 build(root / "site")
