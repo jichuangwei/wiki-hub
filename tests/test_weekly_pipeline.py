@@ -66,9 +66,10 @@ class WeeklyPipelineTests(unittest.TestCase):
             with patch("scripts.build_site.REPORTS", reports):
                 build(root / "site")
             home = (root / "site/news/index.html").read_text()
-            self.assertIn('role="option" data-week="2026-09-28" aria-selected="true"', home)
-            self.assertIn('role="option" data-week="2026-09-21" aria-selected="false"', home)
-            self.assertEqual(home.count('data-kind="news"'), 22)
+            self.assertIn('role="option" data-week="2026-09-28" data-week-path="2026-week-40" aria-selected="true"', home)
+            self.assertIn('role="option" data-week="2026-09-21" data-week-path="2026-week-39" aria-selected="false"', home)
+            self.assertEqual(home.count('data-kind="news"'), 10)
+            self.assertEqual((root / "site/news/2026-week-39/index.html").read_text().count('data-kind="news"'), 12)
             self.assertEqual(archived.read_bytes(), source.read_bytes())
 
 

@@ -74,7 +74,7 @@ img { display: block; max-width: 100%; }
 .week-chevron { flex: 0 0 auto; width: 7px; height: 7px; margin-top: -4px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); transition: transform .2s, margin-top .2s; }
 .week-trigger[aria-expanded="true"] .week-chevron { margin-top: 4px; transform: rotate(225deg); }
 .week-menu { position: absolute; z-index: 20; top: calc(100% + 6px); right: 0; width: 100%; max-height: 240px; overflow-y: auto; padding: 5px; background: white; border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 30px rgba(19, 45, 92, .14); }
-.week-option { display: block; width: 100%; padding: 10px 9px; color: var(--ink); background: transparent; border: 0; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: left; white-space: nowrap; }
+.week-option { display: block; width: 100%; padding: 10px 9px; color: var(--ink); background: transparent; border: 0; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: left; text-decoration: none; white-space: nowrap; }
 .week-option:hover, .week-option:focus-visible { color: var(--blue); background: #f0f4fd; }
 .week-option[aria-selected="true"] { color: var(--blue); background: #eaf0fc; }
 .weekly-report { min-width: 0; }

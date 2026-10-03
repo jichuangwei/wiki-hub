@@ -328,6 +328,11 @@ def week_start(day: date) -> date:
     return day - timedelta(days=day.weekday())
 
 
+def week_slug(week: date) -> str:
+    iso = week.isocalendar()
+    return f"{iso.year}-week-{iso.week}"
+
+
 def render_mail_body(source: str, categories: list[str]) -> str:
     """Preserve the complete mail layout and annotate its rows for filtering."""
     body = re.search(r"<body\b[^>]*>(.*?)</body>", source, flags=re.S | re.I)
@@ -423,20 +428,14 @@ def build(output: Path) -> list[Issue]:
     def week_label(week: date) -> str:
         return f'第 {week.isocalendar().week:02d} 周 · {week:%Y.%m.%d}—{week + timedelta(days=6):%m.%d}'
 
-    options = "\n".join(
-        f'<button class="week-option" type="button" role="option" data-week="{week.isoformat()}" '
-        f'aria-selected="{str(week == latest_week).lower()}">{week_label(week)}</button>'
-        for week in weeks
-    )
-    reports = []
+    week_documents = {}
     for week in weeks:
         documents = [render_mail_body(issue.source.read_text(encoding="utf-8"), issue.categories)
                      for issue in issues if issue.start == week]
         extra = [item for item in standalone if week_start(item.published) == week]
         if extra:
             documents.append(standalone_mail(extra))
-        hidden = "" if week == latest_week else " hidden"
-        reports.append(f'<section class="weekly-report" data-week="{week.isoformat()}" aria-label="{week_label(week)}"{hidden}>' + "".join(documents) + '</section>')
+        week_documents[week] = f'<section class="weekly-report" data-week="{week.isoformat()}" aria-label="{week_label(week)}">' + "".join(documents) + '</section>'
 
     if output.exists():
         shutil.rmtree(output)
@@ -444,16 +443,31 @@ def build(output: Path) -> list[Issue]:
     shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
     asset_rev = hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes()).hexdigest()[:12]
-    news_page = render((SITE / "pages" / "news.html").read_text(encoding="utf-8"), {
-        "ASSET_REV": asset_rev,
-        "WEEK_OPTIONS": options,
-        "CURRENT_WEEK": week_label(latest_week),
-        "CATEGORY_TABS": "\n".join(tabs),
-        "WEEKLY_REPORTS": "\n".join(reports),
-        "EMAIL_STYLES": email_styles(),
-    })
-    (output / "news").mkdir()
-    (output / "news/index.html").write_text(news_page, encoding="utf-8")
+    news_template = (SITE / "pages" / "news.html").read_text(encoding="utf-8")
+    def news_page(selected_week: date, site_root: str) -> str:
+        options = "\n".join(
+            f'<a class="week-option" href="{site_root}news/{week_slug(week)}/" role="option" '
+            f'data-week="{week.isoformat()}" data-week-path="{week_slug(week)}" '
+            f'aria-selected="{str(week == selected_week).lower()}">{week_label(week)}</a>'
+            for week in weeks
+        )
+        return render(news_template, {
+            "SITE_ROOT": site_root,
+            "ASSET_REV": asset_rev,
+            "WEEK_OPTIONS": options,
+            "CURRENT_WEEK": week_label(selected_week),
+            "CATEGORY_TABS": "\n".join(tabs),
+            "WEEKLY_REPORTS": week_documents[selected_week],
+            "EMAIL_STYLES": email_styles(),
+        })
+
+    news_dir = output / "news"
+    news_dir.mkdir()
+    (news_dir / "index.html").write_text(news_page(latest_week, "../"), encoding="utf-8")
+    for week in weeks:
+        week_dir = news_dir / week_slug(week)
+        week_dir.mkdir()
+        (week_dir / "index.html").write_text(news_page(week, "../../"), encoding="utf-8")
     (output / "notes").mkdir()
     if notes:
         cards = "\n".join(

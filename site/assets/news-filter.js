@@ -3,7 +3,11 @@ const weekTrigger = document.querySelector("#week-trigger");
 const weekCurrent = document.querySelector("#week-current");
 const weekMenu = document.querySelector("#week-menu");
 const weekOptions = Array.from(document.querySelectorAll(".week-option"));
-let activeWeek = weekOptions[0].dataset.week;
+const pathWeek = window.location.pathname.match(/\/news\/(\d{4}-week-\d{1,2})\/?$/)?.[1];
+const activeOption = weekOptions.find((option) => option.dataset.weekPath === pathWeek) || weekOptions[0];
+const activeWeek = activeOption.dataset.week;
+weekCurrent.textContent = activeOption.textContent;
+weekOptions.forEach((option) => option.setAttribute("aria-selected", String(option === activeOption)));
 const tabs = Array.from(document.querySelectorAll(".category-tab"));
 const reports = Array.from(document.querySelectorAll(".weekly-report"));
 const emptyState = document.querySelector("#empty-state");
@@ -55,16 +59,6 @@ weekTrigger.addEventListener("keydown", (event) => {
   }
 });
 weekOptions.forEach((option, index) => {
-  option.addEventListener("click", () => {
-    activeWeek = option.dataset.week;
-    activeCategory = "all";
-    weekCurrent.textContent = option.textContent;
-    weekOptions.forEach((item) => item.setAttribute("aria-selected", String(item === option)));
-    setWeekMenuOpen(false);
-    weekTrigger.focus();
-    updateCategories();
-    filterNews();
-  });
   option.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();

@@ -1,16 +1,21 @@
 import re
 import tempfile
 import unittest
+from datetime import date
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.build_site import REPORTS, ReportParser, build, parse_issue, render_mail_body
+from scripts.build_site import REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
 
 CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-21-to-2026-09-27.html"
 WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/ai-agent-frontend-weekly-2026-09-14-to-2026-09-20.html"
 
 
 class BuildSiteTests(unittest.TestCase):
+    def test_week_path_uses_iso_week_year(self):
+        self.assertEqual(week_slug(date(2025, 12, 29)), "2026-week-1")
+        self.assertEqual(week_slug(date(2026, 9, 21)), "2026-week-39")
+
     def test_existing_report_contains_twelve_verified_items(self):
         issue = parse_issue(CURRENT_REPORT)
         self.assertEqual(issue.slug, "2026-09-21-to-2026-09-27")
@@ -23,16 +28,20 @@ class BuildSiteTests(unittest.TestCase):
             output = Path(directory) / "site"
             build(output)
             pages = list(output.rglob("*.html"))
+            expected_week_pages = {
+                output / f"news/{week_slug(parse_issue(path).start)}/index.html"
+                for path in REPORTS.glob("*/*/*.html")
+            }
             self.assertEqual(set(pages), {
                 output / "index.html", output / "news/index.html", output / "notes/index.html",
                 output / "notes/github-pages-subpath-assets/index.html",
-            })
+            } | expected_week_pages)
             self.assertIn('content="0;url=news/"', (output / "index.html").read_text(encoding="utf-8"))
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
-            expected = sum(len(parse_issue(path).articles) for path in REPORTS.glob("*/*/*.html"))
-            self.assertEqual(home.count('data-kind="news"'), expected)
-            self.assertIn('class="week-option" type="button" role="option" data-week="2026-09-21"', home)
+            self.assertEqual(home.count('data-kind="news"'), len(parse_issue(CURRENT_REPORT).articles))
+            self.assertIn('href="../news/2026-week-39/" role="option" data-week="2026-09-21" data-week-path="2026-week-39"', home)
+            self.assertIn('href="../news/2026-week-38/" role="option" data-week="2026-09-14" data-week-path="2026-week-38"', home)
             self.assertNotIn("<select", home)
             self.assertIn('data-category="AI/大模型"', home)
             self.assertNotIn('class="detail-dialog"', home)
@@ -80,12 +89,15 @@ class BuildSiteTests(unittest.TestCase):
             with patch("scripts.build_site.REPORTS", root / "reports"):
                 build(root / "site")
             home = (root / "site/news/index.html").read_text(encoding="utf-8")
-            self.assertEqual(home.count('data-kind="news"'), 24)
-            self.assertEqual(home.count('class="weekly-report"'), 2)
+            self.assertEqual(home.count('data-kind="news"'), 12)
+            self.assertEqual(home.count('class="weekly-report"'), 1)
             self.assertIn('data-week="2026-09-28" aria-label="第 40 周 · 2026.09.28—10.04">', home)
-            self.assertIn('data-week="2026-09-21" aria-label="第 39 周 · 2026.09.21—09.27" hidden>', home)
-            self.assertIn('role="option" data-week="2026-09-28"', home)
-            self.assertIn('role="option" data-week="2026-09-21"', home)
+            older = (root / "site/news/2026-week-39/index.html").read_text(encoding="utf-8")
+            self.assertIn('data-week="2026-09-21" aria-label="第 39 周 · 2026.09.21—09.27">', older)
+            self.assertIn('href="../../news/2026-week-40/" role="option" data-week="2026-09-28" data-week-path="2026-week-40" aria-selected="false"', older)
+            self.assertIn('href="../../news/2026-week-39/" role="option" data-week="2026-09-21" data-week-path="2026-week-39" aria-selected="true"', older)
+            self.assertIn('href="../../assets/wiki-hub.css', older)
+            self.assertIn('href="../../notes/"', older)
 
     def test_mail_layout_preserves_every_article_and_source(self):
         source = CURRENT_REPORT
@@ -135,7 +147,7 @@ class BuildSiteTests(unittest.TestCase):
             home = (root / "site/news/index.html").read_text(encoding="utf-8")
             self.assertIn('data-week="2026-09-28"', home)
             self.assertIn('data-category="产业观察"', home)
-            self.assertEqual(len(list((root / "site").rglob("*.html"))), 3)
+            self.assertEqual(len(list((root / "site").rglob("*.html"))), 4)
             self.assertIn('class="content-empty"', (root / "site/notes/index.html").read_text(encoding="utf-8"))
 
 
