@@ -23,7 +23,10 @@ class BuildSiteTests(unittest.TestCase):
             output = Path(directory) / "site"
             build(output)
             pages = list(output.rglob("*.html"))
-            self.assertEqual(set(pages), {output / "index.html", output / "news/index.html", output / "notes/index.html"})
+            self.assertEqual(set(pages), {
+                output / "index.html", output / "news/index.html", output / "notes/index.html",
+                output / "notes/github-pages-subpath-assets/index.html",
+            })
             self.assertIn('content="0;url=news/"', (output / "index.html").read_text(encoding="utf-8"))
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
@@ -39,11 +42,17 @@ class BuildSiteTests(unittest.TestCase):
             self.assertIn('href="../notes/"', home)
             self.assertIn('href="../news/"', notes)
             self.assertIn('href="../notes/" aria-current="page"', notes)
-            self.assertIn("暂无记录", notes)
+            self.assertIn("示例：GitHub Pages 子路径下静态资源 404", notes)
+            self.assertIn('href="github-pages-subpath-assets/"', notes)
+            self.assertNotIn('class="notes-title"', notes)
+            self.assertLess(notes.index('<h2>示例：GitHub Pages'), notes.index('<p>页面能打开'))
+            self.assertLess(notes.index('<p>页面能打开'), notes.index('<time datetime="2026-10-03"'))
+            detail = (output / "notes/github-pages-subpath-assets/index.html").read_text(encoding="utf-8")
+            self.assertIn('<h2>现象</h2>', detail)
+            self.assertIn('class="note-body"', detail)
+            self.assertIn('href="../../assets/wiki-hub.css', detail)
             self.assertIn('class="content-empty" id="empty-state" hidden', home)
-            self.assertIn('class="content-empty"', notes)
             self.assertIn('class="content-empty-icon"', home)
-            self.assertIn('class="content-empty-icon"', notes)
             self.assertIn("一句话趋势总结", home)
             self.assertIn("本周动手验证", home)
             self.assertIn("团队行动建议", home)
@@ -121,12 +130,13 @@ class BuildSiteTests(unittest.TestCase):
             }''', encoding="utf-8")
             reports = root / "reports"
             reports.mkdir()
-            with patch("scripts.build_site.NEWS", news.parent), patch("scripts.build_site.REPORTS", reports):
+            with patch("scripts.build_site.NEWS", news.parent), patch("scripts.build_site.REPORTS", reports), patch("scripts.build_site.NOTES", root / "notes"):
                 build(root / "site")
             home = (root / "site/news/index.html").read_text(encoding="utf-8")
             self.assertIn('data-week="2026-09-28"', home)
             self.assertIn('data-category="产业观察"', home)
             self.assertEqual(len(list((root / "site").rglob("*.html"))), 3)
+            self.assertIn('class="content-empty"', (root / "site/notes/index.html").read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

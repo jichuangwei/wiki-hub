@@ -15,10 +15,16 @@ from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import urlparse
 
+if __package__:
+    from .build_notes import parse_note, render_note_body
+else:
+    from build_notes import parse_note, render_note_body
+
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORTS = ROOT / "content" / "news" / "reports"
 NEWS = ROOT / "content" / "news" / "items"
+NOTES = ROOT / "content" / "notes"
 SITE = ROOT / "site"
 DIST = ROOT / "dist"
 REPORT_NAME = re.compile(r"^([a-z0-9-]+)-weekly-(\d{4}-\d{2}-\d{2})-to-(\d{4}-\d{2}-\d{2})\.html$")
@@ -397,6 +403,8 @@ def build(output: Path) -> list[Issue]:
     issues = [parse_issue(path) for path in REPORTS.glob("*/*/*.html")]
     issues.sort(key=lambda issue: (issue.start, issue.topic), reverse=True)
     standalone = [parse_standalone_news(path) for path in sorted(NEWS.glob("*/*.json"))]
+    notes = [parse_note(path) for path in NOTES.glob("*.md")]
+    notes.sort(key=lambda note: (note.published, note.slug), reverse=True)
     if not issues and not standalone:
         raise ValueError("No content found in content/news/items or content/news/reports")
     slugs = [issue.slug for issue in issues]
@@ -447,8 +455,39 @@ def build(output: Path) -> list[Issue]:
     (output / "news").mkdir()
     (output / "news/index.html").write_text(news_page, encoding="utf-8")
     (output / "notes").mkdir()
-    notes_page = render((SITE / "pages" / "notes.html").read_text(encoding="utf-8"), {"ASSET_REV": asset_rev})
+    if notes:
+        cards = "\n".join(
+            f'<li><a class="note-card" href="{escape(note.slug)}/">'
+            f'<h2>{escape(note.title)}</h2><p>{escape(note.summary)}</p>'
+            f'<time datetime="{note.published.isoformat()}">{note.published:%Y.%m.%d}</time>'
+            '</a></li>' for note in notes
+        )
+        notes_content = f'<ol class="notes-list">{cards}</ol>'
+    else:
+        notes_content = '''<div class="content-empty">
+        <svg class="content-empty-icon" width="42" height="42" viewBox="0 0 42 42" fill="none" aria-hidden="true">
+          <rect x="9" y="6" width="24" height="30" rx="4" stroke="currentColor" stroke-width="1.8"/>
+          <path d="M15 16h12M15 22h12M15 28h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <p>暂无记录</p>
+        <span>遇到的问题和解决过程会陆续整理在这里。</span>
+      </div>'''
+    notes_page = render((SITE / "pages" / "notes.html").read_text(encoding="utf-8"), {
+        "ASSET_REV": asset_rev,
+        "NOTES_SECTION_CLASS": " has-notes" if notes else "",
+    }).replace("<!--NOTES_CONTENT-->", notes_content)
     (output / "notes/index.html").write_text(notes_page, encoding="utf-8")
+    for note in notes:
+        note_page = render((SITE / "pages" / "note.html").read_text(encoding="utf-8"), {
+            "ASSET_REV": asset_rev,
+            "NOTE_TITLE": escape(note.title),
+            "NOTE_SUMMARY": escape(note.summary),
+            "NOTE_DATE_ISO": note.published.isoformat(),
+            "NOTE_DATE": f"{note.published:%Y.%m.%d}",
+        }).replace("<!--NOTE_BODY-->", render_note_body(note))
+        note_dir = output / "notes" / note.slug
+        note_dir.mkdir()
+        (note_dir / "index.html").write_text(note_page, encoding="utf-8")
     (output / "index.html").write_text((SITE / "pages" / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
     return issues
 

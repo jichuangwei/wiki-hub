@@ -24,13 +24,40 @@ img { display: block; max-width: 100%; }
 .site-header-inner { display: flex; align-items: center; gap: 26px; min-height: 68px; }
 .site-brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 10px; color: var(--ink); font-size: 17px; font-weight: 800; letter-spacing: -.025em; text-decoration: none; white-space: nowrap; }
 .brand-mark { display: grid; place-items: center; width: 30px; height: 30px; color: #fff; background: #2456cd; border-radius: 8px; font-size: 18px; font-weight: 800; line-height: 1; letter-spacing: -.08em; }
-.site-nav { display: flex; align-items: stretch; align-self: stretch; gap: 4px; padding-left: 20px; border-left: 1px solid var(--line); }
+.site-nav { display: flex; align-items: stretch; align-self: stretch; gap: 4px; }
 .site-nav-link { display: inline-flex; position: relative; align-items: center; padding: 0 16px; color: #52647e; font-size: 14px; font-weight: 650; text-decoration: none; white-space: nowrap; transition: color .15s, background-color .15s; }
 .site-nav-link:hover { color: var(--blue); background: #f7f9fe; }
 .site-nav-link.is-active { color: var(--blue); font-weight: 750; }
 .site-nav-link.is-active::after { position: absolute; right: 16px; bottom: 0; left: 16px; height: 3px; background: var(--blue); border-radius: 3px 3px 0 0; content: ""; }
 .news-section { padding: 38px 0 64px; }
 .notes-section { display: grid; place-items: center; min-height: calc(100vh - 68px); padding: 40px 12px 80px; }
+.notes-section.has-notes { display: block; padding-top: 38px; }
+.notes-list { width: 100%; margin: 0; padding: 0; overflow: hidden; background: #fff; border: 1px solid var(--line); border-radius: 12px; list-style: none; }
+.notes-list li + li { border-top: 1px solid var(--line); }
+.note-card { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 2fr) 92px; align-items: center; gap: 20px; width: 100%; min-height: 72px; padding: 16px 20px; color: var(--ink); text-decoration: none; transition: background-color .15s; }
+.note-card:hover, .note-card:focus-visible { background: #f2f6ff; }
+.note-card:focus-visible { outline-offset: -3px; }
+.note-card:hover h2 { color: var(--blue); }
+.note-card time, .note-heading time { color: #8090a6; font-size: 12px; font-weight: 650; }
+.note-card h2 { min-width: 0; margin: 0; overflow: hidden; font-size: 16px; line-height: 1.5; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; transition: color .15s; }
+.note-card p { min-width: 0; margin: 0; overflow: hidden; color: var(--muted); font-size: 14px; line-height: 1.5; text-overflow: ellipsis; white-space: nowrap; }
+.note-card time { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.note-detail { max-width: 860px; margin: 0 auto; padding: 34px 12px 90px; }
+.note-back { display: inline-block; margin-bottom: 30px; color: var(--muted); font-size: 13px; text-decoration: none; }
+.note-back:hover { color: var(--blue); }
+.note-heading { padding-bottom: 25px; border-bottom: 1px solid var(--line); }
+.note-heading h1 { margin: 10px 0 12px; font-size: 34px; line-height: 1.3; }
+.note-heading p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.note-body { color: #394a64; font-size: 15px; line-height: 1.85; overflow-wrap: anywhere; }
+.note-body h2 { margin: 34px 0 12px; color: var(--ink); font-size: 22px; line-height: 1.4; }
+.note-body h3 { margin: 26px 0 10px; color: var(--ink); font-size: 18px; }
+.note-body p, .note-body ul, .note-body ol, .note-body blockquote { margin: 0 0 16px; }
+.note-body pre { overflow-x: auto; padding: 16px 18px; color: #e8eefc; background: #17233b; border-radius: 10px; font-size: 13px; line-height: 1.6; }
+.note-body :not(pre) > code { padding: 2px 5px; color: #254ca8; background: #eaf0fc; border-radius: 4px; font-size: .9em; }
+.note-body blockquote { padding: 4px 0 4px 15px; color: var(--muted); border-left: 3px solid #9db7e9; }
+.note-body img { height: auto; margin: 20px 0; border-radius: 8px; }
+.note-body table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.note-body th, .note-body td { padding: 9px 12px; border: 1px solid var(--line); text-align: left; }
 .content-empty { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 420px; margin: 0 auto; padding: 48px 24px; color: var(--muted); text-align: center; }
 .content-empty-icon { box-sizing: content-box; padding: 18px; color: #7294d6; background: #eaf1ff; border-radius: 20px; }
 .content-empty p { margin: 22px 0 6px; color: var(--ink); font-size: 17px; font-weight: 700; }
@@ -52,4 +79,4 @@ img { display: block; max-width: 100%; }
 .week-option[aria-selected="true"] { color: var(--blue); background: #eaf0fc; }
 .weekly-report { min-width: 0; }
 .weekly-reports { padding-top: 4px; }
-@media (max-width: 640px) { .shell { width: calc(100% - 16px); } .site-header-inner { gap: 10px; min-height: 58px; } .site-brand { gap: 7px; font-size: 15px; } .brand-mark { width: 26px; height: 26px; border-radius: 7px; font-size: 15px; } .site-nav { gap: 0; padding-left: 8px; } .site-nav-link { padding: 0 10px; font-size: 13px; } .site-nav-link.is-active::after { right: 10px; left: 10px; } .news-section { padding-top: 16px; } .notes-section { min-height: calc(100vh - 58px); padding: 24px 8px 64px; } .filters-row { gap: 12px; } .week-picker { width: 165px; } #week-current { overflow: hidden; text-overflow: ellipsis; } }
+@media (max-width: 640px) { .shell { width: calc(100% - 16px); } .site-header-inner { gap: 10px; min-height: 58px; } .site-brand { gap: 7px; font-size: 15px; } .brand-mark { width: 26px; height: 26px; border-radius: 7px; font-size: 15px; } .site-nav { gap: 0; } .site-nav-link { padding: 0 10px; font-size: 13px; } .site-nav-link.is-active::after { right: 10px; left: 10px; } .news-section { padding-top: 16px; } .notes-section { min-height: calc(100vh - 58px); padding: 24px 8px 64px; } .notes-section.has-notes { padding-top: 26px; } .note-card { grid-template-columns: minmax(0, 1.3fr) minmax(0, .8fr) 74px; gap: 8px; min-height: 60px; padding: 12px; } .note-card h2 { font-size: 13px; } .note-card p { font-size: 12px; } .note-card time { font-size: 11px; } .note-detail { padding: 22px 8px 64px; } .note-heading h1 { font-size: 28px; } .filters-row { gap: 12px; } .week-picker { width: 165px; } #week-current { overflow: hidden; text-overflow: ellipsis; } }

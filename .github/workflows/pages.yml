@@ -11,6 +11,7 @@ on:
       - "scripts/**"
       - "tests/**"
       - "automation/**"
+      - "requirements-site.txt"
   workflow_dispatch:
   workflow_call:
     inputs:
@@ -41,6 +42,7 @@ jobs:
           persist-credentials: false
       - name: Check and build site
         run: |
+          python3 -m pip install -r requirements-site.txt
           python3 scripts/build_task_prompt.py --check
           python3 -m unittest discover -s tests -v
           python3 scripts/build_site.py
