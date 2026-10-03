@@ -6,6 +6,9 @@
 【模板和格式】
 通过已连接 GitHub 读取 jichuangwei/wiki-hub/main 的 templates/reports/ai-agent-frontend-weekly-email.html，读取完整内容并记录 blob SHA；这是唯一排版源，读取失败则停止发布。复用模板的外壳、栏目行与 story 资讯块，删除旧五栏目示例，改为唯一栏目“01 · AI 编程助手 / Code Agent 深度资料”，添加 3–5 个完整 story 块。在每块中以模板现有段落样式增加“证据强弱：”和“前端实践：”两个 strong 标签段落，保留“摘要：”及“来源：”段落。不要把分析放在 story 块外，不要使用 Markdown 冒充 HTML。无可靠图片则删除整块图片区域。保留结尾：一句话趋势总结、本周动手验证、团队行动建议。删除所有未填占位符，保留完整 UTF-8 HTML。
 
+【标题和版式校验】
+深度周报只改变选题与栏目结构，不改变模板的固定品牌标题和版式。主标题 h1 必须逐字保留“AI 资讯干货”，位于日期/周次行上方；HTML title 保留“AI 资讯干货｜日期范围”。页脚品牌保留“AI 资讯干货”。不要把“AI 编程助手 / Code Agent 深度周报”替换进 h1、title 或页脚；深度资料栏目名只写在栏目行。保留模板的标签顺序、class、内联 style、字号、间距、颜色、容器宽度、表格结构和移动端 CSS。只替换占位符、复制 story 块、调整栏目数量、移除未使用图片/产品可选段落，并按现有段落样式增加证据强弱与前端实践。发布前逐项对照完整模板，发现任何未经允许的标题或样式变动则修正后再发布。
+
 【发布】
 目标仓库 jichuangwei/wiki-hub，main 分支；归档路径 content/news/reports/ai-agent-frontend/YEAR/ai-agent-frontend-weekly-START-to-END.html，YEAR 取 START 所在年。确认仓库可访问再检查本期归档；已有完整归档则复用，不重新生成或覆盖，不把权限错误当成文件不存在。
 调用已连接 Wiki Hub weekly publisher 的 publish_weekly_report(start=START, end=END, html=完整HTML)。保存返回的 request_id，再调用 get_publication_status(request_id)。持续查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
