@@ -1,4 +1,4 @@
-每周一 09:00（Asia/Shanghai）制作上一完整自然周（周一至周日）的 AI 编程助手 / Code Agent 深度周报。测试指定周次时使用指定日期，不改正式任务定时设置。
+每周一 09:00（Asia/Shanghai）制作上一完整自然周（周一至周日）的完整 AI × Agent × 前端周报：五类资讯各 2–4 条，另设第六栏目 AI 编程助手 / Code Agent 深度资料 3–5 篇。不得只生成深度栏目。测试指定周次时使用指定日期，不改正式任务定时设置。
 
 开始前，通过已连接的 GitHub 读取 jichuangwei/wiki-hub 的 main 分支中 skills/ai-agent-frontend-weekly/SKILL.md 的完整内容，并按该 skill 执行；再读取 templates/news/ai-agent-frontend-weekly-email.html 的完整 HTML，记录模板 blob SHA。仓库中的 skill 和模板是本次运行的规则与排版源，不使用旧缓存或记忆代替。任一文件读取失败，停止发布和发信并说明原因。
 

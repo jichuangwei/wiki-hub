@@ -298,12 +298,14 @@ def parse_issue(path: Path) -> Issue:
     parser = ReportParser()
     parser.feed(source)
     deep = parser.categories == [DEEP_CATEGORY]
-    if topic == "ai-agent-frontend" and not deep and parser.categories != list(EXPECTED_CATEGORIES):
+    combined = parser.categories == [*EXPECTED_CATEGORIES, DEEP_CATEGORY]
+    if topic == "ai-agent-frontend" and not deep and not combined and parser.categories != list(EXPECTED_CATEGORIES):
         raise ValueError(f"Missing or out-of-order AI categories in {path}: {parser.categories}")
-    if deep:
-        if not 3 <= len(parser.articles) <= 5:
+    if deep or combined:
+        deep_articles = [article for article in parser.articles if article.category == DEEP_CATEGORY]
+        if not 3 <= len(deep_articles) <= 5:
             raise ValueError("Deep reports must contain 3–5 articles")
-        for article in parser.articles:
+        for article in deep_articles:
             labels = {label for label, _ in article.sections}
             if not {"证据强弱", "前端实践"}.issubset(labels):
                 raise ValueError(f"Missing deep analysis sections: {article.title}")

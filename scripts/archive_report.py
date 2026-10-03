@@ -34,7 +34,7 @@ def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-fr
         issue = parse_issue(candidate)
         if topic == "ai-agent-frontend" and issue.categories != [DEEP_CATEGORY]:
             counts = Counter(article.category for article in issue.articles)
-            if any(not 2 <= count <= 4 for count in counts.values()):
+            if any(not 2 <= count <= 4 for category, count in counts.items() if category != DEEP_CATEGORY):
                 raise ValueError("Each AI category must have 2–4 articles")
         for heading in ("一句话趋势总结", "本周动手验证", "团队行动建议"):
             if heading not in content.decode("utf-8"):
