@@ -1,10 +1,10 @@
 # 深度周报定时发布
 
-正式任务：每周一 09:00（Asia/Shanghai），筛选 3–5 篇 AI 编程助手 / Code Agent 深度资料，分析证据强弱及前端实践，生成 HTML，归档并部署 Pages。不发送 Gmail。
+正式任务：每周一 09:00（Asia/Shanghai），筛选 3–5 篇 AI 编程助手 / Code Agent 深度资料，分析证据强弱及前端实践，生成 HTML，归档并部署 Pages，线上核验成功后发送完整 HTML 邮件并使用 BCC 密送。邮件服务和收件人由云任务私有任务指令提供，不写进仓库。
 
 ## 云端链路
 
-Scheduled Task → `publish_weekly_report(start, end, html)` → `archive-report.yml` → bot 提交 main → 复用 `pages.yml` → `get_publication_status(request_id)` 核实线上内容。
+Scheduled Task → `publish_weekly_report(start, end, html)` → `archive-report.yml` → bot 提交 main → 复用 `pages.yml` → `get_publication_status(request_id)` 核实线上内容 → 已授权邮件工具发送同一 HTML（独立 BCC 字段）。
 
 发布工具代码、容器和完整部署/授权配置见 [publisher/README.md](../publisher/README.md)。发布工具需要部署到常驻 HTTPS 服务，安装仅 Actions write、Contents read 的 GitHub App，配置外部 OAuth 授权，并将该远程 MCP 连接提供给云任务。Contents write 仅在 Action 的归档 job 中使用。
 
