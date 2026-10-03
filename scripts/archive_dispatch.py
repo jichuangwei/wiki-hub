@@ -9,6 +9,7 @@ import os
 import re
 from pathlib import Path
 import tempfile
+from datetime import date
 
 try:
     from .report_paths import repository_paths
@@ -66,6 +67,8 @@ def main() -> None:
             path, created = archive_report(source, start, end)
     with Path(os.environ["GITHUB_ENV"]).open("a", encoding="utf-8") as output:
         output.write(f"REPORT_START={start}\nREPORT_END={end}\n")
+        iso_year, iso_week, _ = date.fromisoformat(start).isocalendar()
+        output.write(f"REPORT_WEEK={iso_year}-week-{iso_week}\n")
     print(f"{'Archived' if created else 'Already archived'}: {path}")
 
 
