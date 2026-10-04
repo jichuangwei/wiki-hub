@@ -85,7 +85,7 @@ class BuildSiteTests(unittest.TestCase):
             self.assertNotIn('class="detail-open"', home)
             self.assertLess(home.index('class="category-tabs"'), home.index('id="week-trigger"'))
             self.assertIn("OpenAI 发布公告", home)
-            self.assertLess(home.index('>AI 资讯干货</h1>'), home.index('第 39 周</div>'))
+            self.assertLess(home.index('>AI 资讯干货</h1>'), home.index('第 39 周&nbsp;&nbsp;/'))
             self.assertNotIn("{{", home)
 
     def test_practice_navigation_and_migrated_article_link(self):
@@ -142,7 +142,9 @@ class BuildSiteTests(unittest.TestCase):
         self.assertTrue(all(re.fullmatch(r'\d+\s*月\s*\d+(?:、\d+)*\s*日', value) for value in dates))
         self.assertIn('修复：9 月 25 日', body)
         self.assertIn('white-space:nowrap', body)
-        self.assertIn('bgcolor="#edf1f7"', body)
+        self.assertNotIn('bgcolor="#edf1f7"', body)
+        self.assertIn('text-align:center', body)
+        self.assertNotIn('padding:0 0 4px 4px;', body)
         self.assertNotIn('decimal-leading-zero', body)
         self.assertEqual(body.count('data-kind="section"'), 5)
 

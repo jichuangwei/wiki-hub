@@ -18,7 +18,13 @@
   }
   toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
   drawer.addEventListener('click', (event) => {
-    if (event.target.closest('a')) setOpen(false);
+    const link = event.target.closest('a');
+    if (!link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey || event.button !== 0) return;
+    // Keep the overlay visible during navigation to avoid flashing the old page.
+    if (link.href === window.location.href) {
+      event.preventDefault();
+      closeMenu();
+    }
   });
   function closeMenu() {
     setOpen(false);
@@ -33,5 +39,6 @@
     }
   });
   mobile.addEventListener('change', () => setOpen(false));
+  window.addEventListener('pageshow', () => setOpen(false));
   drawer.classList.remove('is-open');
 })();

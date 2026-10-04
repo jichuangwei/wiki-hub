@@ -31,11 +31,11 @@ def template_fragments() -> dict[str, str]:
     tail = source.index("<!-- END NEWS ITEM: S5, item 1 -->")
     shell = compact(source[:section_start] + "{{SECTIONS_HTML}}" + source[tail:])
     scenario = '<p class="mail-muted" style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong class="mail-ink" style="color:#17233b;">适用场景 / 理由：</strong>{{PRODUCT_SCENARIO}}</p>'
-    images = '<div style="width:100%;font-size:0;line-height:0;margin:0 0 13px;">'
-    for index, padding in enumerate(("0 4px 4px 0", "0 0 4px 4px"), 1):
+    images = '<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">'
+    for index, padding in enumerate(("0 4px 8px", "0 4px 8px"), 1):
         images += f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:{padding};">{{{{IMAGE_{index}}}}}</div></div>'
     images += "</div>"
-    image = '<img src="{{IMAGE_URL}}" height="200" alt="{{IMAGE_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;">'
+    image = '<img src="{{IMAGE_URL}}" height="200" alt="{{IMAGE_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">'
     return dict((
         ("邮件主模板", shell), ("栏目模板", section), ("NEWS ITEM 资讯模板", item),
         ("产品适用场景模板", scenario), ("配图模板", images), ("单张图片模板", image),
