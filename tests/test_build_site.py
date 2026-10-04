@@ -59,7 +59,12 @@ class BuildSiteTests(unittest.TestCase):
             self.assertEqual(set(pages), {
                 output / "index.html", output / "news/index.html", output / "notes/index.html", output / "practices/index.html",
             } | expected_week_pages | expected_note_pages | expected_practice_pages | expected_redirect_pages)
-            self.assertIn('content="0;url=news/"', (output / "index.html").read_text(encoding="utf-8"))
+            landing = (output / "index.html").read_text(encoding="utf-8")
+            self.assertNotIn('http-equiv="refresh"', landing)
+            self.assertIn('id="latest-heading"', landing)
+            self.assertIn('href="news/2026-week-39/"', landing)
+            self.assertIn('practices/chatgpt-automated-content-publishing/', landing)
+            self.assertIn('notes/qq-mail-dark-mode-colors/', landing)
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
             self.assertEqual(home.count('data-kind="news"'), len(parse_issue(CURRENT_REPORT).articles))

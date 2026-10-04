@@ -654,12 +654,18 @@ def build(output: Path) -> list[Issue]:
         week_dir = news_dir / week_slug(week)
         week_dir.mkdir()
         (week_dir / "index.html").write_text(news_page(week, "../../"), encoding="utf-8")
+    home_lists = {}
     for section, source, detail_template, empty_description in (
         ("notes", NOTES, "note.html", "遇到的问题和解决过程会陆续整理在这里。"),
         ("practices", PRACTICES, "practice.html", "工具协作、流程设计与实践经验会陆续整理在这里。"),
     ):
         notes = sorted((parse_note(path) for path in source.glob("*.md")),
                        key=lambda note: (note.published, note.slug), reverse=True)
+        home_lists[section] = '<ol class="notes-list">' + ''.join(
+            f'<li><a class="note-card" href="{section}/{escape(note.slug)}/">'
+            f'<h3>{escape(note.title)}</h3><p>{escape(note.summary)}</p>'
+            f'<time datetime="{note.published.isoformat()}">{note.published:%Y.%m.%d}</time></a></li>'
+            for note in notes[:3]) + '</ol>' if notes else '<p class="home-empty">内容正在整理，敬请期待。</p>'
         (output / section).mkdir()
         if notes:
             cards = "\n".join(
@@ -707,10 +713,20 @@ def build(output: Path) -> list[Issue]:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="0;url={escape(target)}">
 <title>文章已移至实践经验 · Wiki Hub</title>
+<link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
 <link rel="canonical" href="{escape(target)}"></head>
 <body><p><a href="{escape(target)}">阅读实践经验文章</a></p></body></html>'''
         (redirect_dir / "index.html").write_text(redirect_page, encoding="utf-8")
-    (output / "index.html").write_text((SITE / "pages" / "index.html").read_text(encoding="utf-8"), encoding="utf-8")
+    latest_issues = [issue for issue in issues if issue.start == latest_week]
+    highlights = [point for issue in latest_issues for point in issue.highlights][:3]
+    title = ' · '.join(dict.fromkeys(re.sub(r'\s*[｜|]\s*\d{4}\.\d{2}\.\d{2}\s*[–—-]\s*(?:\d{4}\.)?\d{2}\.\d{2}\s*$', '', issue.title) for issue in latest_issues)) or '本周资讯'
+    latest_content = (f'<div class="home-issue"><p class="home-week">{escape(week_label(latest_week))}</p>'
+        f'<h2><a href="news/{week_slug(latest_week)}/">{escape(title)}</a></h2>'
+        + ('<p class="home-focus-label">本期聚焦</p><ul class="home-focus">' + ''.join(f'<li>{escape(point)}</li>' for point in highlights) + '</ul>' if highlights else '')
+        + f'<a class="home-read" href="news/{week_slug(latest_week)}/"><span class="home-read-label">阅读本期</span><span class="home-read-arrow" aria-hidden="true">→</span></a></div>')
+    home_page = render((SITE / "pages" / "index.html").read_text(encoding="utf-8"), {"ASSET_REV": asset_rev})
+    home_page = home_page.replace('<!--HOME_LATEST-->', latest_content).replace('<!--HOME_PRACTICES-->', home_lists['practices']).replace('<!--HOME_NOTES-->', home_lists['notes'])
+    (output / "index.html").write_text(home_page, encoding="utf-8")
     return issues
 
 

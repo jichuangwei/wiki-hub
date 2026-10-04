@@ -1,6 +1,6 @@
 # Wiki Hub 内容维护
 
-本站从仓库内容生成静态页面。编辑 `content/` 中的源文件，不直接修改 `dist/`；`dist/` 是 `scripts/build_site.py` 的生成结果。根路径进入 `/news/`，踩坑记录列表位于 `/notes/`，通用实践经验位于 `/practices/`。
+本站从仓库内容生成静态页面。编辑 `content/` 中的源文件，不直接修改 `dist/`；`dist/` 是 `scripts/build_site.py` 的生成结果。根路径 `/` 为内容聚合首页，资讯干货位于 `/news/`，踩坑记录列表位于 `/notes/`，通用实践经验位于 `/practices/`。
 
 ## 新增资讯干货
 
