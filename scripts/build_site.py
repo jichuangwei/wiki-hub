@@ -346,6 +346,17 @@ def week_slug(week: date) -> str:
     return f"{iso.year}-week-{iso.week}"
 
 
+def image_gallery(images: list[str]) -> str:
+    """Use the current email template's wrapping, two-slot image layout."""
+    slots = []
+    for index, image in enumerate(images):
+        image = re.sub(r'\s(?:style|width|height)="[^"]*"', '', image, flags=re.I)
+        image = image.rstrip('>').rstrip('/') + ' height="200" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;">'
+        padding = "0 4px 4px 0" if index % 2 == 0 else "0 0 4px 4px"
+        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:{padding};">{image}</div></div>')
+    return '<div style="width:100%;font-size:0;line-height:0;margin:0 0 13px;">' + ''.join(slots) + '</div>'
+
+
 def render_mail_body(source: str, categories: list[str]) -> str:
     """Preserve the complete mail layout and annotate its rows for filtering."""
     body = re.search(r"<body\b[^>]*>(.*?)</body>", source, flags=re.S | re.I)
@@ -354,6 +365,14 @@ def render_mail_body(source: str, categories: list[str]) -> str:
     content = re.sub(r"<!--.*?-->", "", body.group(1), flags=re.S)
     if re.search(r"<(?:script|iframe|object|embed|form|base)\b|\son\w+\s*=", content, flags=re.I):
         raise ValueError("Report body must contain passive email markup")
+    # Migrate the old three-column galleries only in website output. The original
+    # sent email remains unchanged; current image-slot galleries pass through.
+    def migrate_gallery(match: re.Match[str]) -> str:
+        images = re.findall(r'<img\b[^>]*>', match.group(0), flags=re.I)
+        return image_gallery(images) if images else match.group(0)
+
+    content = re.sub(r'<table\b[^>]*style="[^"]*table-layout:fixed[^\"]*"[^>]*>.*?</table>',
+                     migrate_gallery, content, flags=re.S | re.I)
     # Keep archived emails intact while displaying their heading above the week.
     def title_before_date(match: re.Match[str]) -> str:
         date_line, title = match.groups()
@@ -400,6 +419,9 @@ def render_mail_body(source: str, categories: list[str]) -> str:
 def email_styles() -> str:
     template = (ROOT / "templates/news/ai-agent-frontend-weekly-email.html").read_text(encoding="utf-8")
     css = re.search(r"<style>(.*?)</style>", template, flags=re.S).group(1)
+    # Website theme is selected by its header toggle, independently of the
+    # system preference used by email clients.
+    css = re.sub(r'@media\s*\(prefers-color-scheme:dark\)\s*\{(?:[^{}]*\{[^{}]*\})*\s*\}', '', css)
     for selector in ("body", "table", "img", "a"):
         replacement = ".weekly-report" if selector == "body" else f".weekly-report {selector}"
         css = re.sub(rf"(?<![\w.-]){selector}\s*\{{", replacement + "{", css)
@@ -410,7 +432,7 @@ def standalone_mail(items: list[StandaloneNews]) -> str:
     rows = []
     for item in items:
         article = item.article
-        image = (f'<img src="{escape(article.image_url)}" alt="{escape(article.image_alt)}" height="200" style="width:33.33%;height:200px;object-fit:cover;margin-bottom:13px;">' if article.image_url else "")
+        image = (image_gallery([f'<img src="{escape(article.image_url)}" alt="{escape(article.image_alt)}">']) if article.image_url else "")
         sections = "".join(f'<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">{escape(label)}：</strong>{escape(body)}</p>' for label, body in article.sections)
         links = " · ".join(f'<a href="{escape(url)}">{escape(label)}</a>' for label, url in article.sources)
         rows.append(f'<tr data-category="{escape(article.category)}" data-kind="news"><td style="padding:10px 12px 0;"><table width="100%" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td style="padding:19px 20px;"><div style="font-size:12px;color:#8090a6;">{escape(article.meta)}</div><h2 style="font-size:18px;line-height:26px;">{escape(article.title)}</h2>{image}{sections}<p style="font-size:13px;color:#607089;"><strong>来源：</strong>{links}</p></td></tr></table></td></tr>')
@@ -453,8 +475,12 @@ def build(output: Path) -> list[Issue]:
     output.mkdir(parents=True)
     shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
-    asset_rev = hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes()).hexdigest()[:12]
+    asset_rev = hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes() + (SITE / "assets/theme.js").read_bytes()).hexdigest()[:12]
     news_template = (SITE / "pages" / "news.html").read_text(encoding="utf-8")
+    image_copies = json.loads((SITE / "assets/news/image-sources.json").read_text(encoding="utf-8"))
+    for asset in image_copies.values():
+        if not (SITE / "assets" / asset).is_file():
+            raise ValueError(f"Missing news image copy: {asset}")
     def news_page(selected_week: date, site_root: str) -> str:
         options = "\n".join(
             f'<a class="week-option" href="{site_root}news/{week_slug(week)}/" role="option" '
@@ -462,13 +488,16 @@ def build(output: Path) -> list[Issue]:
             f'aria-selected="{str(week == selected_week).lower()}">{week_label(week)}</a>'
             for week in weeks
         )
+        report = week_documents[selected_week]
+        for original, asset in image_copies.items():
+            report = report.replace(f'src="{escape(original)}"', f'src="{site_root}assets/{escape(asset)}"')
         return render(news_template, {
             "SITE_ROOT": site_root,
             "ASSET_REV": asset_rev,
             "WEEK_OPTIONS": options,
             "CURRENT_WEEK": week_label(selected_week),
             "CATEGORY_TABS": "\n".join(tabs),
-            "WEEKLY_REPORTS": week_documents[selected_week],
+            "WEEKLY_REPORTS": report,
             "EMAIL_STYLES": email_styles(),
         })
 

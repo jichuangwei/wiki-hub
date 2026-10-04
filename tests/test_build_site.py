@@ -156,6 +156,35 @@ class BuildSiteTests(unittest.TestCase):
         self.assertNotIn('data-category=', body[conclusion.start():])
         self.assertEqual(WEEK38_REPORT.read_bytes(), original)
 
+    def test_historical_images_use_current_template_without_changing_archive(self):
+        for week in (37, 38, 39):
+            source = REPORTS / f"ai-agent-frontend/2026/week-{week}.html"
+            original = source.read_bytes()
+            issue = parse_issue(source)
+            body = render_mail_body(original.decode("utf-8"), issue.categories)
+            self.assertNotIn('width="33.33%"', body)
+            original_images = re.findall(r'<img\b[^>]*>', original.decode("utf-8"))
+            rendered_images = re.findall(r'<img\b[^>]*>', body)
+            self.assertEqual(len(original_images), len(rendered_images))
+            for before, after in zip(original_images, rendered_images):
+                for attribute in ('src', 'alt'):
+                    self.assertEqual(re.search(fr'{attribute}="([^"]*)"', before).group(1),
+                                     re.search(fr'{attribute}="([^"]*)"', after).group(1))
+                self.assertIn('max-width:420px;height:200px', after)
+            self.assertEqual(body.count('class="image-slot"'), len(original_images))
+            self.assertEqual(source.read_bytes(), original)
+
+    def test_week37_images_are_served_locally_under_pages_subpath(self):
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "site"
+            build(output)
+            page = (output / "news/2026-week-37/index.html").read_text(encoding="utf-8")
+            for filename in ('qwencloud-conference.jpeg', 'qwen-drive-architecture.png'):
+                asset = f'assets/news/2026-week-37/{filename}'
+                self.assertIn(f'src="../../{asset}"', page)
+                self.assertTrue((output / asset).is_file())
+            self.assertNotIn('src="https://yqintl.alicdn.com/', page)
+
     def test_independent_news_can_supply_a_week_without_reports(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

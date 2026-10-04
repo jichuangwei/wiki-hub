@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#f6f8fc">
   <meta name="description" content="Wiki Hub 按周整理值得关注的资讯，支持分类与周次筛选。">
   <title>资讯干货 · Wiki Hub</title>
+  <script src="{{SITE_ROOT}}assets/theme.js?v={{ASSET_REV}}"></script>
   <link rel="stylesheet" href="{{SITE_ROOT}}assets/wiki-hub.css?v={{ASSET_REV}}">
   <style>{{EMAIL_STYLES}}</style>
   <script src="{{SITE_ROOT}}assets/news-filter.js?v={{ASSET_REV}}" defer></script>
@@ -20,6 +21,10 @@
         <a class="site-nav-link" href="{{SITE_ROOT}}notes/">踩坑记录</a>
         <a class="site-nav-link" href="{{SITE_ROOT}}practices/">实践经验</a>
       </nav>
+      <button class="theme-toggle" type="button" aria-label="切换深色模式" hidden>
+        <svg class="theme-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13.2A9 9 0 0 1 10.8 3.1 9 9 0 1 0 20.9 13.2Z"/></svg>
+        <svg class="theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/></svg>
+      </button>
     </div>
   </header>
   <main id="main" class="shell">

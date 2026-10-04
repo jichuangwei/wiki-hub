@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from scripts.archive_report import archive_report
-from scripts.build_site import REPORTS, build, parse_issue, render, EXPECTED_CATEGORIES
+from scripts.build_site import REPORTS, build, parse_issue, render, email_styles, EXPECTED_CATEGORIES
 from scripts.build_task_prompt import build_prompt, template_fragments
 
 CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
@@ -41,6 +41,13 @@ class WeeklyPipelineTests(unittest.TestCase):
         self.assertIn("skills/ai-agent-frontend-weekly/SKILL.md", prompt)
         self.assertIn("templates/news/ai-agent-frontend-weekly-email.html", prompt)
         fragments = template_fragments()
+        self.assertIn('name="color-scheme" content="light dark"', fragments["邮件主模板"])
+        self.assertIn('@media (prefers-color-scheme:dark)', fragments["邮件主模板"])
+        self.assertIn('class="mail-muted"', fragments["NEWS ITEM 资讯模板"])
+        self.assertIn('class="mail-ink"', fragments["产品适用场景模板"])
+        # A website user may choose light while the system is dark.
+        self.assertNotIn('prefers-color-scheme', email_styles())
+        self.assertIn('.image-slot', email_styles())
         self.assertIn("{{IMAGE_1}}", fragments["配图模板"])
         self.assertIn("{{IMAGE_2}}", fragments["配图模板"])
         self.assertNotIn("IMAGE_3", fragments["配图模板"])

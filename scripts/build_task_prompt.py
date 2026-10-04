@@ -30,7 +30,7 @@ def template_fragments() -> dict[str, str]:
     item = compact(item).replace("S1_N1_", "")
     tail = source.index("<!-- END NEWS ITEM: S5, item 1 -->")
     shell = compact(source[:section_start] + "{{SECTIONS_HTML}}" + source[tail:])
-    scenario = '<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">适用场景 / 理由：</strong>{{PRODUCT_SCENARIO}}</p>'
+    scenario = '<p class="mail-muted" style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong class="mail-ink" style="color:#17233b;">适用场景 / 理由：</strong>{{PRODUCT_SCENARIO}}</p>'
     images = '<div style="width:100%;font-size:0;line-height:0;margin:0 0 13px;">'
     for index, padding in enumerate(("0 4px 4px 0", "0 0 4px 4px"), 1):
         images += f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:{padding};">{{{{IMAGE_{index}}}}}</div></div>'
