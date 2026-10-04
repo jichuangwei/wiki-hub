@@ -15,7 +15,7 @@
 
 复制 `templates/notes/record.md`，保存为 `content/notes/unique-slug.md`。文件名就是详情页路径 `/notes/unique-slug/`：使用小写英文字母、数字和连字符，并在发布后保持稳定；文章标题可以修改，不必因此改路径。
 
-Markdown 开头必须有 `title`、`date`（`YYYY-MM-DD`）和 `summary` 三个字段，后面写正文。按“现象、原因、解决方法、验证”组织内容，写清可复现的步骤和证据；命令、配置与日志用代码块。`content/notes/github-pages-subpath-assets.md` 是标明为示例的完整记录。构建脚本会按日期倒序生成 `/notes/` 列表，并将 Markdown 渲染为详情 HTML。正文支持常用 Markdown、围栏代码块和表格；不要依赖原生 HTML 或未纳入构建的本地图片文件。
+Markdown 开头必须有 `title`、`date`（`YYYY-MM-DD`）和 `summary` 三个字段，后面写正文。按“现象、原因、解决方法、验证”组织内容，写清可复现的步骤和证据；命令、配置与日志用代码块。构建脚本会按日期倒序生成 `/notes/` 列表，并将 Markdown 渲染为详情 HTML。正文支持常用 Markdown、围栏代码块和表格；不要依赖原生 HTML 或未纳入构建的本地图片文件。
 
 ## 新增实践经验
 
