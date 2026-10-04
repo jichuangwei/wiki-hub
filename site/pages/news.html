@@ -34,9 +34,12 @@
   <main id="main" class="shell">
     <section class="news-section" aria-label="资讯列表">
       <div class="filters-row">
-        <div class="category-tabs" role="group" aria-label="按分类筛选资讯">{{CATEGORY_TABS}}</div>
+        <div class="category-picker">
+          <button class="category-trigger" type="button" aria-label="选择分类" aria-expanded="false" aria-controls="category-menu" hidden><span id="category-current">全部分类</span><span class="week-chevron" aria-hidden="true"></span></button>
+          <div class="category-tabs" id="category-menu" role="group" aria-label="按分类筛选资讯">{{CATEGORY_TABS}}</div>
+        </div>
         <div class="week-picker">
-          <button class="week-trigger" id="week-trigger" type="button" aria-label="选择周次" aria-expanded="false" aria-controls="week-menu"><span id="week-current">{{CURRENT_WEEK}}</span><span class="week-chevron" aria-hidden="true"></span></button>
+          <button class="week-trigger" id="week-trigger" type="button" aria-label="选择周次" aria-expanded="false" aria-controls="week-menu"><span id="week-current" class="week-long">{{CURRENT_WEEK}}</span><span class="week-chevron" aria-hidden="true"></span></button>
           <div class="week-menu" id="week-menu" role="listbox" aria-label="周次" hidden>{{WEEK_OPTIONS}}</div>
         </div>
       </div>

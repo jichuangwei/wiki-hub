@@ -483,19 +483,24 @@ def build(output: Path) -> list[Issue]:
         if not (SITE / "assets" / asset).is_file():
             raise ValueError(f"Missing news image copy: {asset}")
     def news_page(selected_week: date, site_root: str) -> str:
-        options = "\n".join(
-            f'<a class="week-option" href="{site_root}news/{week_slug(week)}/" role="option" '
-            f'data-week="{week.isoformat()}" data-week-path="{week_slug(week)}" '
-            f'aria-selected="{str(week == selected_week).lower()}">{week_label(week)}</a>'
-            for week in weeks
-        )
+        options = []
+        previous_year = None
+        for week in weeks:
+            year = week.isocalendar().year
+            if year != previous_year:
+                options.append(f'<div class="week-year" role="presentation">{year} 年</div>')
+                previous_year = year
+            latest = '<span class="week-latest">最新</span>' if week == latest_week else ''
+            options.append(f'<a class="week-option" href="{site_root}news/{week_slug(week)}/" role="option" '
+                f'data-week="{week.isoformat()}" data-week-path="{week_slug(week)}" '
+                f'aria-selected="{str(week == selected_week).lower()}"><span>{week_label(week)}</span>{latest}</a>')
         report = week_documents[selected_week]
         for original, asset in image_copies.items():
             report = report.replace(f'src="{escape(original)}"', f'src="{site_root}assets/{escape(asset)}"')
         return render(news_template, {
             "SITE_ROOT": site_root,
             "ASSET_REV": asset_rev,
-            "WEEK_OPTIONS": options,
+            "WEEK_OPTIONS": "\n".join(options),
             "CURRENT_WEEK": week_label(selected_week),
             "CATEGORY_TABS": "\n".join(tabs),
             "WEEKLY_REPORTS": report,
