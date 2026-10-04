@@ -475,7 +475,8 @@ def build(output: Path) -> list[Issue]:
     output.mkdir(parents=True)
     shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
-    asset_rev = hashlib.sha256((SITE / "assets/wiki-hub.css").read_bytes() + (SITE / "assets/news-filter.js").read_bytes() + (SITE / "assets/theme.js").read_bytes()).hexdigest()[:12]
+    asset_rev = hashlib.sha256(b''.join((SITE / "assets" / name).read_bytes()
+        for name in ("wiki-hub.css", "news-filter.js", "theme.js", "header.js"))).hexdigest()[:12]
     news_template = (SITE / "pages" / "news.html").read_text(encoding="utf-8")
     image_copies = json.loads((SITE / "assets/news/image-sources.json").read_text(encoding="utf-8"))
     for asset in image_copies.values():

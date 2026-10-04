@@ -7,6 +7,7 @@
   <meta name="description" content="Wiki Hub 实践经验。">
   <title>实践经验 · Wiki Hub</title>
   <script src="../assets/theme.js?v={{ASSET_REV}}"></script>
+  <script src="../assets/header.js?v={{ASSET_REV}}" defer></script>
   <link rel="stylesheet" href="../assets/wiki-hub.css?v={{ASSET_REV}}">
 </head>
 <body>
@@ -14,14 +15,17 @@
   <header class="site-header">
     <div class="shell site-header-inner">
       <a class="site-brand" href="../news/" aria-label="Wiki Hub 首页"><span class="brand-mark" aria-hidden="true">W</span><span>Wiki Hub</span></a>
-      <nav class="site-nav" aria-label="主导航">
+      <nav class="site-nav" id="site-nav" aria-label="主导航">
         <a class="site-nav-link" href="../news/">资讯干货</a>
-        <a class="site-nav-link" href="../notes/">踩坑记录</a>
         <a class="site-nav-link is-active" href="../practices/" aria-current="page">实践经验</a>
+        <a class="site-nav-link" href="../notes/">踩坑记录</a>
       </nav>
       <button class="theme-toggle" type="button" aria-label="切换深色模式" hidden>
         <svg class="theme-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13.2A9 9 0 0 1 10.8 3.1 9 9 0 1 0 20.9 13.2Z"/></svg>
         <svg class="theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5"/></svg>
+      </button>
+      <button class="nav-toggle" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="site-nav" hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path class="nav-line-top" d="M4 6h16"/><path class="nav-line-middle" d="M4 12h16"/><path class="nav-line-bottom" d="M4 18h16"/></svg>
       </button>
     </div>
   </header>
