@@ -63,7 +63,7 @@ class WeeklyPipelineTests(unittest.TestCase):
             sections.append(render(snippet("栏目模板"), {"SECTION_LABEL": f"{index:02d} · {category}"}))
             for item in range(2):
                 sections.append(render(snippet("NEWS ITEM 资讯模板"), {
-                    "SOURCE_NAME": "测试来源", "DATE": "2026-09-29", "FULL_TITLE": f"测试资讯 {index}-{item}",
+                    "TAG_1": "产品发布", "TAG_2": "开源", "DATE": "2026-09-29", "FULL_TITLE": f"测试资讯 {index}-{item}",
                     "FULL_SUMMARY": "测试摘要", "IMPACT": "测试影响", "OPTIONAL_IMAGES": "",
                     "OPTIONAL_PRODUCT_SCENARIO": "", "SOURCE_LINKS": '<a href="https://example.com/source">测试来源</a>',
                 }))
@@ -75,6 +75,11 @@ class WeeklyPipelineTests(unittest.TestCase):
             reports = root / "reports"
             archived, _ = archive_report(source, "2026-09-28", "2026-10-04", root=reports)
             self.assertEqual(len(parse_issue(archived).articles), 10)
+            mail = archived.read_text()
+            self.assertNotIn("SOURCE_NAME", mail)
+            self.assertLess(mail.index('class="news-date'), mail.index('class="news-tags"'))
+            self.assertLess(mail.index('class="news-date'), mail.index('来源：</strong>'))
+            self.assertEqual(parse_issue(archived).articles[0].meta, "2026-09-29")
             archive_report(CURRENT_REPORT, "2026-09-21", "2026-09-27", root=reports)
             with patch("scripts.build_site.REPORTS", reports):
                 build(root / "site")

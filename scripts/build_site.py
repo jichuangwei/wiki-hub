@@ -192,7 +192,7 @@ class ReportParser(HTMLParser):
 
         if self.story is None:
             return
-        if tag == "div" and not self.story.meta:
+        if tag == "div" and ("news-date" in (attr.get("class") or "").split() or (not self.story.meta and not self.story.title and "news-tags" not in (attr.get("class") or "").split())):
             self.div_parts = []
         elif tag == "h2" and not self.story.title:
             self.heading_parts = []
@@ -357,6 +357,20 @@ def image_gallery(images: list[str]) -> str:
     return '<div style="width:100%;font-size:0;line-height:0;margin:0 0 13px;">' + ''.join(slots) + '</div>'
 
 
+def news_metadata(tags: list[str], date_text: str) -> str:
+    labels = "".join(f'<span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:#e8edf5;border-radius:4px;font-size:12px;line-height:20px;color:#607089;">{escape(tag)}</span>' for tag in tags)
+    tags_html = f'<div class="news-tags" style="margin:14px 0 8px;">{labels}</div>' if labels else ""
+    return tags_html + f'<div class="news-date mail-subtle" style="margin:0 0 4px;font-size:12px;line-height:20px;color:#8090a6;">{escape(date_text)}</div>'
+
+
+def news_heading(title_html: str, date_text: str) -> str:
+    return ('<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 11px;"><tr>'
+            f'<td valign="top" style="padding:0 12px 0 0;">{title_html}</td>'
+            '<td align="right" valign="top" style="padding:3px 0 0;">'
+            f'<div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{escape(date_text)}</div>'
+            '</td></tr></table>')
+
+
 def render_mail_body(source: str, categories: list[str]) -> str:
     """Preserve the complete mail layout and annotate its rows for filtering."""
     body = re.search(r"<body\b[^>]*>(.*?)</body>", source, flags=re.S | re.I)
@@ -413,6 +427,61 @@ def render_mail_body(source: str, categories: list[str]) -> str:
         "font-size:20px;line-height:28px;color:#17233b": "font-size:18px;line-height:26px;color:#17233b",
     }.items():
         content = content.replace(old, new)
+    # Historical emails keep their archive bytes, but use the current separator
+    # layout on the website, just like newly generated issues.
+    content = content.replace("border:1px solid #e7edf5;border-radius:16px;", "border-bottom:1px solid #dde5f0;")
+    content = content.replace("border-bottom:2px solid #dde5f0;", "")
+    content = content.replace('class="story" style="padding:19px 20px;', 'class="story" style="padding:8px 0 20px;')
+    content = content.replace('class="story" style="padding:19px 0;', 'class="story" style="padding:8px 0 20px;')
+    content = content.replace('class="pad" style="padding:10px 12px 0;', 'class="pad" style="padding:4px 12px 0;')
+    content = content.replace('style="padding:0 0 10px;"', 'style="padding:0;"')
+    # Reuse the template's focus panel for older archives while retaining each
+    # issue's original highlight markup and count.
+    template = (ROOT / "templates/news/ai-agent-frontend-weekly-email.html").read_text(encoding="utf-8")
+    panel = re.search(r'<table\b[^>]*class="mail-focus focus-panel".*?</table>', template, flags=re.S).group(0)
+    def update_focus(match: re.Match[str]) -> str:
+        items = re.findall(r'<li\b[^>]*>(.*?)</li>', match.group(0), flags=re.S)
+        if not items:
+            return match.group(0)
+        rows = [f'<li style="padding:0 0 12px;">{item}</li>' for item in items]
+        return re.sub(r'(<ul\b[^>]*>).*?(</ul>)', lambda m: m.group(1) + ''.join(rows) + m.group(2), panel, flags=re.S)
+    content = re.sub(r'<table\b[^>]*(?:background:#eef4ff|class="mail-focus focus-panel")[^>]*>.*?</table>', update_focus, content, flags=re.S)
+    # Display archive dates beside their titles and existing tags above sources.
+    def move_metadata(match: re.Match[str]) -> str:
+        story = match.group(0)
+        meta = re.search(r'<div\b[^>]*>([^<]+)</div>\s*(?=<h2)', story)
+        if not meta:
+            return story
+        parts = [part.strip() for part in html.unescape(meta.group(1)).split(" · ")]
+        date_index = next((i for i, part in enumerate(parts) if re.search(r'\d{4}[-/.]\d|\d+\s*月\s*\d+(?:[、，,–—-]\d+)*\s*日', part)), None)
+        if date_index is None:
+            return story
+        # Legacy metadata uses either tag · organization · date or organization · date.
+        tags = parts[:1] if date_index >= 2 else []
+        date_text = " · ".join(parts[date_index:])
+        metadata = news_metadata(tags, "")
+        metadata = re.sub(r'<div class="news-date[^>]*>.*?</div>', '', metadata, flags=re.S)
+        story = story[:meta.start()] + story[meta.end():]
+        def move_date(heading: re.Match[str]) -> str:
+            title = re.sub(r'margin:[^;"]+', 'margin:0', heading.group(0), count=1)
+            return news_heading(title, date_text)
+        story = re.sub(r'<h2\b[^>]*>.*?</h2>', move_date, story, count=1, flags=re.S)
+        return re.sub(r'(?=<p\b[^>]*>\s*<strong[^>]*>来源[：:])', lambda _: metadata, story, count=1)
+
+    content = re.sub(r'<td class="story"[^>]*>.*?</td></tr></table>', move_metadata, content, flags=re.S)
+    content = content.replace("border-bottom:1px solid #dde5f0;", "border-bottom:1px solid #cbd5e1;")
+    # Restyle the three closing sections, preserving every original paragraph.
+    def update_summary(match: re.Match[str]) -> str:
+        body = match.group(1)
+        body = re.sub(r'(<h2\b[^>]*style=")[^"]*("[^>]*>)',
+                      r'\1margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#17233b;\2', body, count=1)
+        if "一句话趋势总结</h2>" in body:
+            body = re.sub(r'<p\b[^>]*>', '<p class="mail-ink" style="margin:0;font-size:16px;line-height:27px;font-weight:650;color:#17233b;">', body, count=1)
+        return ('<tr><td class="pad" style="padding:16px 12px 0;">'
+                '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;background:#edf1f7;border-radius:8px;">'
+                '<tr><td class="summary-content" style="padding:18px 20px;">' + body + '</td></tr></table></td></tr>')
+    content = re.sub(r'<tr><td class="pad"[^>]*>\s*(<h2\b[^>]*>(?:一句话趋势总结|本周动手验证|团队行动建议)</h2>.*?)</td></tr>',
+                     update_summary, content, flags=re.S)
     return content
 
 
@@ -435,7 +504,8 @@ def standalone_mail(items: list[StandaloneNews]) -> str:
         image = (image_gallery([f'<img src="{escape(article.image_url)}" alt="{escape(article.image_alt)}">']) if article.image_url else "")
         sections = "".join(f'<p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong style="color:#17233b;">{escape(label)}：</strong>{escape(body)}</p>' for label, body in article.sections)
         links = " · ".join(f'<a href="{escape(url)}">{escape(label)}</a>' for label, url in article.sources)
-        rows.append(f'<tr data-category="{escape(article.category)}" data-kind="news"><td style="padding:10px 12px 0;"><table width="100%" style="border:1px solid #e7edf5;border-radius:16px;"><tr><td style="padding:19px 20px;"><div style="font-size:12px;color:#8090a6;">{escape(article.meta)}</div><h2 style="font-size:18px;line-height:26px;">{escape(article.title)}</h2>{image}{sections}<p style="font-size:13px;color:#607089;"><strong>来源：</strong>{links}</p></td></tr></table></td></tr>')
+        heading = news_heading(f'<h2 style="margin:0;font-size:18px;line-height:26px;">{escape(article.title)}</h2>', item.published.isoformat())
+        rows.append(f'<tr data-category="{escape(article.category)}" data-kind="news"><td style="padding:4px 12px 0;"><table width="100%" style="border-bottom:1px solid #cbd5e1;"><tr><td style="padding:8px 0 20px;">{heading}{image}{sections}<p style="font-size:13px;color:#607089;"><strong>来源：</strong>{links}</p></td></tr></table></td></tr>')
     return '<table role="presentation" width="100%">' + "".join(rows) + '</table>'
 
 

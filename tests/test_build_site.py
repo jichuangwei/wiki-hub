@@ -132,9 +132,13 @@ class BuildSiteTests(unittest.TestCase):
         body = render_mail_body(source.read_text(encoding="utf-8"), issue.categories)
         parser = ReportParser()
         parser.feed(body)
+        self.assertEqual(parser.highlights, issue.highlights)
         self.assertEqual([(a.title, a.sections, a.sources) for a in parser.articles],
                          [(a.title, a.sections, a.sources) for a in issue.articles])
         self.assertEqual(body.count('data-kind="news"'), 12)
+        self.assertEqual(body.count('class="news-date'), 12)
+        self.assertEqual(body.count('class="mail-summary"'), 3)
+        self.assertNotIn('decimal-leading-zero', body)
         self.assertEqual(body.count('data-kind="section"'), 5)
 
     def test_week38_mail_keeps_content_and_filters_all_articles(self):

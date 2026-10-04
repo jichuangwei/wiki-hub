@@ -17,7 +17,7 @@ def deep_html(count=3):
     rows = [render(fragments["栏目模板"], {"SECTION_LABEL": f"01 · {DEEP_CATEGORY}"})]
     for index in range(count):
         item = render(fragments["NEWS ITEM 资讯模板"], {
-            "SOURCE_NAME": "测试机构", "DATE": "2026-09-01", "FULL_TITLE": f"深度资料 {index}",
+            "TAG_1": "研究进展", "TAG_2": "开源", "DATE": "2026-09-01", "FULL_TITLE": f"深度资料 {index}",
             "FULL_SUMMARY": "摘要", "IMPACT": "影响", "OPTIONAL_IMAGES": "",
             "OPTIONAL_PRODUCT_SCENARIO": '<p><strong>证据强弱：</strong>厂商评测，待独立核验</p>'
                                          '<p><strong>前端实践：</strong>在真实仓库复现实验</p>',
@@ -40,7 +40,7 @@ class DeepReportTests(unittest.TestCase):
                 rows.append(render(fragments["栏目模板"], {"SECTION_LABEL": f"{number:02d} · {category}"}))
                 for index in range(deep_count if category == DEEP_CATEGORY else news_count):
                     rows.append(render(fragments["NEWS ITEM 资讯模板"], {
-                        "SOURCE_NAME": "测试机构", "DATE": "2026-09-01", "FULL_TITLE": f"{category} {index}",
+                        "TAG_1": "研究进展", "TAG_2": "开源", "DATE": "2026-09-01", "FULL_TITLE": f"{category} {index}",
                         "FULL_SUMMARY": "摘要", "IMPACT": "影响", "OPTIONAL_IMAGES": "",
                         "OPTIONAL_PRODUCT_SCENARIO": '<p><strong>证据强弱：</strong>证据</p><p><strong>前端实践：</strong>实践</p>' if category == DEEP_CATEGORY else "",
                         "SOURCE_LINKS": '<a href="https://example.com/source">来源</a>',

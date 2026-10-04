@@ -149,3 +149,9 @@ img { display: block; max-width: 100%; }
 .week-latest { padding: 2px 5px; color: var(--blue); background: var(--active); border-radius: 4px; font-size: 10px; }
 .week-option::after { width: 12px; margin-left: auto; color: var(--blue); content: ""; }
 .week-option[aria-selected="true"]::after { content: "✓"; }
+
+[data-theme="dark"] .weekly-report .mail-tag { background:#223047 !important; color:var(--muted) !important; }
+[data-theme="dark"] .weekly-report [style*="border-bottom:1px solid #cbd5e1"] { border-color:#475569 !important; }
+
+[data-theme="dark"] .weekly-report .mail-focus, [data-theme="dark"] .weekly-report .mail-summary { background:var(--surface) !important; }
+[data-theme="dark"] .weekly-report .mail-focus { border-color:#475569 !important; }
