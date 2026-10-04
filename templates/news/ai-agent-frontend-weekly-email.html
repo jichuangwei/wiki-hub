@@ -12,7 +12,7 @@
   img{border:0;display:block;max-width:100%;height:auto;}
   a{color:#2456cd;text-decoration:underline;}
   @media only screen and (max-width:640px){.pad{padding-left:12px!important;padding-right:12px!important}.story{padding:8px 0 16px!important}.focus-content{padding:12px!important}.summary-content{padding:16px!important}.hero-title{font-size:27px!important;line-height:1.25!important}}
-  @media only screen and (max-width:480px){.image-slot{display:block!important;width:100%!important;min-width:0!important;margin:0 auto!important}.image-slot>div{padding:0 0 8px!important}.image-slot img{margin:0 auto!important}}
+  @media only screen and (max-width:480px){.image-slot{display:block!important;width:100%!important;min-width:0!important;margin:0!important}.image-slot>div{padding:0 0 8px!important}.image-slot img{margin:0!important}}
   @media (prefers-color-scheme:dark){
     .mail-bg{background-color:#111827!important;}
     .mail-tag{background-color:#223047!important;color:#a7b6cc!important;}
@@ -56,8 +56,8 @@
 <tr><td class="focus-wrap" style="padding:0 12px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-focus focus-panel" style="width:100%;border:1px solid #cbd5e1;border-radius:12px;border-collapse:separate;border-spacing:0;">
 <tr><td class="focus-content mail-focus" style="padding:12px 14px;border-radius:11px;">
-<h2 class="mail-ink" style="margin:0;font-size:20px;line-height:28px;font-weight:800;color:#17233b;"><strong>本期聚焦</strong></h2>
-<ul style="margin:8px 0 0;padding-left:20px;list-style-type:disc;font-size:15px;line-height:25px;color:#394a64;" class="mail-ink">
+<h2 style="margin:0;font-size:20px;line-height:28px;font-weight:800;color:#17233b;"><strong>本期聚焦</strong></h2>
+<ul style="margin:8px 0 0;padding-left:20px;list-style-type:disc;font-size:15px;line-height:25px;color:#394a64;">
 <li style="padding:0 0 5px;"><strong>{{WEEK_HIGHLIGHT_1_TITLE}}</strong>：{{WEEK_HIGHLIGHT_1}}</li>
 <li style="padding:0 0 5px;"><strong>{{WEEK_HIGHLIGHT_2_TITLE}}</strong>：{{WEEK_HIGHLIGHT_2}}</li>
 <li style="padding:0 0 5px;"><strong>{{WEEK_HIGHLIGHT_3_TITLE}}</strong>：{{WEEK_HIGHLIGHT_3}}</li>
@@ -74,11 +74,11 @@
 <td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{{S1_N1_DATE}}</div></td>
 </tr></table>
 <!-- 配图槽位：每条 1–2 张。发送前以对应新闻的官方图片替换使用的槽位；未使用槽位保留外层 div，只清空槽位内占位表格。没有可靠图片时，删除整个配图区。 -->
-<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
 </div>
-<!-- 替换示例：<img src="{{S1_N1_IMAGE_1_URL}}" height="200" alt="{{S1_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">；第 2 张使用 IMAGE_2。 -->
+<!-- 替换示例：<img src="{{S1_N1_IMAGE_1_URL}}" height="200" alt="{{S1_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">；第 2 张使用 IMAGE_2。 -->
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">摘要：</strong>{{S1_N1_FULL_SUMMARY}}</p>
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>{{S1_N1_IMPACT}}</p>
 <!-- 产品类保留下一段并填写，非产品类删除整段。 -->
@@ -99,11 +99,11 @@
 <td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{{S2_N1_DATE}}</div></td>
 </tr></table>
 <!-- 配图槽位：每条 1–2 张。发送前以对应新闻的官方图片替换使用的槽位；未使用槽位保留外层 div，只清空槽位内占位表格。没有可靠图片时，删除整个配图区。 -->
-<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
 </div>
-<!-- 替换示例：<img src="{{S2_N1_IMAGE_1_URL}}" height="200" alt="{{S2_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">；第 2 张使用 IMAGE_2。 -->
+<!-- 替换示例：<img src="{{S2_N1_IMAGE_1_URL}}" height="200" alt="{{S2_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">；第 2 张使用 IMAGE_2。 -->
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">摘要：</strong>{{S2_N1_FULL_SUMMARY}}</p>
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>{{S2_N1_IMPACT}}</p>
 <!-- 产品类保留下一段并填写，非产品类删除整段。 -->
@@ -124,11 +124,11 @@
 <td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{{S3_N1_DATE}}</div></td>
 </tr></table>
 <!-- 配图槽位：每条 1–2 张。发送前以对应新闻的官方图片替换使用的槽位；未使用槽位保留外层 div，只清空槽位内占位表格。没有可靠图片时，删除整个配图区。 -->
-<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
 </div>
-<!-- 替换示例：<img src="{{S3_N1_IMAGE_1_URL}}" height="200" alt="{{S3_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">；第 2 张使用 IMAGE_2。 -->
+<!-- 替换示例：<img src="{{S3_N1_IMAGE_1_URL}}" height="200" alt="{{S3_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">；第 2 张使用 IMAGE_2。 -->
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">摘要：</strong>{{S3_N1_FULL_SUMMARY}}</p>
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>{{S3_N1_IMPACT}}</p>
 <!-- 产品类保留下一段并填写，非产品类删除整段。 -->
@@ -149,11 +149,11 @@
 <td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{{S4_N1_DATE}}</div></td>
 </tr></table>
 <!-- 配图槽位：每条 1–2 张。发送前以对应新闻的官方图片替换使用的槽位；未使用槽位保留外层 div，只清空槽位内占位表格。没有可靠图片时，删除整个配图区。 -->
-<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
 </div>
-<!-- 替换示例：<img src="{{S4_N1_IMAGE_1_URL}}" height="200" alt="{{S4_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">；第 2 张使用 IMAGE_2。 -->
+<!-- 替换示例：<img src="{{S4_N1_IMAGE_1_URL}}" height="200" alt="{{S4_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">；第 2 张使用 IMAGE_2。 -->
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">摘要：</strong>{{S4_N1_FULL_SUMMARY}}</p>
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>{{S4_N1_IMPACT}}</p>
 <!-- 产品类保留下一段并填写，非产品类删除整段。 -->
@@ -174,11 +174,11 @@
 <td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{{S5_N1_DATE}}</div></td>
 </tr></table>
 <!-- 配图槽位：每条 1–2 张。发送前以对应新闻的官方图片替换使用的槽位；未使用槽位保留外层 div，只清空槽位内占位表格。没有可靠图片时，删除整个配图区。 -->
-<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
-<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:0 4px 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 1</td></tr></table></div></div>
+<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border:1px dashed #aab9ce;background:#f6f8fb;" class="mail-surface mail-border"><tr><td align="center" height="200" style="height:200px;padding:4px;font-size:12px;line-height:18px;color:#6d7d96;" class="mail-subtle">配图 2</td></tr></table></div></div>
 </div>
-<!-- 替换示例：<img src="{{S5_N1_IMAGE_1_URL}}" height="200" alt="{{S5_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">；第 2 张使用 IMAGE_2。 -->
+<!-- 替换示例：<img src="{{S5_N1_IMAGE_1_URL}}" height="200" alt="{{S5_N1_IMAGE_1_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">；第 2 张使用 IMAGE_2。 -->
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">摘要：</strong>{{S5_N1_FULL_SUMMARY}}</p>
 <p style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;" class="mail-muted"><strong style="color:#17233b;" class="mail-ink">为什么值得关注 / 对前端或 Agent 开发的影响：</strong>{{S5_N1_IMPACT}}</p>
 <!-- 产品类保留下一段并填写，非产品类删除整段。 -->
@@ -191,8 +191,8 @@
 <!-- END NEWS ITEM: S5, item 1 -->
 <tr><td class="pad" style="padding:16px 12px 0;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:8px;">
-<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#17233b;" class="mail-ink">一句话趋势总结</h2>
-<p style="margin:0;font-size:16px;line-height:27px;font-weight:650;color:#394a64;" class="mail-ink">{{ONE_SENTENCE_TREND}}</p>
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#17233b;" class="mail-ink">一句话总结</h2>
+<ul style="margin:0;padding:0;list-style-type:none;font-size:14px;line-height:23px;color:#394a64;"><li style="padding:0;">{{ONE_SENTENCE_TREND}}</li></ul>
 </td></tr></table>
 </td></tr>
 <tr><td class="pad" style="padding:16px 12px 0;">

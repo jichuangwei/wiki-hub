@@ -351,10 +351,9 @@ def image_gallery(images: list[str]) -> str:
     slots = []
     for index, image in enumerate(images):
         image = re.sub(r'\s(?:style|width|height)="[^"]*"', '', image, flags=re.I)
-        image = image.rstrip('>').rstrip('/') + ' height="200" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">'
-        padding = "0 4px 8px"
-        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:{padding};">{image}</div></div>')
-    return '<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">' + ''.join(slots) + '</div>'
+        image = image.rstrip('>').rstrip('/') + ' height="200" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">'
+        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;">{image}</div></div>')
+    return '<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">' + ''.join(slots) + '</div>'
 
 
 def news_metadata(tags: list[str], date_text: str) -> str:
@@ -388,7 +387,7 @@ def render_mail_body(source: str, categories: list[str]) -> str:
     content = re.sub(r'<table\b[^>]*style="[^"]*table-layout:fixed[^\"]*"[^>]*>.*?</table>',
                      migrate_gallery, content, flags=re.S | re.I)
     content = content.replace('padding:0 4px 4px 0;', 'padding:0 4px 8px;').replace('padding:0 0 4px 4px;', 'padding:0 4px 8px;')
-    content = content.replace('width:100%;font-size:0;line-height:0;margin:0 0 13px;', 'width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;')
+    content = content.replace('width:100%;font-size:0;line-height:0;margin:0 0 13px;', 'width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;')
     # Apply the current week-first heading order to archived report pages.
     def week_before_date(match: re.Match[str]) -> str:
         attrs, text = match.groups()
@@ -423,7 +422,7 @@ def render_mail_body(source: str, categories: list[str]) -> str:
                 if heading.endswith(candidate):
                     category = candidate
                     break
-        if re.search(r"<h2[^>]*>\s*(?:一句话趋势总结|本周动手验证|团队行动建议)", chunk):
+        if re.search(r"<h2[^>]*>\s*(?:一句话总结|一句话趋势总结|本周动手验证|团队行动建议)", chunk):
             category = ""
         if category:
             chunk = chunk.replace("<tr>", f'<tr data-category="{escape(category)}" data-kind="{kind}">', 1)
@@ -456,9 +455,13 @@ def render_mail_body(source: str, categories: list[str]) -> str:
         items = re.findall(r'<li\b[^>]*>(.*?)</li>', match.group(0), flags=re.S)
         if not items:
             return match.group(0)
-        rows = [f'<li style="padding:0 0 5px;">{item}</li>' for item in items]
+        rows = []
+        for item in items:
+            item = item.replace(' class="mail-ink"', '')
+            rows.append(f'<li style="padding:0 0 5px;">{item}</li>')
         return re.sub(r'(<ul\b[^>]*>).*?(</ul>)', lambda m: m.group(1) + ''.join(rows) + m.group(2), panel, flags=re.S)
     content = re.sub(r'<table\b[^>]*(?:background:#eef4ff|class="mail-focus focus-panel")[^>]*>.*?</table>', update_focus, content, flags=re.S)
+    content = content.replace("一句话趋势总结", "一句话总结")
     content = re.sub(r'<td class="pad"[^>]*>(\s*<table\b[^>]*class="mail-focus focus-panel")',
                      r'<td class="focus-wrap" style="padding:0 12px;">\1', content)
     content = content.replace('class="focus-wrap" style="padding:0;"', 'class="focus-wrap" style="padding:0 12px;"')
@@ -496,12 +499,17 @@ def render_mail_body(source: str, categories: list[str]) -> str:
                       r'\1margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#17233b;\2', body, count=1)
         body = body.replace('class="mail-muted"', 'class="mail-ink"')
         body = body.replace('color:#607089;', 'color:#394a64;')
-        if "一句话趋势总结</h2>" in body:
-            body = re.sub(r'<p\b[^>]*>', '<p class="mail-ink" style="margin:0;font-size:16px;line-height:27px;font-weight:650;color:#394a64;">', body, count=1)
+        if re.search(r"(?:一句话总结|一句话趋势总结)</h2>", body):
+            def trend_list(match: re.Match[str]) -> str:
+                description = match.group(1)
+                return ('<ul style="margin:0;padding:0;list-style-type:none;'
+                        'font-size:14px;line-height:23px;color:#394a64;">'
+                        f'<li style="padding:0;">{description}</li></ul>')
+            body = re.sub(r'<p\b[^>]*>(.*?)</p>', trend_list, body, count=1, flags=re.S)
         return ('<tr><td class="pad" style="padding:16px 12px 0;">'
                 '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #cbd5e1;border-radius:8px;border-collapse:separate;border-spacing:0;">'
                 '<tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:8px;">' + body + '</td></tr></table></td></tr>')
-    content = re.sub(r'<tr><td class="pad"[^>]*>\s*(<h2\b[^>]*>(?:一句话趋势总结|本周动手验证|团队行动建议)</h2>.*?)</td></tr>',
+    content = re.sub(r'<tr><td class="pad"[^>]*>\s*(<h2\b[^>]*>(?:一句话总结|一句话趋势总结|本周动手验证|团队行动建议)</h2>.*?)</td></tr>',
                      update_summary, content, flags=re.S)
     return content
 

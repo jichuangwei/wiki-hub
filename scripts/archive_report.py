@@ -36,9 +36,12 @@ def archive_report(source: Path, start: str, end: str, topic: str = "ai-agent-fr
             counts = Counter(article.category for article in issue.articles)
             if any(not 2 <= count <= 4 for category, count in counts.items() if category != DEEP_CATEGORY):
                 raise ValueError("Each AI category must have 2–4 articles")
-        for heading in ("一句话趋势总结", "本周动手验证", "团队行动建议"):
-            if heading not in content.decode("utf-8"):
+        report_html = content.decode("utf-8")
+        for heading in ("本周动手验证", "团队行动建议"):
+            if heading not in report_html:
                 raise ValueError(f"Missing report section: {heading}")
+        if not any(name in report_html for name in ("一句话总结", "一句话趋势总结")):
+            raise ValueError("Missing report section: 一句话总结")
     target = root / canonical
     if not target.exists() and (root / legacy).exists():
         target = root / legacy
