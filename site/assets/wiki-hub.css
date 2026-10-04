@@ -178,3 +178,5 @@ img { display: block; max-width: 100%; }
 [data-theme="dark"] .weekly-report table.mail-summary { border-color:#475569 !important; }
 
 [data-theme="dark"] .weekly-report [style*="color:#394a64"] { color:var(--muted) !important; }
+
+.weekly-report .focus-panel { background: #e8eef8; }

@@ -351,8 +351,8 @@ def image_gallery(images: list[str]) -> str:
     slots = []
     for index, image in enumerate(images):
         image = re.sub(r'\s(?:style|width|height)="[^"]*"', '', image, flags=re.I)
-        image = image.rstrip('>').rstrip('/') + ' height="200" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0;">'
-        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:48%;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;">{image}</div></div>')
+        image = image.rstrip('>').rstrip('/') + ' height="200" style="display:block;width:auto;max-width:420px;height:200px;object-fit:contain;object-position:left center;border:0;margin:0;">'
+        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:auto;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;">{image}</div></div>')
     return '<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">' + ''.join(slots) + '</div>'
 
 
@@ -461,6 +461,11 @@ def render_mail_body(source: str, categories: list[str]) -> str:
             rows.append(f'<li style="padding:0 0 5px;">{item}</li>')
         return re.sub(r'(<ul\b[^>]*>).*?(</ul>)', lambda m: m.group(1) + ''.join(rows) + m.group(2), panel, flags=re.S)
     content = re.sub(r'<table\b[^>]*(?:background:#eef4ff|class="mail-focus focus-panel")[^>]*>.*?</table>', update_focus, content, flags=re.S)
+    # Improve reading without modifying historical email archives.
+    content = content.replace("max-width:1180px", "max-width:1000px")
+    content = content.replace("font-size:14px;line-height:23px", "font-size:15px;line-height:26px")
+    content = content.replace("margin:0 0 10px;font-size:15px", "margin:0 0 14px;font-size:15px")
+    content = content.replace("object-fit:cover", "object-fit:contain;object-position:left center")
     content = content.replace("一句话趋势总结", "一句话总结")
     content = re.sub(r'<td class="pad"[^>]*>(\s*<table\b[^>]*class="mail-focus focus-panel")',
                      r'<td class="focus-wrap" style="padding:0 12px;">\1', content)
@@ -511,7 +516,43 @@ def render_mail_body(source: str, categories: list[str]) -> str:
                 '<tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:8px;">' + body + '</td></tr></table></td></tr>')
     content = re.sub(r'<tr><td class="pad"[^>]*>\s*(<h2\b[^>]*>(?:一句话总结|一句话趋势总结|本周动手验证|团队行动建议)</h2>.*?)</td></tr>',
                      update_summary, content, flags=re.S)
-    return content
+    # Ordinary image links work in both the web page and email clients.
+    def link_image(match: re.Match[str]) -> str:
+        if match.group(1):
+            return match.group(0)
+        image = match.group(2)
+        src = re.search(r'\bsrc="([^"]+)"', image)
+        if not src or not valid_https(html.unescape(src.group(1))):
+            return image
+        return f'<a href="{html.escape(html.unescape(src.group(1)), quote=True)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">{image}</a>'
+
+    content = re.sub(r'(<a\b[^>]*>\s*)?(<img\b[^>]*>)(\s*</a>)?', link_image, content, flags=re.I)
+    content = re.sub(r'(<strong\b[^>]*>)(?:为什么值得关注[^<]*|对(?:前端|Agent)[^<]*影响|适用场景与理由)[：:]',
+                     lambda m: m.group(1) + ("适用场景：" if "适用场景" in m.group(0) else "影响与分析："), content)
+    content = content.replace("margin:4px 0 11px;", "margin:4px 0 12px;")
+    content = content.replace("text-align:left;margin:0 0 13px;", "text-align:left;margin:0 0 8px;")
+    content = content.replace("padding:22px 12px 0;", "padding:28px 12px 0;")
+    content = content.replace("font-size:16px;line-height:24px;font-weight:800;letter-spacing:.3px;", "font-size:18px;line-height:26px;font-weight:800;letter-spacing:.3px;")
+    # Put event tags directly below the heading without altering archive files.
+    chunks = re.split(r'(?=<td class="story")', content)
+    for index, chunk in enumerate(chunks):
+        if not chunk.startswith('<td class="story"'):
+            continue
+        tags = re.search(r'<div class="news-tags"[^>]*>.*?</div>', chunk, flags=re.S)
+        if not tags:
+            continue
+        tag_html = tags.group(0).replace("margin:14px 0 8px;", "margin:0 0 8px;")
+        chunk = chunk[:tags.start()] + chunk[tags.end():]
+        heading = re.search(r'<h2\b[^>]*>.*?</h2>', chunk, flags=re.S)
+        if not heading:
+            continue
+        table_end = chunk.find("</tr></table>", heading.end())
+        insert_at = table_end + len("</tr></table>") if table_end >= 0 else heading.end()
+        chunks[index] = chunk[:insert_at] + tag_html + chunk[insert_at:]
+    content = "".join(chunks)
+    content = content.replace("padding:28px 12px 0;", "padding:32px 12px 0;")
+    content = content.replace("font-size:18px;line-height:26px;font-weight:800;letter-spacing:.3px;", "font-size:19px;line-height:28px;font-weight:800;letter-spacing:.3px;")
+    return content.replace("font-size:14px;line-height:23px", "font-size:15px;line-height:26px")
 
 
 def email_styles() -> str:

@@ -25,17 +25,17 @@ def template_fragments() -> dict[str, str]:
     images_start = item.index("<!-- 配图槽位：")
     images_end = item.index("<p style=", images_start)
     item = item[:images_start] + "{{OPTIONAL_IMAGES}}" + item[images_end:]
-    item = re.sub(r"<p[^>]*><strong[^>]*>适用场景 / 理由：</strong>.*?</p>", "{{OPTIONAL_PRODUCT_SCENARIO}}", item)
+    item = re.sub(r"<p[^>]*><strong[^>]*>(?:适用场景 / 理由|适用场景)：</strong>.*?</p>", "{{OPTIONAL_PRODUCT_SCENARIO}}", item)
     item = re.sub(r'<a href="\{\{S1_N1_SOURCE_URL\}\}">.*?</a>', "{{SOURCE_LINKS}}", item)
     item = compact(item).replace("S1_N1_", "")
     tail = source.index("<!-- END NEWS ITEM: S5, item 1 -->")
     shell = compact(source[:section_start] + "{{SECTIONS_HTML}}" + source[tail:])
-    scenario = '<p class="mail-muted" style="margin:0 0 10px;font-size:14px;line-height:23px;color:#607089;"><strong class="mail-ink" style="color:#17233b;">适用场景 / 理由：</strong>{{PRODUCT_SCENARIO}}</p>'
-    images = '<div style="width:100%;font-size:0;line-height:0;text-align:center;margin:0 0 13px;">'
-    for index, padding in enumerate(("0 4px 8px", "0 4px 8px"), 1):
-        images += f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:50%;min-width:180px;max-width:420px;"><div style="padding:{padding};">{{{{IMAGE_{index}}}}}</div></div>'
+    scenario = '<p class="mail-muted" style="margin:0 0 14px;font-size:15px;line-height:26px;color:#607089;"><strong class="mail-ink" style="color:#17233b;">适用场景：</strong>{{PRODUCT_SCENARIO}}</p>'
+    images = '<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 8px;">'
+    for index, padding in enumerate(("0 0 8px", "0 0 8px"), 1):
+        images += f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:auto;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:{padding};">{{{{IMAGE_{index}}}}}</div></div>'
     images += "</div>"
-    image = '<img src="{{IMAGE_URL}}" height="200" alt="{{IMAGE_ALT}}" style="display:block;width:100%;max-width:420px;height:200px;object-fit:cover;border:0;margin:0 auto;">'
+    image = '<a href="{{IMAGE_URL}}" target="_blank" style="display:inline-block;text-decoration:none;"><img src="{{IMAGE_URL}}" height="200" alt="{{IMAGE_ALT}}" style="display:block;width:auto;max-width:420px;height:200px;object-fit:contain;object-position:left center;border:0;margin:0;"></a>'
     return dict((
         ("邮件主模板", shell), ("栏目模板", section), ("NEWS ITEM 资讯模板", item),
         ("产品适用场景模板", scenario), ("配图模板", images), ("单张图片模板", image),

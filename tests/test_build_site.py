@@ -11,6 +11,18 @@ CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
 WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/week-38.html"
 
 
+def current_sections(sections):
+    """Only the visible section labels change; keep every paragraph intact."""
+    result = []
+    for label, text in sections:
+        if label.startswith("为什么值得关注") or re.match(r"对(?:前端|Agent).*影响", label):
+            label = "影响与分析"
+        elif label == "适用场景与理由":
+            label = "适用场景"
+        result.append((label, text))
+    return result
+
+
 class BuildSiteTests(unittest.TestCase):
     def test_week_path_uses_iso_week_year(self):
         self.assertEqual(week_slug(date(2025, 12, 29)), "2026-week-1")
@@ -135,7 +147,7 @@ class BuildSiteTests(unittest.TestCase):
         parser.feed(body)
         self.assertEqual(parser.highlights, issue.highlights)
         self.assertEqual([(a.title, a.sections, a.sources) for a in parser.articles],
-                         [(a.title, a.sections, a.sources) for a in issue.articles])
+                         [(a.title, current_sections(a.sections), a.sources) for a in issue.articles])
         self.assertEqual(body.count('data-kind="news"'), 12)
         self.assertEqual(body.count('class="news-date'), 12)
         self.assertEqual(body.count('class="mail-summary"'), 3)
@@ -162,7 +174,7 @@ class BuildSiteTests(unittest.TestCase):
         parser = ReportParser()
         parser.feed(body)
         self.assertEqual([(a.title, a.sections, a.sources) for a in parser.articles],
-                         [(a.title, a.sections, a.sources) for a in issue.articles])
+                         [(a.title, current_sections(a.sections), a.sources) for a in issue.articles])
         self.assertEqual(body.count('data-kind="news"'), 10)
         self.assertEqual(body.count('data-kind="section"'), 5)
         conclusion = re.search(r'<h2\b[^>]*>一句话总结', body)
@@ -185,6 +197,9 @@ class BuildSiteTests(unittest.TestCase):
                     self.assertEqual(re.search(fr'{attribute}="([^"]*)"', before).group(1),
                                      re.search(fr'{attribute}="([^"]*)"', after).group(1))
                 self.assertIn('max-width:420px;height:200px', after)
+                self.assertIn('object-fit:contain', after)
+                image_url = re.search(r'src="([^"]*)"', after).group(1)
+                self.assertIn(f'href="{image_url}"', body)
             self.assertEqual(body.count('class="image-slot"'), len(original_images))
             self.assertEqual(source.read_bytes(), original)
 
