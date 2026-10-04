@@ -87,7 +87,7 @@ img { display: block; max-width: 100%; }
 .category-tab.is-active { color: var(--blue); background: var(--active); border-color: #c7d7fa; }
 .category-tab span { margin-left: 4px; opacity: .75; }
 .week-long { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.week-picker { position: relative; flex: 0 0 auto; width: 228px; }
+.week-picker { position: relative; flex: 0 0 auto; width: 288px; }
 .filter-trigger { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; height: 40px; padding: 0 13px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 9px; font-size: 13px; font-weight: 650; text-align: left; white-space: nowrap; }
 .category-trigger.filter-trigger { display: none; }
 .filter-trigger:hover, .filter-trigger[aria-expanded="true"] { border-color: var(--line); background: var(--hover); }
@@ -156,8 +156,11 @@ img { display: block; max-width: 100%; }
   .has-filters .category-tabs { display: none; position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; width: 290px; max-width: calc(100vw - 16px); padding: 5px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 12px 30px rgba(19, 45, 92, .14); }
   .has-filters .category-picker.is-open .category-tabs { display: flex; flex-direction: column; gap: 2px; }
   .has-filters .category-tab.is-active::after { display: none; }
-  .filter-trigger { padding: 0 12px; }
+  .filter-trigger { padding: 0 10px; }
+  .week-trigger { gap: 6px; }
 }
+
+@media (max-width: 360px) { .week-trigger { padding:0 8px; font-size:12px; } }
 
 .week-year { padding: 8px 9px 5px; color: var(--subtle); font-size: 11px; font-weight: 650; }
 .week-latest { padding: 2px 5px; color: var(--blue); background: var(--active); border-radius: 4px; font-size: 10px; }
