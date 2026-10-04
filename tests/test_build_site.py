@@ -81,7 +81,7 @@ class BuildSiteTests(unittest.TestCase):
             self.assertLess(notes.index('<h2>QQ 邮箱'), notes.index('<p>QQ 邮箱会自动转换'))
             self.assertLess(notes.index('<p>QQ 邮箱会自动转换'), notes.index('<time datetime="2026-10-04"'))
             detail = (output / "notes/qq-mail-dark-mode-colors/index.html").read_text(encoding="utf-8")
-            self.assertIn('<h2>现象</h2>', detail)
+            self.assertRegex(detail, r'<h2(?: id="[^"]+")?>现象</h2>')
             self.assertIn('class="note-body"', detail)
             self.assertIn('href="../../assets/wiki-hub.css', detail)
             self.assertIn('class="content-empty" id="empty-state" hidden', home)

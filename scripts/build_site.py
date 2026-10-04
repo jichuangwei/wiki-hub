@@ -16,9 +16,9 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 if __package__:
-    from .build_notes import parse_note, render_note_body
+    from .build_notes import article_layout, parse_note, render_note_body
 else:
-    from build_notes import parse_note, render_note_body
+    from build_notes import article_layout, parse_note, render_note_body
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -616,7 +616,7 @@ def build(output: Path) -> list[Issue]:
     shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
     asset_rev = hashlib.sha256(b''.join((SITE / "assets" / name).read_bytes()
-        for name in ("wiki-hub.css", "news-filter.js", "theme.js", "header.js"))).hexdigest()[:12]
+        for name in ("wiki-hub.css", "news-filter.js", "theme.js", "header.js", "article.js"))).hexdigest()[:12]
     news_template = (SITE / "pages" / "news.html").read_text(encoding="utf-8")
     image_copies = json.loads((SITE / "assets/news/image-sources.json").read_text(encoding="utf-8"))
     for asset in image_copies.values():
@@ -684,13 +684,15 @@ def build(output: Path) -> list[Issue]:
         }).replace("<!--NOTES_CONTENT-->", notes_content)
         (output / section / "index.html").write_text(notes_page, encoding="utf-8")
         for note in notes:
+            note_body, note_toc = article_layout(render_note_body(note))
             note_page = render((SITE / "pages" / detail_template).read_text(encoding="utf-8"), {
                 "ASSET_REV": asset_rev,
+                "NOTE_LAYOUT_CLASS": " has-toc" if note_toc else "",
                 "NOTE_TITLE": escape(note.title),
                 "NOTE_SUMMARY": escape(note.summary),
                 "NOTE_DATE_ISO": note.published.isoformat(),
                 "NOTE_DATE": f"{note.published:%Y.%m.%d}",
-            }).replace("<!--NOTE_BODY-->", render_note_body(note))
+            }).replace("<!--NOTE_BODY-->", note_body).replace("<!--NOTE_TOC-->", note_toc)
             note_dir = output / section / note.slug
             note_dir.mkdir()
             (note_dir / "index.html").write_text(note_page, encoding="utf-8")

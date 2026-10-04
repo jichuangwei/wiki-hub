@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.build_notes import parse_note, render_note_body
+from scripts.build_notes import article_layout, parse_note, render_note_body
 from scripts.build_site import build
 
 
@@ -35,6 +35,26 @@ summary: 问题摘要
             self.assertIn("<strong>相对路径</strong>", detail)
             self.assertIn("&lt;script&gt;", detail)
             self.assertNotIn("<script>alert", detail)
+
+    def test_directory_has_unique_links_and_preserves_heading_markup(self):
+        body = "".join("<h2>重复标题 <code>x</code></h2><p>正文</p>" for _ in range(6))
+        rendered, toc = article_layout(body)
+        for index in range(1, 7):
+            self.assertIn(f'id="section-{index}"', rendered)
+            self.assertIn(f'href="#section-{index}"', toc)
+        self.assertEqual(rendered.count("<code>x</code>"), 6)
+        self.assertIn("重复标题 x", toc)
+        _, short_toc = article_layout("<h2>原因</h2><p>短文</p>")
+        self.assertEqual(short_toc, "")
+
+    def test_article_links_open_new_tab_but_directory_stays_in_page(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "note.md"
+            path.write_text("---\ntitle: Test\ndate: 2026-10-03\nsummary: Test\n---\n\n[文档](https://example.com/docs)\n\n" + "## 章节\n\n正文\n\n" * 6, encoding="utf-8")
+            body, toc = article_layout(render_note_body(parse_note(path)))
+            self.assertIn('href="https://example.com/docs" target="_blank" rel="noopener noreferrer"', body)
+            self.assertIn('href="#section-1"', toc)
+            self.assertNotIn('target="_blank"', toc)
 
     def test_note_requires_complete_front_matter(self):
         with tempfile.TemporaryDirectory() as directory:

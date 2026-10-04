@@ -48,22 +48,22 @@ img { display: block; max-width: 100%; }
 .news-section { padding: 0 0 64px; }
 .notes-section { display: grid; place-items: center; min-height: calc(100vh - 68px); padding: 40px 12px 80px; }
 .notes-section.has-notes { display: block; padding-top: 38px; }
-.notes-list { width: 100%; margin: 0; padding: 0; list-style: none; }
+.notes-list { width: 100%; max-width:960px; margin: 0 auto; padding: 0; list-style: none; }
 .notes-list li { border-bottom: 1px solid var(--line); }
 .note-card { display: grid; grid-template-columns: minmax(0, 1fr) 92px; align-items: start; gap: 8px 20px; width: 100%; padding: 20px 0; color: var(--ink); text-decoration: none; }
 .note-card:focus-visible { outline-offset: 4px; }
 .note-card:hover h2, .note-card:focus-visible h2 { color: var(--blue); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .note-card time, .note-heading time { color: var(--subtle); font-size: 12px; font-weight: 650; }
-.note-card h2 { grid-column: 1; grid-row: 1; min-width: 0; margin: 0; font-size: 16px; line-height: 1.5; font-weight: 700; overflow-wrap: anywhere; }
-.note-card p { grid-column: 1 / -1; grid-row: 2; min-width: 0; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; }
+.note-card h2 { grid-column: 1; grid-row: 1; min-width: 0; margin: 0; font-size: 18px; line-height: 1.5; font-weight: 700; overflow-wrap: anywhere; }
+.note-card p { grid-column: 1 / -1; grid-row: 2; min-width: 0; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
 .note-card time { grid-column: 2; grid-row: 1; padding-top: 3px; text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.note-detail { max-width: 860px; margin: 0 auto; padding: 34px 12px 90px; }
-.note-back { display: inline-block; margin-bottom: 30px; color: var(--muted); font-size: 13px; text-decoration: none; }
-.note-back:hover { color: var(--blue); }
+.note-detail { max-width: 804px; margin: 0 auto; padding: 34px 12px 90px; }
+.note-back { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; margin: 0 0 16px -10px; padding: 6px 10px; border-radius: 7px; color: var(--muted); font-size: 13px; font-weight: 600; line-height: 22px; text-decoration: none; }
+.note-back:hover, .note-back:focus-visible { color: var(--blue); background: var(--active); }
 .note-heading { padding-bottom: 25px; border-bottom: 1px solid var(--line); }
-.note-heading h1 { margin: 10px 0 12px; font-size: 34px; line-height: 1.3; }
-.note-heading p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
-.note-body { color: var(--body-text); font-size: 15px; line-height: 1.85; overflow-wrap: anywhere; }
+.note-heading h1 { margin: 0 0 12px; font-size: 34px; line-height: 1.3; }
+.note-heading p { margin: 18px 0 0; padding: 12px 16px; border-left: 3px solid var(--blue); background: var(--surface); color: var(--body-text); font-size: 15px; line-height: 1.75; }
+.note-body { color: var(--body-text); font-size: 16px; line-height: 1.8; overflow-wrap: anywhere; }
 .note-body h2 { margin: 34px 0 12px; color: var(--ink); font-size: 22px; line-height: 1.4; }
 .note-body h3 { margin: 26px 0 10px; color: var(--ink); font-size: 18px; }
 .note-body p, .note-body ul, .note-body ol, .note-body blockquote { margin: 0 0 16px; }
@@ -180,3 +180,40 @@ img { display: block; max-width: 100%; }
 [data-theme="dark"] .weekly-report [style*="color:#394a64"] { color:var(--muted) !important; }
 
 .weekly-report .focus-panel { background: #e8eef8; }
+
+/* Shared article reading layout. */
+.note-heading { max-width: 780px; }
+.note-body { min-width: 0; }
+.note-body :is(h2, h3, h4) { scroll-margin-top: calc(var(--site-header-height) + 24px); }
+.note-body li + li { margin-top: 6px; }
+.note-body ul, .note-body ol { padding-left: 24px; }
+.note-body th { background: var(--surface); font-weight: 700; }
+.note-body tbody tr:nth-child(even) { background: var(--hover); }
+.note-body a { text-underline-offset: 3px; }
+.note-end { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); }
+.note-end .note-back { margin-bottom: 0; }
+.note-detail.has-toc { max-width: 1120px; }
+.note-reading-layout { display: grid; gap: 32px; margin-top: 28px; }
+.note-body > :first-child { margin-top: 0; }
+.has-toc .note-reading-layout { grid-template-columns: minmax(0, 780px) 220px; }
+.article-toc { align-self: start; position: sticky; top: calc(var(--site-header-height) + 24px); max-height: calc(100vh - var(--site-header-height) - 48px); overflow-y: auto; font-size: 13px; }
+.article-toc .toc-title { margin: 0; padding: 0 12px 12px; color: var(--ink); font-weight: 700; }
+.article-toc ol { margin: 0; padding: 0; list-style: none; border-left: 1px solid var(--line); }
+.article-toc a { display: block; padding: 7px 12px; border-left: 2px solid transparent; margin-left: -1px; color: var(--muted); text-decoration: none; line-height: 1.5; }
+.article-toc a:hover, .article-toc a[aria-current] { color: var(--blue); border-left-color: var(--blue); background: var(--active); }
+.article-toc .toc-level-3 a { padding-left: 24px; }
+.code-tools { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; gap: 12px; font-family: inherit; font-size: 12px; color: #b6c5dd; }
+.code-copy { padding: 4px 9px; border: 1px solid #52627b; border-radius: 5px; background: transparent; color: #e8eefc; cursor: pointer; font: inherit; }
+.code-copy:hover { background: #334155; }
+@media (max-width: 1000px) {
+  .note-detail.has-toc { max-width: 804px; }
+  .has-toc .note-reading-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .article-toc { display: none; }
+}
+@media (max-width: 640px) {
+  .note-card { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .note-card time { grid-column: 1; grid-row: 3; padding-top: 0; text-align: left; }
+  .note-card h2 { font-size: 17px; }
+  .note-heading h1 { font-size: 28px; overflow-wrap: anywhere; }
+  .note-body { font-size: 16px; }
+}

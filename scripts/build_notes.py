@@ -98,6 +98,8 @@ class NoteHtmlSanitizer(HTMLParser):
             if key == "class" and not re.fullmatch(r"language-[a-zA-Z0-9_-]+", value):
                 continue
             safe_attrs.append(f' {key}="{html.escape(value, quote=True)}"')
+        if tag == "a" and any(key == "href" and value is not None for key, value in attrs):
+            safe_attrs.append(' target="_blank" rel="noopener noreferrer"')
         self.parts.append(f"<{tag}{''.join(safe_attrs)}>")
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -116,3 +118,22 @@ class NoteHtmlSanitizer(HTMLParser):
     def handle_data(self, data: str) -> None:
         if not self.blocked_tag:
             self.parts.append(html.escape(data))
+
+def article_layout(body: str) -> tuple[str, str]:
+    """Assign unique anchors after sanitization; show a directory on long articles."""
+    headings = []
+    def anchor(match: re.Match[str]) -> str:
+        level, content = match.groups()
+        identifier = f"section-{len(headings) + 1}"
+        title = html.unescape(re.sub(r"<[^>]+>", "", content))
+        headings.append((level, identifier, title))
+        return f'<h{level} id="{identifier}">{content}</h{level}>'
+    body = re.sub(r"<h([23])>(.*?)</h\1>", anchor, body, flags=re.S)
+    if sum(level == "2" for level, _, _ in headings) < 6:
+        return body, ""
+    links = "".join(f'<li class="toc-level-{level}"><a href="#{identifier}">{html.escape(title)}</a></li>'
+                    for level, identifier, title in headings)
+    toc = ('<aside class="article-toc" aria-label="文章目录">'
+           '<p class="toc-title">文章目录</p>'
+           f'<nav aria-label="章节导航"><ol>{links}</ol></nav></aside>')
+    return body, toc
