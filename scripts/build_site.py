@@ -365,8 +365,8 @@ def news_metadata(tags: list[str], date_text: str) -> str:
 
 def news_heading(title_html: str, date_text: str) -> str:
     return ('<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 11px;"><tr>'
-            f'<td valign="top" style="padding:0 12px 0 0;">{title_html}</td>'
-            '<td align="right" valign="top" style="padding:3px 0 0;">'
+            f'<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;">{title_html}</td>'
+            '<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;">'
             f'<div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#8090a6;">{escape(date_text)}</div>'
             '</td></tr></table>')
 
@@ -443,9 +443,11 @@ def render_mail_body(source: str, categories: list[str]) -> str:
         items = re.findall(r'<li\b[^>]*>(.*?)</li>', match.group(0), flags=re.S)
         if not items:
             return match.group(0)
-        rows = [f'<li style="padding:0 0 12px;">{item}</li>' for item in items]
+        rows = [f'<li style="padding:0 0 5px;">{item}</li>' for item in items]
         return re.sub(r'(<ul\b[^>]*>).*?(</ul>)', lambda m: m.group(1) + ''.join(rows) + m.group(2), panel, flags=re.S)
     content = re.sub(r'<table\b[^>]*(?:background:#eef4ff|class="mail-focus focus-panel")[^>]*>.*?</table>', update_focus, content, flags=re.S)
+    content = re.sub(r'<td class="pad"[^>]*>(\s*<table\b[^>]*class="mail-focus focus-panel")',
+                     r'<td class="focus-wrap" style="padding:0;">\1', content)
     # Display archive dates beside their titles and existing tags above sources.
     def move_metadata(match: re.Match[str]) -> str:
         story = match.group(0)
@@ -458,9 +460,12 @@ def render_mail_body(source: str, categories: list[str]) -> str:
             return story
         # Legacy metadata uses either tag · organization · date or organization · date.
         tags = parts[:1] if date_index >= 2 else []
-        date_text = " · ".join(parts[date_index:])
+        full_date_text = " · ".join(parts[date_index:])
+        date_text = re.search(r'\d{4}[-/.]\d{1,2}[-/.]\d{1,2}|\d+\s*月\s*\d+(?:[、，,–—-]\d+)*\s*日', full_date_text).group(0)
         metadata = news_metadata(tags, "")
         metadata = re.sub(r'<div class="news-date[^>]*>.*?</div>', '', metadata, flags=re.S)
+        if full_date_text != date_text:
+            metadata += f'<div class="mail-subtle" style="margin:0 0 6px;font-size:12px;line-height:20px;color:#8090a6;">时间与状态说明：{escape(full_date_text)}</div>'
         story = story[:meta.start()] + story[meta.end():]
         def move_date(heading: re.Match[str]) -> str:
             title = re.sub(r'margin:[^;"]+', 'margin:0', heading.group(0), count=1)
@@ -478,8 +483,8 @@ def render_mail_body(source: str, categories: list[str]) -> str:
         if "一句话趋势总结</h2>" in body:
             body = re.sub(r'<p\b[^>]*>', '<p class="mail-ink" style="margin:0;font-size:16px;line-height:27px;font-weight:650;color:#17233b;">', body, count=1)
         return ('<tr><td class="pad" style="padding:16px 12px 0;">'
-                '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;background:#edf1f7;border-radius:8px;">'
-                '<tr><td class="summary-content" style="padding:18px 20px;">' + body + '</td></tr></table></td></tr>')
+                '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" bgcolor="#edf1f7" style="width:100%;background-color:#edf1f7;border-radius:8px;border-collapse:separate;border-spacing:0;">'
+                '<tr><td class="summary-content mail-summary" bgcolor="#edf1f7" style="padding:18px 20px;background-color:#edf1f7;border-radius:8px;">' + body + '</td></tr></table></td></tr>')
     content = re.sub(r'<tr><td class="pad"[^>]*>\s*(<h2\b[^>]*>(?:一句话趋势总结|本周动手验证|团队行动建议)</h2>.*?)</td></tr>',
                      update_summary, content, flags=re.S)
     return content

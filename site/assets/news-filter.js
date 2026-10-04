@@ -1,3 +1,31 @@
+const filtersRow = document.querySelector('.filters-row');
+const siteHeader = document.querySelector('.site-header');
+const filterSentinel = document.createElement('div');
+filterSentinel.setAttribute('aria-hidden', 'true');
+filtersRow.before(filterSentinel);
+function updateStickyFilters() {
+  const headerHeight = siteHeader.getBoundingClientRect().height;
+  document.documentElement.style.setProperty('--site-header-height', `${headerHeight}px`);
+  filtersRow.classList.toggle('is-stuck', filterSentinel.getBoundingClientRect().top < headerHeight);
+}
+let stickyFrame = 0;
+window.addEventListener('scroll', () => {
+  if (stickyFrame) return;
+  stickyFrame = requestAnimationFrame(() => {
+    stickyFrame = 0;
+    updateStickyFilters();
+  });
+}, { passive: true });
+window.addEventListener('resize', updateStickyFilters);
+if ('ResizeObserver' in window) new ResizeObserver(updateStickyFilters).observe(siteHeader);
+updateStickyFilters();
+function scrollToNewsStart() {
+  const content = document.querySelector('.weekly-reports');
+  const top = window.scrollY + content.getBoundingClientRect().top
+    - siteHeader.getBoundingClientRect().height - filtersRow.getBoundingClientRect().height;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
+}
+
 const weekPicker = document.querySelector(".week-picker");
 const weekTrigger = document.querySelector("#week-trigger");
 const weekCurrent = document.querySelector("#week-current");
@@ -84,6 +112,13 @@ weekTrigger.addEventListener("keydown", (event) => {
   }
 });
 weekOptions.forEach((option, index) => {
+  option.addEventListener('click', (event) => {
+    if (option !== activeOption || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    setWeekMenuOpen(false);
+    weekTrigger.focus({ preventScroll: true });
+    scrollToNewsStart();
+  });
   option.addEventListener("keydown", (event) => {
     if (event.key === "ArrowDown" || event.key === "ArrowUp") {
       event.preventDefault();
@@ -120,7 +155,8 @@ for (const tab of tabs) {
     updateCategories();
     filterNews();
     setCategoryOpen(false);
-    if (window.matchMedia('(max-width: 640px)').matches) categoryTrigger.focus();
+    scrollToNewsStart();
+    if (window.matchMedia('(max-width: 640px)').matches) categoryTrigger.focus({ preventScroll: true });
   });
 }
 window.matchMedia('(max-width: 640px)').addEventListener('change', () => {

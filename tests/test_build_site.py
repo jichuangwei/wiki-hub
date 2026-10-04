@@ -138,6 +138,11 @@ class BuildSiteTests(unittest.TestCase):
         self.assertEqual(body.count('data-kind="news"'), 12)
         self.assertEqual(body.count('class="news-date'), 12)
         self.assertEqual(body.count('class="mail-summary"'), 3)
+        dates = re.findall(r'<div class="news-date[^>]*>(.*?)</div>', body)
+        self.assertTrue(all(re.fullmatch(r'\d+\s*月\s*\d+(?:、\d+)*\s*日', value) for value in dates))
+        self.assertIn('修复：9 月 25 日', body)
+        self.assertIn('white-space:nowrap', body)
+        self.assertIn('bgcolor="#edf1f7"', body)
         self.assertNotIn('decimal-leading-zero', body)
         self.assertEqual(body.count('data-kind="section"'), 5)
 
