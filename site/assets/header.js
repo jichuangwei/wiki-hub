@@ -1,23 +1,31 @@
 (() => {
   const header = document.querySelector('.site-header');
   const nav = header?.querySelector('.site-nav');
+  const drawer = header?.querySelector('.site-drawer');
   const toggle = header?.querySelector('.nav-toggle');
-  if (!nav || !toggle) return;
+  const backdrop = document.querySelector('.drawer-backdrop');
+  if (!nav || !drawer || !toggle || !backdrop) return;
   document.documentElement.classList.add('has-menu');
   toggle.hidden = false;
+  backdrop.hidden = true;
   const mobile = window.matchMedia('(max-width: 640px)');
   function setOpen(open) {
-    nav.classList.toggle('is-open', open);
+    drawer.classList.toggle('is-open', open && mobile.matches);
+    backdrop.hidden = !open || !mobile.matches;
+    document.body.classList.toggle('menu-open', open && mobile.matches);
     toggle.setAttribute('aria-expanded', String(open));
-    toggle.setAttribute('aria-label', open ? '关闭菜单' : '打开菜单');
+    toggle.setAttribute('aria-label', '打开菜单');
   }
   toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
-  nav.addEventListener('click', (event) => {
+  drawer.addEventListener('click', (event) => {
     if (event.target.closest('a')) setOpen(false);
   });
-  document.addEventListener('click', (event) => {
-    if (!header.contains(event.target)) setOpen(false);
-  });
+  function closeMenu() {
+    setOpen(false);
+    toggle.focus();
+  }
+  backdrop.addEventListener('click', closeMenu);
+  drawer.querySelector('.drawer-close').addEventListener('click', closeMenu);
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
       setOpen(false);
@@ -25,4 +33,5 @@
     }
   });
   mobile.addEventListener('change', () => setOpen(false));
+  drawer.classList.remove('is-open');
 })();
