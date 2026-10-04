@@ -10,7 +10,9 @@
   backdrop.hidden = true;
   const mobile = window.matchMedia('(max-width: 640px)');
   function setOpen(open) {
-    drawer.classList.toggle('is-open', open && mobile.matches);
+    open = open && mobile.matches;
+    drawer.inert = mobile.matches && !open;
+    drawer.classList.toggle('is-open', open);
     backdrop.hidden = !open || !mobile.matches;
     document.body.classList.toggle('menu-open', open && mobile.matches);
     toggle.setAttribute('aria-expanded', String(open));
@@ -40,5 +42,5 @@
   });
   mobile.addEventListener('change', () => setOpen(false));
   window.addEventListener('pageshow', () => setOpen(false));
-  drawer.classList.remove('is-open');
+  setOpen(false);
 })();

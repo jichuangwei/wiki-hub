@@ -15,6 +15,8 @@
       const label = theme === 'dark' ? '切换浅色模式' : '切换深色模式';
       button.setAttribute('aria-label', label);
       button.title = label;
+      const state = button.querySelector('.theme-state');
+      if (state) state.textContent = theme === 'dark' ? '深色' : '浅色';
     }
   }
   const currentSystemTheme = () => system.matches ? 'dark' : 'light';
@@ -30,6 +32,12 @@
   document.addEventListener('DOMContentLoaded', () => {
     button = document.querySelector('.theme-toggle');
     if (!button) return;
+    const label = document.createElement('span');
+    label.className = 'theme-label';
+    label.textContent = '外观';
+    const state = document.createElement('span');
+    state.className = 'theme-state';
+    button.append(label, state);
     apply(root.dataset.theme);
     button.hidden = false;
     button.addEventListener('click', () => {
