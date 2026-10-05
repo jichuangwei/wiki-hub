@@ -329,6 +329,17 @@ def parse_issue(path: Path) -> Issue:
 
 
 def render(template: str, values: dict[str, str]) -> str:
+    values = dict(values)
+    article_detail = "<!--ARTICLE_LAYOUT-->" in template
+    for marker, name in (("SITE_HEADER", "header"), ("ARTICLE_LAYOUT", "article"), ("ARTICLE_LIST", "article-list")):
+        if f"<!--{marker}-->" in template:
+            template = template.replace(f"<!--{marker}-->", (SITE / "partials" / f"{name}.html").read_text(encoding="utf-8"))
+    for key in ("HOME", "NEWS", "PRACTICES", "NOTES"):
+        active = key.lower() == values.get("NAV_SECTION")
+        values[key + "_ACTIVE"] = " is-active" if active else ""
+        if key != "HOME":
+            values[key + "_HREF"] = "../" if active and article_detail else values.get("SITE_ROOT", "") + key.lower() + "/"
+        values[key + "_CURRENT"] = ' aria-current="page"' if active else ""
     for key, value in values.items():
         template = template.replace("{{" + key + "}}", value)
     if re.search(r"\{\{[^}]+\}\}", template):
@@ -639,6 +650,7 @@ def build(output: Path) -> list[Issue]:
             report = report.replace(f'src="{escape(original)}"', f'src="{site_root}assets/{escape(asset)}"')
         return render(news_template, {
             "SITE_ROOT": site_root,
+            "NAV_SECTION": "news",
             "ASSET_REV": asset_rev,
             "WEEK_OPTIONS": "\n".join(options),
             "CURRENT_WEEK": week_label(selected_week),
@@ -687,6 +699,9 @@ def build(output: Path) -> list[Issue]:
         notes_page = render((SITE / "pages" / f"{section}.html").read_text(encoding="utf-8"), {
             "ASSET_REV": asset_rev,
             "NOTES_SECTION_CLASS": " has-notes" if notes else "",
+            "SITE_ROOT": "../",
+            "NAV_SECTION": section,
+            "SECTION_LABEL": "实践经验" if section == "practices" else "踩坑记录",
         }).replace("<!--NOTES_CONTENT-->", notes_content)
         (output / section / "index.html").write_text(notes_page, encoding="utf-8")
         for note in notes:
@@ -694,6 +709,8 @@ def build(output: Path) -> list[Issue]:
             note_page = render((SITE / "pages" / detail_template).read_text(encoding="utf-8"), {
                 "ASSET_REV": asset_rev,
                 "NOTE_LAYOUT_CLASS": " has-toc" if note_toc else "",
+                "SITE_ROOT": "../../",
+                "NAV_SECTION": section,
                 "NOTE_TITLE": escape(note.title),
                 "NOTE_SUMMARY": escape(note.summary),
                 "NOTE_DATE_ISO": note.published.isoformat(),
@@ -724,7 +741,7 @@ def build(output: Path) -> list[Issue]:
         f'<h2><a href="news/{week_slug(latest_week)}/">{escape(title)}</a></h2>'
         + ('<p class="home-focus-label">本期聚焦</p><ul class="home-focus">' + ''.join(f'<li>{escape(point)}</li>' for point in highlights) + '</ul>' if highlights else '')
         + f'<a class="home-read" href="news/{week_slug(latest_week)}/"><span class="home-read-label">阅读本期</span><span class="home-read-arrow" aria-hidden="true">→</span></a></div>')
-    home_page = render((SITE / "pages" / "index.html").read_text(encoding="utf-8"), {"ASSET_REV": asset_rev})
+    home_page = render((SITE / "pages" / "index.html").read_text(encoding="utf-8"), {"ASSET_REV": asset_rev, "SITE_ROOT": "./", "NAV_SECTION": "home"})
     home_page = home_page.replace('<!--HOME_LATEST-->', latest_content).replace('<!--HOME_PRACTICES-->', home_lists['practices']).replace('<!--HOME_NOTES-->', home_lists['notes'])
     (output / "index.html").write_text(home_page, encoding="utf-8")
     return issues

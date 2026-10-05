@@ -120,7 +120,7 @@ class NoteHtmlSanitizer(HTMLParser):
             self.parts.append(html.escape(data))
 
 def article_layout(body: str) -> tuple[str, str]:
-    """Assign unique anchors after sanitization; show a directory on long articles."""
+    """Assign unique anchors after sanitization; show a directory for articles with multiple sections."""
     headings = []
     def anchor(match: re.Match[str]) -> str:
         level, content = match.groups()
@@ -129,7 +129,7 @@ def article_layout(body: str) -> tuple[str, str]:
         headings.append((level, identifier, title))
         return f'<h{level} id="{identifier}">{content}</h{level}>'
     body = re.sub(r"<h([23])>(.*?)</h\1>", anchor, body, flags=re.S)
-    if sum(level == "2" for level, _, _ in headings) < 6:
+    if sum(level == "2" for level, _, _ in headings) < 2:
         return body, ""
     links = "".join(f'<li class="toc-level-{level}"><a href="#{identifier}">{html.escape(title)}</a></li>'
                     for level, identifier, title in headings)

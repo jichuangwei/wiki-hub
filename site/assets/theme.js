@@ -10,7 +10,7 @@
   function apply(theme) {
     root.dataset.theme = theme;
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.content = theme === 'dark' ? '#111827' : '#f6f8fc';
+    if (meta) meta.content = theme === 'dark' ? '#111318' : '#fafafa';
     if (button) {
       const label = theme === 'dark' ? '切换浅色模式' : '切换深色模式';
       button.setAttribute('aria-label', label);
