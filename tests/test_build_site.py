@@ -201,8 +201,8 @@ class BuildSiteTests(unittest.TestCase):
                 for attribute in ('src', 'alt'):
                     self.assertEqual(re.search(fr'{attribute}="([^"]*)"', before).group(1),
                                      re.search(fr'{attribute}="([^"]*)"', after).group(1))
-                self.assertIn('max-width:420px;height:200px', after)
-                self.assertIn('object-fit:contain', after)
+                self.assertIn('width:100%;max-width:420px;height:auto', after)
+                self.assertIn('width="420"', after)
                 image_url = re.search(r'src="([^"]*)"', after).group(1)
                 self.assertIn(f'href="{image_url}"', body)
             self.assertEqual(body.count('class="image-slot"'), len(original_images))

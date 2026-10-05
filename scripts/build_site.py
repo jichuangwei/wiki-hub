@@ -362,8 +362,8 @@ def image_gallery(images: list[str]) -> str:
     slots = []
     for index, image in enumerate(images):
         image = re.sub(r'\s(?:style|width|height)="[^"]*"', '', image, flags=re.I)
-        image = image.rstrip('>').rstrip('/') + ' height="200" style="display:block;width:auto;max-width:420px;height:200px;object-fit:contain;object-position:left center;border:0;margin:0;">'
-        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:auto;min-width:180px;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;">{image}</div></div>')
+        image = image.rstrip('>').rstrip('/') + ' width="420" style="display:block;width:100%;max-width:420px;height:auto;border:0;margin:0;">'
+        slots.append(f'<div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;">{image}</div></div>')
     return '<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 13px;">' + ''.join(slots) + '</div>'
 
 
@@ -535,7 +535,7 @@ def render_mail_body(source: str, categories: list[str]) -> str:
         src = re.search(r'\bsrc="([^"]+)"', image)
         if not src or not valid_https(html.unescape(src.group(1))):
             return image
-        return f'<a href="{html.escape(html.unescape(src.group(1)), quote=True)}" target="_blank" rel="noopener" style="display:inline-block;text-decoration:none;">{image}</a>'
+        return f'<a href="{html.escape(html.unescape(src.group(1)), quote=True)}" target="_blank" rel="noopener" style="display:block;width:100%;text-decoration:none;">{image}</a>'
 
     content = re.sub(r'(<a\b[^>]*>\s*)?(<img\b[^>]*>)(\s*</a>)?', link_image, content, flags=re.I)
     content = re.sub(r'(<strong\b[^>]*>)(?:为什么值得关注[^<]*|对(?:前端|Agent)[^<]*影响|适用场景与理由)[：:]',
