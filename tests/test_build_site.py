@@ -2,6 +2,7 @@ import re
 import tempfile
 import unittest
 from datetime import date
+from html import escape
 from pathlib import Path
 from unittest.mock import patch
 
@@ -38,7 +39,10 @@ class BuildSiteTests(unittest.TestCase):
     def test_build_generates_news_and_notes_with_the_latest_week(self):
         with tempfile.TemporaryDirectory() as directory:
             output = Path(directory) / "site"
-            build(output)
+            issues = build(output)
+            latest = max(issues, key=lambda issue: issue.start)
+            latest_articles = [article for issue in issues if issue.start == latest.start
+                               for article in issue.articles]
             pages = list(output.rglob("*.html"))
             expected_week_pages = {
                 output / f"news/{week_slug(parse_issue(path).start)}/index.html"
@@ -62,12 +66,12 @@ class BuildSiteTests(unittest.TestCase):
             landing = (output / "index.html").read_text(encoding="utf-8")
             self.assertNotIn('http-equiv="refresh"', landing)
             self.assertIn('id="latest-heading"', landing)
-            self.assertIn('href="news/2026-week-39/"', landing)
+            self.assertIn(f'href="news/{week_slug(latest.start)}/"', landing)
             self.assertIn('practices/chatgpt-automated-content-publishing/', landing)
             self.assertIn('notes/qq-mail-dark-mode-colors/', landing)
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
-            self.assertEqual(home.count('data-kind="news"'), len(parse_issue(CURRENT_REPORT).articles))
+            self.assertEqual(home.count('data-kind="news"'), len(latest_articles))
             self.assertIn('href="../news/2026-week-39/" role="option" data-week="2026-09-21" data-week-path="2026-week-39"', home)
             self.assertIn('href="../news/2026-week-38/" role="option" data-week="2026-09-14" data-week-path="2026-week-38"', home)
             self.assertNotIn("<select", home)
@@ -102,8 +106,12 @@ class BuildSiteTests(unittest.TestCase):
             self.assertNotIn('id="news-search"', home)
             self.assertNotIn('class="detail-open"', home)
             self.assertLess(home.index('class="category-tabs"'), home.index('id="week-trigger"'))
-            self.assertIn("OpenAI 发布公告", home)
-            self.assertLess(home.index('>AI 资讯干货</h1>'), home.index('第 39 周&nbsp;&nbsp;/'))
+            for article in latest_articles:
+                self.assertIn(escape(article.title), home)
+                for _, url in article.sources:
+                    self.assertIn(f'href="{escape(url)}"', home)
+            self.assertLess(home.index('>AI 资讯干货</h1>'),
+                            home.index(f'第 {latest.week_number} 周&nbsp;&nbsp;/'))
             self.assertNotIn("{{", home)
 
     def test_practice_navigation_and_migrated_article_link(self):
