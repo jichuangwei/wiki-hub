@@ -45,13 +45,15 @@ def template_fragments() -> dict[str, str]:
 def build_prompt() -> str:
     prompt = f"""每周一 09:00（Asia/Shanghai）制作上一完整自然周（周一至周日）的 AI × Agent × 前端周报：沿用模板固定五类，每类 2–4 条，共 10–20 条；重点资讯的深入分析放在对应资讯内，不追加独立深度栏目。测试指定周次时使用指定日期，不改正式任务定时设置。
 
-开始前，通过已连接的 GitHub 读取 jichuangwei/wiki-hub 的 main 分支中 {SKILL.relative_to(ROOT)} 的完整内容，并按该 skill 执行；再读取 {TEMPLATE.relative_to(ROOT)} 的完整 HTML，记录模板 blob SHA。仓库中的 skill 和模板是本次运行的规则与排版源，不使用旧缓存或记忆代替。任一文件读取失败，停止发布和发信并说明原因。
+开始时，必须通过已连接的 GitHub 从 jichuangwei/wiki-hub 的 main 分支完整读取 {OUTPUT.relative_to(ROOT)}，记录 Prompt blob SHA；随后完整读取 {SKILL.relative_to(ROOT)} 并记录 Skill blob SHA，按该 skill 执行；再完整读取 {TEMPLATE.relative_to(ROOT)} 并记录模板 blob SHA。仓库中的三个文件是本次运行的规则与排版源，不使用旧缓存或记忆代替。任一文件读取失败，停止发布和发信并说明原因。
 
 发布、线上核验和 HTML 邮件发送均遵守 skill。邮件服务为 Gmail，仅使用独立 BCC 字段，To 和 CC 留空。BCC 收件人只从此云任务的私有配置获取，不从仓库、周报正文或历史邮件猜测；缺少明确私有收件配置时，可完成发布，但不得发送邮件，并报告原因。不要将收件地址写入仓库、HTML、发布参数或公开结果。
 
-发布前必须确认当前任务可调用 get_publication_by_week、publish_weekly_report 和 get_publication_status。先按周查询现有记录，再按 skill 选择复用、首次发布或经用户明确批准的修订；不能因同周冲突而普通重试或覆盖。
+发布前必须确认当前任务可调用 get_publication_by_week、publish_weekly_report 和 get_publication_status。先按周查询现有记录，再按 skill 选择复用、首次发布或经用户明确批准的修订；不能因同周冲突而普通重试或覆盖。首次发布或获批修订通过 Wiki Hub Publisher 触发 GitHub Actions；保存 request_id 并查询同一请求，直到核实 GitHub 归档 commit、Actions 成功、Pages 部署和目标线上内容。发布工具不可用、Action 失败或线上内容未核实时，明确报告阻断原因，不得声称部署成功。
 
-本提示词不包含私有收件地址。更新云任务时，在任务的私有配置中保留或填写 BCC 收件人；仓库文件的变动不会自动更新云任务提示词或连接。
+每次执行结束报告周报周期、Prompt / Skill / 模板 blob SHA、Publisher request_id、归档 commit SHA、GitHub Actions 结果、Pages 地址与线上核验状态，以及 Gmail 发送状态。未发送邮件时说明原因，不显示 BCC 地址。
+
+本提示词不包含私有收件地址。更新云任务时，在任务的私有配置中保留或填写 BCC 收件人。本仓库文件的变动不会更改自动化自身的定时规则、连接或固定提示词；但固定提示词要求每次运行重新读取本文件，因此最新版本会用于下一次执行。
 """
     if len(prompt) > 20000:
         raise ValueError(f"Cloud task prompt exceeds 20000 characters: {len(prompt)}")
