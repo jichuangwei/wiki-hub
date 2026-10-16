@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<title>AI 资讯干货｜2026-09-28 至 2026-10-04</title>
+<style>
+  body{margin:0;padding:0;background:#fafafa;color:#171b24;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  table{border-collapse:collapse;border-spacing:0;}
+  img{border:0;display:block;max-width:100%;height:auto;}
+  .image-slot img{max-width:100%!important;}
+  a{color:#3662f4;text-decoration:underline;}
+  @media only screen and (max-width:640px){.pad{padding-left:12px!important;padding-right:12px!important}.story{padding:8px 0 16px!important}.focus-content{padding:12px!important}.summary-content{padding:16px!important}.hero-title{font-size:27px!important;line-height:1.25!important}}
+  @media only screen and (max-width:480px){.image-slot{display:block!important;width:100%!important;min-width:0!important;margin:0!important}.image-slot>div{padding:0 0 8px!important}.image-slot img{margin:0!important}}
+  @media (prefers-color-scheme:dark){
+    .mail-bg{background-color:#111318!important;}
+    .mail-tag{background-color:#232832!important;color:#c7ccd6!important;}
+    .mail-surface{background-color:#181c23!important;}
+    .mail-ink{color:#eef0f5!important;}
+    .mail-muted{color:#c7ccd6!important;}
+    .mail-subtle{color:#929baa!important;}
+    .mail-accent,a{color:#819bff!important;}
+    .mail-border,.mail-focus,.mail-summary{border-color:#343942!important;}
+  }
+  [data-ogsc] .mail-bg,[data-ogsb] .mail-bg{background-color:#111318!important;}
+  [data-ogsc] .mail-surface,[data-ogsb] .mail-surface{background-color:#181c23!important;}
+  [data-ogsc] .mail-ink,[data-ogsb] .mail-ink{color:#eef0f5!important;}
+  [data-ogsc] .mail-muted,[data-ogsb] .mail-muted{color:#c7ccd6!important;}
+  [data-ogsc] .mail-subtle,[data-ogsb] .mail-subtle{color:#929baa!important;}
+  [data-ogsc] .mail-accent,[data-ogsc] a,[data-ogsb] .mail-accent,[data-ogsb] a{color:#819bff!important;}
+  [data-ogsc] .mail-border,[data-ogsc] .mail-focus,[data-ogsc] .mail-summary,[data-ogsb] .mail-border,[data-ogsb] .mail-focus,[data-ogsb] .mail-summary{border-color:#343942!important;}
+
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#fafafa;" class="mail-bg mail-ink">
+
+<div style="display:none;font-size:1px;color:#fafafa;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">第 40 周：模型效率竞争、Agent 执行边界、浏览器 API 迁移；五类 10 条一手资讯。</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#fafafa;" class="mail-bg">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:1000px;">
+<tr><td class="pad" style="padding:20px 12px 14px;">
+<h1 class="hero-title mail-ink" style="margin:0;font-size:42px;line-height:1.2;text-align:center;font-weight:750;color:#171b24;">AI 资讯干货</h1>
+<div style="margin-top:12px;font-size:14px;line-height:22px;font-weight:400;text-align:center;font-family:Consolas,monospace;color:#171b24;" class="mail-ink">第 40 周&nbsp;&nbsp;/&nbsp;&nbsp;2026-09-28 至 2026-10-04</div>
+</td></tr>
+<tr><td class="focus-wrap" style="padding:0 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-focus focus-panel" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;">
+<tr><td class="focus-content mail-focus" style="padding:12px 14px;border-radius:4px;">
+<h2 style="margin:0;font-size:20px;line-height:28px;font-weight:800;color:#171b24;"><strong>本期聚焦</strong></h2>
+<ul style="margin:8px 0 0;padding-left:20px;list-style-type:disc;font-size:15px;line-height:25px;color:#424a57;">
+<li style="padding:0 0 5px;"><strong>比较完成任务的总成本</strong>：Sonnet 5.5 与 GPT-6.1 Sol 将速度、缓存和推理效率带入选型，真实验收比单项榜单更重要。</li>
+<li style="padding:0 0 5px;"><strong>执行环境也是 Agent 的能力</strong>：Qwen Code 的文件保护修复、Codex 云环境与独立运行约束，指向可恢复、可核验的长期执行。</li>
+<li style="padding:0 0 5px;"><strong>浏览器新能力先验证再迁移</strong>：Chrome 156 Beta 与 HTML-in-Canvas 更新需要同时检查兼容性、点击区域和可访问性。</li>
+</ul>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">01&nbsp;·&nbsp;AI/大模型</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Claude Sonnet 5.5 发布：提高日常编码效率，按任务成本而非单价比较</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-28</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">模型发布</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">能力评测</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Anthropic 发布 Claude Sonnet 5.5，定位为 Opus 5.5 的更快、低成本补充。官方称输出速度较 Sonnet 5 提升超过 30%，多数任务成本最多下降 30%；标准价格仍为每百万输入 2 美元、输出 10 美元，缓存读取降至 0.10 美元。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对高频修复、界面迭代和文档生成，收益主要来自减少推理与工具调用的总消耗。复杂、开放式工作仍应保留更强模型的升级通道，不能把一次榜单领先等同于所有项目都能替换。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合任务边界清楚、验收标准明确的缺陷修复和前端组件实现；先在相同仓库、提示词与测试条件下比较。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">证据与局限：</strong>速度和成本变化来自厂商测试。Terminal-Bench、CursorBench 与真实产品验收衡量不同能力，本期未独立复测，不能把不同评测版本的分数直接横向排序。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://www.anthropic.com/claude-sonnet-5-5">Anthropic：Claude Sonnet 5.5</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">GPT-6.1 Sol 发布：以更低预算承接复杂编码和计算机操作</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-29</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">模型发布</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">推理成本</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>OpenAI 发布 GPT-6.1 Sol，面向编码、计算机操作和专业工作。发布公告给出的标准 API 价格为每百万输入 2 美元、缓存输入 0.10 美元、输出 10 美元，标准输入输出价格为 GPT-6 Astra 的五分之一；首批进入 Work、Codex 和 API。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对反复复用上下文的 Agent，缓存命中与总调用轮数会共同影响账单。预算评估应同时记录任务成功率、完整耗时和缓存用量，避免只比较每百万 token 的价格。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合需要多步骤执行的代码修复与资料处理；关键架构决策或失败代价高的任务，仍应与 Astra 对照评估。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">证据与局限：</strong>公告中的接近 Astra 表现来自特定评测设置，不代表所有场景等价。比较时应固定工具、推理档位和验收测试，并将重试与人工返工计入任务成本。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://openai.com/index/introducing-gpt-6-1-sol/">OpenAI：Introducing GPT-6.1 Sol</a> · <a href="https://deploymentsafety.openai.com/gpt-6-1-sol/math-side-tasking-monitor-evasion">OpenAI：GPT-6.1 Sol 系统卡补充</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">02&nbsp;·&nbsp;Coding Agent/Agent 产品</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Qwen Code v0.24.7：补强 worktree 文件保护与更新恢复</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-29</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">版本更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">开源</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Qwen Code 发布 v0.24.7，加入 Web Shell 分支会话可选 worktree、更新准备与侧栏重启等能力，并修复过期 worktree 清理可能删除未跟踪或被 gitignore 忽略内容的问题。发布记录也包含独立会话读取、更新错误呈现与会话恢复方面的修正。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>中国开源 Coding Agent 的改进开始落到工作区生命周期：清理、恢复和升级行为直接关系到开发者文件能否保留。官方列出“无已知破坏性变更”，仍应对团队自己的缓存、构建目录与临时数据做验证。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合使用 Qwen Code 多分支并行开发、长会话和 Web Shell 的团队；升级前先保存工作区，在隔离仓库验证清理路径。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">实践建议：</strong>创建包含跟踪文件、未跟踪文件和忽略目录的测试仓库，跑一次分支会话退出与清理流程；验收标准是用户文件保留、会话可恢复，且错误能定位到实际更新阶段。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://github.com/QwenLM/qwen-code/releases/tag/v0.24.7">QwenLM：v0.24.7 官方发布记录</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Codex 扩展云端工作方式：复用开发环境，跨设备接续任务</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-29</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">产品更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">云端开发</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>OpenAI 在 DevDay 公布 Codex 云端工作方式：开发者可以在电脑、手机远程入口或云端发起与继续任务，并通过可复用开发环境共享已批准的配置和权限。本条聚焦编码产品的执行环境，模型能力变化见第一栏。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>团队接入云 Agent 时，需要把环境准备从个人电脑迁移为可重复配置，包括依赖、构建命令和任务权限。本文判断，环境的一致性将直接影响任务能否复现以及交接成本。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合需要离开电脑后继续处理的构建、修复和评审任务，以及需要统一开发环境的团队；涉及本机文件和内部服务时，先确认所选执行环境能访问。</p>
+
+
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://openai.com/index/devday-2026-recap/">OpenAI DevDay：Codex in the cloud</a> · <a href="https://learn.chatgpt.com/docs/cloud">OpenAI：Codex Cloud 使用说明</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">03&nbsp;·&nbsp;Agent 开发技术与工程</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">NVIDIA 发布 Open Agent Safety Platform，将运行约束置于 Agent 外部</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-28</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">工程实践</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">安全治理</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>NVIDIA 发布 Open Agent Safety Platform，由 OpenShell 开源运行时软件与 Sentry 参考系统设计组成。OpenShell 负责执行时策略与行为跟踪；Sentry 在 BlueField-4 DPU 的带外信任域监控行为，官方称可在毫秒级隔离越界 Agent。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>Agent 的提示约束需要与运行时权限配合。平台把工具与数据访问控制、遥测和隔离放在独立执行层，对运行不可信代码、接触内部系统的长任务尤其有参考价值；硬件方案不能直接当作所有部署环境的默认能力。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">证据与局限：</strong>毫秒级隔离与开销表述来自厂商公告，本期未复测。工程验收应覆盖拒绝后是否仍有外部副作用、网络白名单能否被扩大，以及策略日志是否足以追溯一次越权尝试。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Launches-Open-Agent-Safety-Platform-to-Secure-Agents-From-Testing-to-Deployment/">NVIDIA：Open Agent Safety Platform 发布公告</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Agents API 新增计算机操作：把界面任务接入托管 Agent 执行链</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-29</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">API 更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">工具调用</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>OpenAI 在 DevDay 宣布 Agents API 支持 computer use，使开发者能够让 Agent 通过软件界面完成任务。本次更新不是 Agents API 首次发布；该 API 已在 9 月 10 日进入公开测试，提供上下文管理、工具与多 Agent 协调等执行基础。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>当业务系统缺少 API 时，界面操作为自动化增加了入口，也带来页面变化、登录状态与操作结果不确定的问题。开发者仍需为提交、付款或发信等有外部影响的步骤定义授权边界和成功证据。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">实践建议：</strong>先选择一个可撤销的表单流程，记录任务 ID、每步截图和最终数据状态；模拟页面跳转或按钮变化，要求 Agent 明确报告失败点，并确认失败重试不会重复提交。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://openai.com/index/devday-2026-recap/">OpenAI DevDay：Agents API with Computer use</a> · <a href="https://openai.com/index/introducing-the-agents-api/">OpenAI：Agents API 公开测试背景</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">04&nbsp;·&nbsp;前端开发与生态</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Chrome 156 进入 Beta：提前验证新 CSS 与模块加载能力</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-30</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">浏览器更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">测试预览</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Chrome 156 于 9 月 30 日进入 Beta。Google 的当月 Web 平台汇总列出本轮预览中的 CSS random()、corner 简写、单轴滚动容器、媒体状态伪类、延迟模块求值及 Web Install API 等能力；Beta 预览不等同于跨浏览器可用。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对组件库、媒体播放器与 PWA 团队，这一阶段适合建立小型兼容性样例并反馈问题。生产环境应按目标浏览器检查功能支持，保留回退路径，不因 Chrome Beta 已出现就移除现有实现。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合维护浏览器兼容矩阵和组件库的前端团队；优先测试与现有滚动、媒体状态和模块初始化相关的用例。</p>
+
+
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://developer.chrome.com/blog/chrome-156-beta">Chrome：156 Beta 公告</a> · <a href="https://web.dev/blog/web-platform-09-2026">web.dev：9 月 Web 平台能力汇总</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">HTML-in-Canvas API 调整：DOM 绘制、纹理预分配与命中测试同步需迁移</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-29</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">Web API</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">实验性功能</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Chrome 团队更新 HTML-in-Canvas 实验 API 说明，梳理 Chrome 150 与 155 的迁移变化：WebGPU 方法改为 drawElementImageToTexture，WebGL 上传前要求显式预分配纹理，canvas 的 layoutsubtree 改为 content=&quot;drawable&quot;，并允许标记独立绘制的后代。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对画布编辑器、可视化工具和 3D 中的富文本界面，DOM 绘制位置必须与点击区域、焦点和辅助技术看到的位置一致。2D 自动同步与 3D 显式 updateElementGeometry 的差异，需要纳入跨版本兼容层。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">实践建议：</strong>用一个带中文文本和可点击按钮的最小画布样例，对比视觉位置、键盘焦点和命中区域。API 仍在试验阶段，Origin Trial 延长至 Chrome 160，参与者需续期 token，并保留常规 DOM 回退。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://developer.chrome.com/blog/html-in-canvas-ot-changes">Chrome：HTML-in-Canvas 更新与迁移说明</a> · <a href="https://wicg.github.io/html-in-canvas/">WICG：HTML-in-Canvas 提案</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">05&nbsp;·&nbsp;AI 产业与开发者生态</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Appinventiv 宣布加入 Anthropic Partner Network，扩展企业 AI 交付合作</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-28</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">产业合作</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">企业应用</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Appinventiv 宣布加入 Anthropic Partner Network，并将 Claude 模型族纳入其企业 AI 交付基础设施。公告把合作重点放在企业系统集成、治理与可衡量的业务结果，显示模型厂商继续通过工程服务伙伴推动应用落地。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>本文判断，企业采购需要同时考察模型能力与实施团队对身份、数据、审计和成本的处理方式。伙伴资格说明合作关系，不能单独证明某个业务场景已达到安全、合规或效果目标。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">证据与局限：</strong>本条依据合作方的一手公告；其中准确率、降本和交付规模均为公司自述，本期不将其当作独立验证结果。团队评估服务商时，可要求提供验收样例、失败处置和持续运维责任。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://appinventiv.com/press-release/appinventiv-partners-with-anthropic-for-enterprise-ai/">Appinventiv：加入 Anthropic 合作伙伴网络公告</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">GitHub 发布开发者政策更新：AI 内容溯源与开源基础设施边界成为议题</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-09-29</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">开发者生态</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">政策观察</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>GitHub 发布开发者政策进展，讨论 AI 内容透明度、内容来源信息与开源许可证的关系，并指出部分平台定义可能把代码托管等开发者基础设施纳入范围。文章同时更新透明度信息，强调开源社区参与政策讨论的价值。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对维护开源模型、工具和代码仓库的团队，发布流程中保留来源、许可证和变更记录更有助于说明作品边界。本文只转述 GitHub 在公告当日的立场与关注点，不把待定条款写成已生效要求。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">实践建议：</strong>由项目维护者整理模型、数据与代码的来源和许可证清单；涉及具体辖区的适用性与后续状态，应交由负责人员核实，避免把新闻摘要直接变成产品限制。</p>
+<p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://github.blog/news-insights/policy-news-and-insights/developer-policy-update-transparency-state-policy-and-whats-ahead/">GitHub：开发者政策更新与 AI 透明度讨论</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:16px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:4px;">
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#171b24;" class="mail-ink">一句话趋势总结</h2>
+<ul style="margin:0;padding:0;list-style-type:none;font-size:15px;line-height:26px;color:#424a57;"><li style="padding:0;">模型竞争正在转向可重复交付：更低的任务成本、更稳的工作区与执行边界，以及能验证结果的前端和企业集成。</li></ul>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:16px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:4px;">
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#171b24;" class="mail-ink">本周动手验证</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:15px;line-height:26px;color:#424a57;" class="mail-ink">
+<li style="padding:0 0 12px;">选取 6 个有自动化验收的真实修复任务，固定工具和提示词，对照 Sonnet 5.5、GPT-6.1 Sol 与当前模型；记录成功率、耗时、token、缓存和返工，按每个合格结果的总成本判断。</li>
+<li style="padding:0 0 12px;">在隔离仓库放入跟踪、未跟踪和忽略文件，验证 Qwen Code v0.24.7 的分支会话清理与恢复；同时用一次可撤销表单检查 Agent 重试不会重复产生外部记录。</li>
+<li style="padding:0;">制作包含中文文本、按钮与键盘导航的 HTML-in-Canvas 样例，核对视觉、焦点和点击区域；在目标浏览器与 Beta 中比较，并确认不支持时能回退常规 DOM。</li>
+</ul>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:16px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:4px;">
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#171b24;" class="mail-ink">团队行动建议</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:15px;line-height:26px;color:#424a57;" class="mail-ink">
+<li style="padding:0 0 12px;"><strong>建立模型变更门槛：</strong>建议由技术负责人维护代表性任务集和成本口径，模型升级前检查回归结果，再决定默认路由与升级条件。</li>
+<li style="padding:0 0 12px;"><strong>明确运行权限与结果证据：</strong>建议由平台负责人统一工作区保留、云环境访问和外部写入规则，为任务保存执行记录及最终数据状态。</li>
+<li style="padding:0;"><strong>指定兼容性与生态维护人：</strong>建议由前端负责人跟踪实验 API 和回退策略，由项目维护者定期复核依赖来源、许可证及服务伙伴的验收责任。</li>
+</ul>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #d9dde5;padding-top:15px;font-size:11px;line-height:18px;color:#79818f;" class="mail-subtle mail-border">AI 资讯干货 · 2026-09-28 至 2026-10-04<br>依据本周官方公告、文档与发布记录整理；厂商评测和合作方自述已标明，实践建议未表述为已完成测试。未找到能确认可访问的事件配图，本期省略配图，不使用占位图片。</td></tr></table></td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
