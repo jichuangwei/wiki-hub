@@ -305,6 +305,16 @@ img { display: block; max-width: 100%; }
 .weekly-report [style*="color:#607089"], .weekly-report [style*="color:#394a64"] { color: var(--body-text) !important; }
 .weekly-report [style*="color:#8090a6"], .weekly-report [style*="color:#6d7d96"] { color: var(--subtle) !important; }
 .weekly-report [style*="background"][style*="#f6f8fc"] { background-color: var(--paper) !important; }
+/* Current email templates use semantic roles; keep their inline email palette
+   inside the website's shared light/dark theme, as with historical issues. */
+.weekly-report .mail-bg { background-color: var(--paper) !important; }
+.weekly-report .mail-surface { background-color: var(--surface) !important; }
+.weekly-report .mail-ink { color: var(--ink) !important; }
+.weekly-report .mail-muted { color: var(--body-text) !important; }
+.weekly-report .mail-subtle { color: var(--subtle) !important; }
+.weekly-report .mail-accent { color: var(--blue) !important; }
+.weekly-report .mail-border { border-color: var(--line) !important; }
+.weekly-report .summary-content :is(p, ul) { color: var(--body-text) !important; }
 .weekly-report .mail-focus, .weekly-report .focus-panel, .weekly-report table.mail-summary { background: var(--surface) !important; border-color: var(--line) !important; border-radius: 4px !important; }
 .weekly-report .mail-tag { background: var(--active) !important; color: var(--blue) !important; border-radius: 3px !important; }
 .weekly-report [style*="border-bottom:1px solid"] { border-bottom-color: var(--line) !important; }

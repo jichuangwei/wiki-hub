@@ -6,7 +6,7 @@ from html import escape
 from pathlib import Path
 from unittest.mock import patch
 
-from scripts.build_site import ARTICLE_REDIRECTS, NOTES, PRACTICES, REPORTS, ReportParser, build, parse_issue, render_mail_body, week_slug
+from scripts.build_site import ARTICLE_REDIRECTS, NOTES, PRACTICES, REPORTS, ReportParser, build, parse_issue, render_mail_body, report_display_title, week_slug
 
 CURRENT_REPORT = REPORTS / "ai-agent-frontend/2026/week-39.html"
 WEEK38_REPORT = REPORTS / "ai-agent-frontend/2026/week-38.html"
@@ -25,6 +25,16 @@ def current_sections(sections):
 
 
 class BuildSiteTests(unittest.TestCase):
+    def test_home_title_omits_email_dates_in_old_and_current_formats(self):
+        for subject in (
+            "AI 资讯干货｜2026.09.21—09.27",
+            "AI 资讯干货｜2026.09.21—2026.09.27",
+            "AI 资讯干货｜2026-09-28 至 2026-10-04",
+        ):
+            with self.subTest(subject=subject):
+                self.assertEqual(report_display_title(subject), "AI 资讯干货")
+        self.assertEqual(report_display_title("前端实践｜工具与流程"), "前端实践｜工具与流程")
+
     def test_week_path_uses_iso_week_year(self):
         self.assertEqual(week_slug(date(2025, 12, 29)), "2026-week-1")
         self.assertEqual(week_slug(date(2026, 9, 21)), "2026-week-39")
@@ -69,6 +79,10 @@ class BuildSiteTests(unittest.TestCase):
             self.assertIn(f'href="news/{week_slug(latest.start)}/"', landing)
             self.assertIn('practices/chatgpt-automated-content-publishing/', landing)
             self.assertIn('notes/qq-mail-dark-mode-colors/', landing)
+            # The email subject's date range must not become a giant multiline
+            # homepage title when a new template switches to ISO dates.
+            feature_title = re.search(r'<h2><a href="news/[^\"]+">(.*?)</a></h2>', landing).group(1)
+            self.assertNotRegex(feature_title, r'\d{4}[.-]\d{2}[.-]\d{2}')
             home = (output / "news/index.html").read_text(encoding="utf-8")
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
             self.assertEqual(home.count('data-kind="news"'), len(latest_articles))

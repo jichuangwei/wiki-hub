@@ -51,6 +51,12 @@ def escape(value: str) -> str:
     return html.escape(value, quote=True)
 
 
+def report_display_title(title: str) -> str:
+    """Omit email subject dates where the page already has a week line."""
+    date_suffix = r'\s*[｜|]\s*\d{4}[.-]\d{2}[.-]\d{2}\s*(?:[–—-]|至)\s*(?:\d{4}[.-])?\d{2}[.-]\d{2}\s*$'
+    return re.sub(date_suffix, '', title)
+
+
 def valid_https(url: str) -> bool:
     parsed = urlparse(url)
     return parsed.scheme == "https" and bool(parsed.netloc)
@@ -736,7 +742,7 @@ def build(output: Path) -> list[Issue]:
         (redirect_dir / "index.html").write_text(redirect_page, encoding="utf-8")
     latest_issues = [issue for issue in issues if issue.start == latest_week]
     highlights = [point for issue in latest_issues for point in issue.highlights][:3]
-    title = ' · '.join(dict.fromkeys(re.sub(r'\s*[｜|]\s*\d{4}\.\d{2}\.\d{2}\s*[–—-]\s*(?:\d{4}\.)?\d{2}\.\d{2}\s*$', '', issue.title) for issue in latest_issues)) or '本周资讯'
+    title = ' · '.join(dict.fromkeys(report_display_title(issue.title) for issue in latest_issues)) or '本周资讯'
     latest_content = (f'<div class="home-issue"><p class="home-week">{escape(week_label(latest_week))}</p>'
         f'<h2><a href="news/{week_slug(latest_week)}/">{escape(title)}</a></h2>'
         + ('<p class="home-focus-label">本期聚焦</p><ul class="home-focus">' + ''.join(f'<li>{escape(point)}</li>' for point in highlights) + '</ul>' if highlights else '')
