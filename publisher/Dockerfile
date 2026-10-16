@@ -4,6 +4,7 @@ COPY publisher/requirements.lock publisher/requirements.lock
 RUN pip install --no-cache-dir -r publisher/requirements.lock
 COPY publisher publisher
 COPY scripts scripts
+COPY templates/news templates/news
 RUN useradd --uid 10001 --create-home publisher && mkdir /data && chown publisher /data
 USER publisher
 ENV PUBLISHER_DB=/data/publications.sqlite3
