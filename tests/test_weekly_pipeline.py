@@ -41,8 +41,9 @@ class WeeklyPipelineTests(unittest.TestCase):
         self.assertIn("skills/ai-agent-frontend-weekly/SKILL.md", prompt)
         self.assertIn("templates/news/ai-agent-frontend-weekly-email.html", prompt)
         fragments = template_fragments()
-        self.assertIn('name="color-scheme" content="light dark"', fragments["邮件主模板"])
-        self.assertIn('@media (prefers-color-scheme:dark)', fragments["邮件主模板"])
+        self.assertIn('name="color-scheme" content="light"', fragments["邮件主模板"])
+        self.assertNotIn('name="supported-color-schemes"', fragments["邮件主模板"])
+        self.assertNotIn('@media (prefers-color-scheme:dark)', fragments["邮件主模板"])
         self.assertIn('class="mail-muted"', fragments["NEWS ITEM 资讯模板"])
         self.assertIn('class="mail-ink"', fragments["产品适用场景模板"])
         # A website user may choose light while the system is dark.

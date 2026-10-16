@@ -3,8 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light dark">
-<meta name="supported-color-schemes" content="light dark">
+<meta name="color-scheme" content="light">
 <title>AI 资讯干货｜{{DATE_RANGE}}</title>
 <style>
   body{margin:0;padding:0;background:#fafafa;color:#171b24;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;-webkit-text-size-adjust:100%;}
@@ -14,30 +13,12 @@
   a{color:#3662f4;text-decoration:underline;}
   @media only screen and (max-width:640px){.pad{padding-left:12px!important;padding-right:12px!important}.story{padding:8px 0 16px!important}.focus-content{padding:12px!important}.summary-content{padding:16px!important}.hero-title{font-size:27px!important;line-height:1.25!important}}
   @media only screen and (max-width:480px){.image-slot{display:block!important;width:100%!important;min-width:0!important;margin:0!important}.image-slot>div{padding:0 0 8px!important}.image-slot img{margin:0!important}}
-  @media (prefers-color-scheme:dark){
-    .mail-bg{background-color:#111318!important;}
-    .mail-tag{background-color:#232832!important;color:#c7ccd6!important;}
-    .mail-surface{background-color:#181c23!important;}
-    .mail-ink{color:#eef0f5!important;}
-    .mail-muted{color:#c7ccd6!important;}
-    .mail-subtle{color:#929baa!important;}
-    .mail-accent,a{color:#819bff!important;}
-    .mail-border,.mail-focus,.mail-summary{border-color:#343942!important;}
-  }
-  [data-ogsc] .mail-bg,[data-ogsb] .mail-bg{background-color:#111318!important;}
-  [data-ogsc] .mail-surface,[data-ogsb] .mail-surface{background-color:#181c23!important;}
-  [data-ogsc] .mail-ink,[data-ogsb] .mail-ink{color:#eef0f5!important;}
-  [data-ogsc] .mail-muted,[data-ogsb] .mail-muted{color:#c7ccd6!important;}
-  [data-ogsc] .mail-subtle,[data-ogsb] .mail-subtle{color:#929baa!important;}
-  [data-ogsc] .mail-accent,[data-ogsc] a,[data-ogsb] .mail-accent,[data-ogsb] a{color:#819bff!important;}
-  [data-ogsc] .mail-border,[data-ogsc] .mail-focus,[data-ogsc] .mail-summary,[data-ogsb] .mail-border,[data-ogsb] .mail-focus,[data-ogsb] .mail-summary{border-color:#343942!important;}
-
 </style>
 </head>
-<body style="margin:0;padding:0;background-color:#fafafa;" class="mail-bg mail-ink">
+<body style="margin:0;padding:0;background-color:#fafafa;" class="mail-bg">
 <!--
 邮件正文模板。发送前将所有 {{...}} 替换为真实内容，并删除这些说明注释。
-保留深浅色声明、mail-* 类和 prefers-color-scheme CSS；支持的邮件客户端跟随主题，不支持时使用浅色内联样式或客户端自身颜色转换。
+邮件采用浅色 HTML 基准并声明 color-scheme: light；不要加入 prefers-color-scheme: dark 或 [data-ogsc]/[data-ogsb] 颜色覆写，让 QQ 邮箱按自身策略整体转换深色主题。body 仅使用 mail-bg，不要加 mail-ink。
 每个栏目复制 NEWS ITEM 区块至 2–4 条，总数保持 10–20 条；资讯标题不显示序号。
 DATE_RANGE 统一填写 YYYY.MM.DD–MM.DD（跨年时结束日期保留年份）；顶部显示“第 N 周 / 日期范围”。本期聚焦使用三条简短、无加粗前缀的完整结论，与历史周报保持一致。每条资讯填写 1–3 个事件标签（如模型发布、产品发布、开源、版本更新、研究进展），标签置于标题与时间下方、配图上方，日期位于标题右侧，只填写日期，不含机构、发布阶段或说明；附加时间信息放正文，日期不换行、标题自适应换行；机构名称在正文与来源链接中体现，不设 SOURCE_NAME。
 每条保留完整标题、摘要、影响与分析、全部可点击来源。长摘要按发布内容、关键数据、限制条件组织为短段，段落使用相同的行内字体与间距样式。
@@ -55,13 +36,13 @@ DATE_RANGE 统一填写 YYYY.MM.DD–MM.DD（跨年时结束日期保留年份�
 <div style="margin-top:12px;font-size:14px;line-height:22px;font-weight:400;text-align:center;font-family:Consolas,monospace;color:#171b24;" class="mail-ink">第 {{WEEK_NO}} 周&nbsp;&nbsp;/&nbsp;&nbsp;{{DATE_RANGE}}</div>
 </td></tr>
 <tr><td class="focus-wrap" style="padding:0 12px;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-focus focus-panel" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;">
-<tr><td class="focus-content mail-focus" style="padding:12px 14px;border-radius:4px;">
-<h2 style="margin:0;font-size:20px;line-height:28px;font-weight:800;color:#171b24;"><strong>本期聚焦</strong></h2>
-<ul style="margin:8px 0 0;padding-left:20px;list-style-type:disc;font-size:15px;line-height:25px;color:#424a57;">
-<li style="padding:0 0 5px;">{{WEEK_HIGHLIGHT_1}}</li>
-<li style="padding:0 0 5px;">{{WEEK_HIGHLIGHT_2}}</li>
-<li style="padding:0 0 5px;">{{WEEK_HIGHLIGHT_3}}</li>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-focus focus-panel" style="width:100%;background:#eef4ff;border-left:3px solid #79a7ff;border-radius:6px;">
+<tr><td class="focus-content mail-focus" style="padding:12px 14px;font-size:14px;line-height:22px;color:#19345f;">
+<strong style="font-weight:700;">本期聚焦</strong>
+<ul style="margin:8px 0 0;padding-left:20px;">
+<li style="padding:0 0 4px;">{{WEEK_HIGHLIGHT_1}}</li>
+<li style="padding:0 0 4px;">{{WEEK_HIGHLIGHT_2}}</li>
+<li style="padding:0;">{{WEEK_HIGHLIGHT_3}}</li>
 </ul>
 </td></tr></table>
 </td></tr>
