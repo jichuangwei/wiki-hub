@@ -409,10 +409,19 @@ def render_mail_body(source: str, categories: list[str]) -> str:
     def week_before_date(match: re.Match[str]) -> str:
         attrs, text = match.groups()
         plain = html.unescape(text).replace("\xa0", " ")
-        heading = re.search(r"(?P<date>.+?)\s*/\s*第\s*(?P<week>\d+)\s*周", plain)
+        heading = re.fullmatch(r"(?:第\s*(\d+)\s*周\s*/\s*(.+)|(.+?)\s*/\s*第\s*(\d+)\s*周)", plain.strip())
         if not heading:
             return match.group(0)
-        ordered = f"第 {heading.group('week')} 周&nbsp;&nbsp;/&nbsp;&nbsp;{escape(heading.group('date').strip())}"
+        week = heading.group(1) or heading.group(4)
+        dates = (heading.group(2) or heading.group(3)).strip()
+        period = re.fullmatch(r'(\d{4}[.-]\d{2}[.-]\d{2})\s*(?:[–—-]|至)\s*((?:\d{4}[.-])?\d{2}[.-]\d{2})', dates)
+        if period:
+            start = date.fromisoformat(period.group(1).replace('.', '-'))
+            end_text = period.group(2).replace('.', '-')
+            end = date.fromisoformat(end_text if len(end_text) == 10 else f'{start.year}-{end_text}')
+            end_label = end.strftime('%m.%d' if start.year == end.year else '%Y.%m.%d')
+            dates = f'{start:%Y.%m.%d}–{end_label}'
+        ordered = f"第 {week} 周&nbsp;&nbsp;/&nbsp;&nbsp;{escape(dates)}"
         return f'<div{attrs}>{ordered}</div>'
 
     content = re.sub(r'<div(\b[^>]*)>([^<]*第\s*\d+\s*周[^<]*)</div>', week_before_date, content)
@@ -474,6 +483,7 @@ def render_mail_body(source: str, categories: list[str]) -> str:
             return match.group(0)
         rows = []
         for item in items:
+            item = re.sub(r'</?strong\b[^>]*>', '', item)
             item = item.replace(' class="mail-ink"', '')
             rows.append(f'<li style="padding:0 0 5px;">{item}</li>')
         return re.sub(r'(<ul\b[^>]*>).*?(</ul>)', lambda m: m.group(1) + ''.join(rows) + m.group(2), panel, flags=re.S)

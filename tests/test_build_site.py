@@ -190,6 +190,23 @@ class BuildSiteTests(unittest.TestCase):
         self.assertNotIn('decimal-leading-zero', body)
         self.assertEqual(body.count('data-kind="section"'), 5)
 
+    def test_old_and_current_report_dates_and_focus_share_a_display_format(self):
+        for week, dates in ((39, '2026.09.21–09.27'), (40, '2026.09.28–10.04')):
+            path = REPORTS / f'ai-agent-frontend/2026/week-{week}.html'
+            original = path.read_bytes()
+            issue = parse_issue(path)
+            body = render_mail_body(original.decode('utf-8'), issue.categories)
+            self.assertIn(f'第 {week} 周&nbsp;&nbsp;/&nbsp;&nbsp;{dates}</div>', body)
+            focus = re.search(r'class="focus-content[^>]*>.*?(<ul\b.*?</ul>)', body, re.S).group(1)
+            self.assertNotIn('<strong', focus)
+            parser = ReportParser()
+            parser.feed(body)
+            self.assertEqual(parser.highlights, issue.highlights)
+            self.assertEqual(path.read_bytes(), original)
+        cross_year = '<body><div>第 1 周 / 2025-12-29 至 2026-01-04</div></body>'
+        self.assertIn('第 1 周&nbsp;&nbsp;/&nbsp;&nbsp;2025.12.29–2026.01.04</div>',
+                      render_mail_body(cross_year, []))
+
     def test_week38_mail_keeps_content_and_filters_all_articles(self):
         original = WEEK38_REPORT.read_bytes()
         issue = parse_issue(WEEK38_REPORT)
