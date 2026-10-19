@@ -685,7 +685,7 @@ def build(output: Path) -> list[Issue]:
     home_lists = {}
     for section, source, detail_template, empty_description in (
         ("notes", NOTES, "note.html", "遇到的问题和解决过程会陆续整理在这里。"),
-        ("practices", PRACTICES, "practice.html", "工具协作、流程设计与实践经验会陆续整理在这里。"),
+        ("practices", PRACTICES, "practice.html", "工具协作、流程设计与可迁移的经验会陆续整理在这里。"),
     ):
         notes = sorted((parse_note(path) for path in source.glob("*.md")),
                        key=lambda note: (note.published, note.slug), reverse=True)
@@ -717,7 +717,7 @@ def build(output: Path) -> list[Issue]:
             "NOTES_SECTION_CLASS": " has-notes" if notes else "",
             "SITE_ROOT": "../",
             "NAV_SECTION": section,
-            "SECTION_LABEL": "实践经验" if section == "practices" else "踩坑记录",
+            "SECTION_LABEL": "经验笔记" if section == "practices" else "踩坑记录",
         }).replace("<!--NOTES_CONTENT-->", notes_content)
         (output / section / "index.html").write_text(notes_page, encoding="utf-8")
         for note in notes:
@@ -745,10 +745,10 @@ def build(output: Path) -> list[Issue]:
 <html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="0;url={escape(target)}">
-<title>文章已移至实践经验 · Wiki Hub</title>
+<title>文章已移至经验笔记 · Wiki Hub</title>
 <link rel="icon" type="image/svg+xml" href="../../assets/favicon.svg">
 <link rel="canonical" href="{escape(target)}"></head>
-<body><p><a href="{escape(target)}">阅读实践经验文章</a></p></body></html>'''
+<body><p><a href="{escape(target)}">阅读经验笔记文章</a></p></body></html>'''
         (redirect_dir / "index.html").write_text(redirect_page, encoding="utf-8")
     latest_issues = [issue for issue in issues if issue.start == latest_week]
     highlights = [point for issue in latest_issues for point in issue.highlights][:3]
