@@ -1,7 +1,7 @@
 ---
-title: Claude Desktop 切到 3P 后看不到官方账号会话
+title: Claude Desktop 接入 CC Switch 后看不到官方账号会话
 date: 2026-10-19
-summary: CC Switch 接管 Claude Desktop 时会切到 3P 部署，使用独立数据目录和假账号，官方账号的会话目录不会被扫描；切回 Claude Desktop Official 即可恢复，数据不会丢失。
+summary: 接入 CC Switch 后，Claude Desktop 会被切到 3P 部署模式，使用独立数据目录和假账号，官方账号的会话目录不会被扫描；切回 Claude Desktop Official 即可恢复，数据不会丢失。
 ---
 
 ## 现象

@@ -82,7 +82,7 @@ summary: Codex 与 Claude Code CLI 的本地会话可以跨账号、跨 provider
 ## 两个典型坑
 
 - Codex 旧会话恢复报 `Model provider not found`：[CC Switch 接管后 Codex 旧会话恢复报 Model provider not found](/notes/codex-cc-switch-model-provider-missing/)
-- Claude Desktop 切到 3P 后官方会话消失：[Claude Desktop 切到 3P 后看不到官方账号会话](/notes/claude-desktop-3p-official-sessions-missing/)
+- Claude Desktop 接入 CC Switch 后官方会话消失：[Claude Desktop 接入 CC Switch 后看不到官方账号会话](/notes/claude-desktop-3p-official-sessions-missing/)
 
 ## 选型建议
 
