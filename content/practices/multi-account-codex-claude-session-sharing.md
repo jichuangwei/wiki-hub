@@ -10,7 +10,7 @@ summary: Codex 与 Claude Code CLI 的本地会话可以跨账号、跨 provider
 |---|---|---|
 | Codex App / CLI | `~/.codex/sessions`，本地按时间存 | 旧会话仍可见；provider 只是每条会话的标签 |
 | Claude Code CLI | `~/.claude/projects/<cwd>`，本地按工作目录存 | 旧会话仍可见，但 `--resume` 列表按 cwd 分组 |
-| Claude Desktop Code | 按 account / org 分目录 | 官方与 3P 是两套身份、两套数据根，互不可见 |
+| Claude Desktop Code | 按 account / org 分目录 | 官方与 CC Switch 3P 是两套身份、两套数据根，互不可见 |
 
 一句话：**本地优先的客户端可以跨账号共用一个历史库；账号目录型的客户端不行。**
 
@@ -46,6 +46,8 @@ summary: Codex 与 Claude Code CLI 的本地会话可以跨账号、跨 provider
 ~/Library/Application Support/Claude-3p/
 ```
 
+用户侧看到的是「接入 CC Switch」，实际发生的是 CC Switch 写入 3P profile，并把客户端切到 3P 部署模式；两者指的是同一件事。
+
 3P 使用独立的 userData 和假身份（`cowork-3p@localhost`），官方账号的目录不会被扫描，所以不是“隐藏”，而是“不在同一个库里”。
 
 ## 能共用 vs 不能共用
@@ -62,7 +64,7 @@ summary: Codex 与 Claude Code CLI 的本地会话可以跨账号、跨 provider
 - 跨机器：需要手动同步
 - 跨配置根：换 `CODEX_HOME` / `CLAUDE_CONFIG_DIR` 就是另一个库
 - 跨客户端：Codex 读不了 Claude 的 JSONL，反之亦然
-- Claude Desktop 官方 ↔ 3P：只能切模式
+- Claude Desktop 官方 ↔ CC Switch 3P：只能切模式
 
 ## 切换检查清单
 
@@ -89,7 +91,7 @@ summary: Codex 与 Claude Code CLI 的本地会话可以跨账号、跨 provider
 | 需求 | 建议 |
 |---|---|
 | 官方账号与第三方模型来回切，且保留全部历史 | Codex 或 Claude Code CLI |
-| 必须用 Claude Desktop 图形界面 | 接受 Official / 3P 二选一，按需切换 |
+| 必须用 Claude Desktop 图形界面 | 接受 Official / CC Switch 3P 二选一，按需切换 |
 | 想跨机器同步历史 | 自行同步 `~/.codex/sessions`、`~/.codex/archived_sessions`、`~/.claude/projects` |
 | 想让 Codex 与 Claude 互相读历史 | 不支持，只能手工导出或粘贴 |
 
