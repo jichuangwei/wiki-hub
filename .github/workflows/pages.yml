@@ -41,6 +41,8 @@ jobs:
           ref: ${{ inputs.revision || github.sha }}
           persist-credentials: false
       - name: Check and build site
+        env:
+          GA4_MEASUREMENT_ID: ${{ vars.GA4_MEASUREMENT_ID }}
         run: |
           python3 -m pip install -r requirements-site.txt
           python3 scripts/build_task_prompt.py --check

@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import html
 import json
+import os
 import re
 import shutil
 from dataclasses import dataclass, field
@@ -337,6 +338,10 @@ def parse_issue(path: Path) -> Issue:
 
 def render(template: str, values: dict[str, str]) -> str:
     values = dict(values)
+    for marker, partial in (("SITE_ANALYTICS", "analytics"), ("SITE_ANALYTICS_NOTICE", "analytics-notice")):
+        if f"<!--{marker}-->" in template:
+            analytics = (SITE / "partials" / f"{partial}.html").read_text(encoding="utf-8") if values.get("GA4_MEASUREMENT_ID") else ""
+            template = template.replace(f"<!--{marker}-->", analytics)
     article_detail = "<!--ARTICLE_LAYOUT-->" in template
     for marker, name in (("SITE_HEADER", "header"), ("ARTICLE_LAYOUT", "article"), ("ARTICLE_LIST", "article-list")):
         if f"<!--{marker}-->" in template:
@@ -610,7 +615,10 @@ def standalone_mail(items: list[StandaloneNews]) -> str:
     return '<table role="presentation" width="100%">' + "".join(rows) + '</table>'
 
 
-def build(output: Path) -> list[Issue]:
+def build(output: Path, ga4_measurement_id: str = "") -> list[Issue]:
+    ga4_measurement_id = ga4_measurement_id.strip()
+    if ga4_measurement_id and not re.fullmatch(r"G-[A-Z0-9]+", ga4_measurement_id):
+        raise ValueError("GA4_MEASUREMENT_ID must be a GA4 measurement ID such as G-XXXXXXXXXX")
     issues = [parse_issue(path) for path in REPORTS.glob("*/*/*.html")]
     issues.sort(key=lambda issue: (issue.start, issue.topic), reverse=True)
     standalone = [parse_standalone_news(path) for path in sorted(NEWS.glob("*/*.json"))]
@@ -647,8 +655,9 @@ def build(output: Path) -> list[Issue]:
     shutil.copytree(SITE / "assets", output / "assets")
     (output / ".nojekyll").touch()
     asset_rev = hashlib.sha256(b''.join((SITE / "assets" / name).read_bytes()
-        for name in ("wiki-hub.css", "news-filter.js", "theme.js", "header.js", "article.js"))).hexdigest()[:12]
-    page_values = {"ASSET_REV": asset_rev, "LATEST_WEEK": week_slug(latest_week)}
+        for name in ("wiki-hub.css", "news-filter.js", "theme.js", "header.js", "article.js", "analytics.js"))).hexdigest()[:12]
+    page_values = {"ASSET_REV": asset_rev, "LATEST_WEEK": week_slug(latest_week),
+                   "GA4_MEASUREMENT_ID": ga4_measurement_id}
     news_template = (SITE / "pages" / "news.html").read_text(encoding="utf-8")
     image_copies = json.loads((SITE / "assets/news/image-sources.json").read_text(encoding="utf-8"))
     for asset in image_copies.values():
@@ -775,9 +784,12 @@ def build(output: Path) -> list[Issue]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DIST)
+    parser.add_argument("--ga4-measurement-id", default=os.environ.get("GA4_MEASUREMENT_ID", ""),
+                        help="GA4 measurement ID; defaults to GA4_MEASUREMENT_ID (empty disables analytics)")
     args = parser.parse_args()
-    issues = build(args.output.resolve())
+    issues = build(args.output.resolve(), args.ga4_measurement_id)
     print(f"Built news, notes and practices pages from {len(issues)} weekly reports at {args.output.resolve()}")
+    print(f"GA4: {args.ga4_measurement_id.strip() or 'disabled (GA4_MEASUREMENT_ID is not set)'}")
 
 
 if __name__ == "__main__":

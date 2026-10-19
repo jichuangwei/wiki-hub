@@ -416,6 +416,11 @@ img { display: block; max-width: 100%; }
 [data-theme="dark"] .home-diagram img { filter: none; mix-blend-mode: lighten; }
 
 .weekly-report .focus-content h2 strong { color: inherit !important; }
+.analytics-notice { padding-block: 24px; color: var(--muted); font-size: 13px; line-height: 1.7; }
+.analytics-notice details { border-top: 1px solid var(--line); padding-top: 16px; }
+.analytics-notice summary { width: fit-content; cursor: pointer; }
+.analytics-notice p { max-width: 80ch; }
+.analytics-notice a { color: var(--blue); text-decoration: underline; }
 [data-theme="dark"] .weekly-report .mail-tag { background: transparent !important; color: var(--muted) !important; }
 
 @media (min-width: 641px) and (max-width: 760px) {
