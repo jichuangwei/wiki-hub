@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>正在打开最新一期资讯 · Wiki Hub</title>
+  <link rel="canonical" href="./{{LATEST_WEEK}}/">
+  <script>
+    const target = new URL('./{{LATEST_WEEK}}/', window.location.href);
+    target.search = window.location.search;
+    target.hash = window.location.hash;
+    window.location.replace(target.href);
+  </script>
+  <noscript><meta http-equiv="refresh" content="0;url=./{{LATEST_WEEK}}/"></noscript>
+</head>
+<body>
+  <p>正在打开最新一期资讯：<a href="./{{LATEST_WEEK}}/">{{CURRENT_WEEK}}</a></p>
+</body>
+</html>

@@ -58,7 +58,7 @@ class DeepReportTests(unittest.TestCase):
             self.assertEqual(len(issue.articles), 13)
             with patch("scripts.build_site.REPORTS", root / "reports"):
                 build(root / "site")
-            output = (root / "site/news/index.html").read_text()
+            output = (root / "site/news/2026-week-36/index.html").read_text()
             for category in issue.categories:
                 self.assertIn(f'data-filter="{category}"', output)
             for html in (combined_html(news_count=1), combined_html(deep_count=2),
@@ -77,7 +77,7 @@ class DeepReportTests(unittest.TestCase):
             self.assertEqual(len(parse_issue(path).articles), 3)
             with patch("scripts.build_site.REPORTS", reports):
                 build(root / "site")
-            output = (root / "site/news/index.html").read_text()
+            output = (root / "site/news/2026-week-36/index.html").read_text()
             self.assertIn('data-week="2026-08-31"', output)
             self.assertIn("证据强弱", output)
             self.assertIn("前端实践", output)

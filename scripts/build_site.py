@@ -345,6 +345,8 @@ def render(template: str, values: dict[str, str]) -> str:
         values[key + "_ACTIVE"] = " is-active" if active else ""
         if key != "HOME":
             values[key + "_HREF"] = "../" if active and article_detail else values.get("SITE_ROOT", "") + key.lower() + "/"
+        if key == "NEWS" and values.get("LATEST_WEEK"):
+            values["NEWS_HREF"] = values.get("SITE_ROOT", "") + "news/" + values["LATEST_WEEK"] + "/"
         values[key + "_CURRENT"] = ' aria-current="page"' if active else ""
     for key, value in values.items():
         template = template.replace("{{" + key + "}}", value)
@@ -644,6 +646,7 @@ def build(output: Path) -> list[Issue]:
     (output / ".nojekyll").touch()
     asset_rev = hashlib.sha256(b''.join((SITE / "assets" / name).read_bytes()
         for name in ("wiki-hub.css", "news-filter.js", "theme.js", "header.js", "article.js"))).hexdigest()[:12]
+    page_values = {"ASSET_REV": asset_rev, "LATEST_WEEK": week_slug(latest_week)}
     news_template = (SITE / "pages" / "news.html").read_text(encoding="utf-8")
     image_copies = json.loads((SITE / "assets/news/image-sources.json").read_text(encoding="utf-8"))
     for asset in image_copies.values():
@@ -665,9 +668,9 @@ def build(output: Path) -> list[Issue]:
         for original, asset in image_copies.items():
             report = report.replace(f'src="{escape(original)}"', f'src="{site_root}assets/{escape(asset)}"')
         return render(news_template, {
+            **page_values,
             "SITE_ROOT": site_root,
             "NAV_SECTION": "news",
-            "ASSET_REV": asset_rev,
             "WEEK_OPTIONS": "\n".join(options),
             "CURRENT_WEEK": week_label(selected_week),
             "CATEGORY_TABS": "\n".join(tabs),
@@ -677,7 +680,11 @@ def build(output: Path) -> list[Issue]:
 
     news_dir = output / "news"
     news_dir.mkdir()
-    (news_dir / "index.html").write_text(news_page(latest_week, "../"), encoding="utf-8")
+    news_redirect = render((SITE / "pages" / "news-redirect.html").read_text(encoding="utf-8"), {
+        "LATEST_WEEK": week_slug(latest_week),
+        "CURRENT_WEEK": week_label(latest_week),
+    })
+    (news_dir / "index.html").write_text(news_redirect, encoding="utf-8")
     for week in weeks:
         week_dir = news_dir / week_slug(week)
         week_dir.mkdir()
@@ -713,7 +720,7 @@ def build(output: Path) -> list[Issue]:
             <span>{empty_description}</span>
           </div>'''
         notes_page = render((SITE / "pages" / f"{section}.html").read_text(encoding="utf-8"), {
-            "ASSET_REV": asset_rev,
+            **page_values,
             "NOTES_SECTION_CLASS": " has-notes" if notes else "",
             "SITE_ROOT": "../",
             "NAV_SECTION": section,
@@ -723,7 +730,7 @@ def build(output: Path) -> list[Issue]:
         for note in notes:
             note_body, note_toc = article_layout(render_note_body(note))
             note_page = render((SITE / "pages" / detail_template).read_text(encoding="utf-8"), {
-                "ASSET_REV": asset_rev,
+                **page_values,
                 "NOTE_LAYOUT_CLASS": " has-toc" if note_toc else "",
                 "SITE_ROOT": "../../",
                 "NAV_SECTION": section,
@@ -757,7 +764,7 @@ def build(output: Path) -> list[Issue]:
         f'<h2><a href="news/{week_slug(latest_week)}/">{escape(title)}</a></h2>'
         + ('<p class="home-focus-label">本期聚焦</p><ul class="home-focus">' + ''.join(f'<li>{escape(point)}</li>' for point in highlights) + '</ul>' if highlights else '')
         + f'<a class="home-read" href="news/{week_slug(latest_week)}/"><span class="home-read-label">阅读本期</span><span class="home-read-arrow" aria-hidden="true">→</span></a></div>')
-    home_page = render((SITE / "pages" / "index.html").read_text(encoding="utf-8"), {"ASSET_REV": asset_rev, "SITE_ROOT": "./", "NAV_SECTION": "home"})
+    home_page = render((SITE / "pages" / "index.html").read_text(encoding="utf-8"), {**page_values, "SITE_ROOT": "./", "NAV_SECTION": "home"})
     home_page = home_page.replace('<!--HOME_LATEST-->', latest_content).replace('<!--HOME_PRACTICES-->', home_lists['practices']).replace('<!--HOME_NOTES-->', home_lists['notes'])
     (output / "index.html").write_text(home_page, encoding="utf-8")
     return issues

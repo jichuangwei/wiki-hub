@@ -83,19 +83,33 @@ class BuildSiteTests(unittest.TestCase):
             # homepage title when a new template switches to ISO dates.
             feature_title = re.search(r'<h2><a href="news/[^\"]+">(.*?)</a></h2>', landing).group(1)
             self.assertNotRegex(feature_title, r'\d{4}[.-]\d{2}[.-]\d{2}')
-            home = (output / "news/index.html").read_text(encoding="utf-8")
+            redirect = (output / "news/index.html").read_text(encoding="utf-8")
+            target = f"./{week_slug(latest.start)}/"
+            self.assertIn(f'new URL(\'{target}\', window.location.href)', redirect)
+            self.assertIn('target.search = window.location.search', redirect)
+            self.assertIn('target.hash = window.location.hash', redirect)
+            self.assertIn('window.location.replace(target.href)', redirect)
+            self.assertIn(f'<noscript><meta http-equiv="refresh" content="0;url={target}"></noscript>', redirect)
+            self.assertIn(f'<link rel="canonical" href="{target}">', redirect)
+            self.assertIn(f'<a href="{target}">', redirect)
+            self.assertNotIn('src=', redirect)
+            self.assertNotIn('data-kind="news"', redirect)
+            self.assertNotIn('{{', redirect)
+            home = (output / f"news/{week_slug(latest.start)}/index.html").read_text(encoding="utf-8")
+            self.assertNotIn('http-equiv="refresh"', home)
+            self.assertNotIn('location.replace', home)
             notes = (output / "notes/index.html").read_text(encoding="utf-8")
             self.assertEqual(home.count('data-kind="news"'), len(latest_articles))
-            self.assertIn('href="../news/2026-week-39/" role="option" data-week="2026-09-21" data-week-path="2026-week-39"', home)
-            self.assertIn('href="../news/2026-week-38/" role="option" data-week="2026-09-14" data-week-path="2026-week-38"', home)
+            self.assertIn('href="../../news/2026-week-39/" role="option" data-week="2026-09-21" data-week-path="2026-week-39"', home)
+            self.assertIn('href="../../news/2026-week-38/" role="option" data-week="2026-09-14" data-week-path="2026-week-38"', home)
             self.assertNotIn("<select", home)
             self.assertIn('data-category="AI/大模型"', home)
             self.assertNotIn('class="detail-dialog"', home)
             self.assertNotIn('class="news-card"', home)
             self.assertIn('class="site-header"', home)
-            self.assertIn('href="../news/" aria-current="page"', home)
-            self.assertIn('href="../notes/"', home)
-            self.assertIn('href="../news/"', notes)
+            self.assertIn(f'href="../../news/{week_slug(latest.start)}/" aria-current="page"', home)
+            self.assertIn('href="../../notes/"', home)
+            self.assertIn(f'href="../news/{week_slug(latest.start)}/"', notes)
             self.assertIn('href="../notes/" aria-current="page"', notes)
             self.assertIn("QQ 邮箱深色模式与浏览器预览的文字颜色不一致", notes)
             self.assertIn('href="qq-mail-dark-mode-colors/"', notes)
@@ -127,6 +141,14 @@ class BuildSiteTests(unittest.TestCase):
             self.assertLess(home.index('>AI 资讯干货</h1>'),
                             home.index(f'第 {latest.week_number} 周&nbsp;&nbsp;/'))
             self.assertNotIn("{{", home)
+            for page in pages:
+                content = page.read_text(encoding="utf-8")
+                if 'class="site-nav"' not in content:
+                    continue
+                with self.subTest(page=page.relative_to(output)):
+                    href = re.search(r'<a class="site-nav-link[^"]*" href="([^"]+)"[^>]*>资讯干货</a>', content).group(1)
+                    self.assertEqual((page.parent / href).resolve(),
+                                     (output / f"news/{week_slug(latest.start)}").resolve())
 
     def test_practice_navigation_and_migrated_article_link(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -155,7 +177,9 @@ class BuildSiteTests(unittest.TestCase):
             next_week.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
             with patch("scripts.build_site.REPORTS", root / "reports"):
                 build(root / "site")
-            home = (root / "site/news/index.html").read_text(encoding="utf-8")
+            redirect = (root / "site/news/index.html").read_text(encoding="utf-8")
+            self.assertIn("new URL('./2026-week-40/', window.location.href)", redirect)
+            home = (root / "site/news/2026-week-40/index.html").read_text(encoding="utf-8")
             self.assertEqual(home.count('data-kind="news"'), 12)
             self.assertEqual(home.count('class="weekly-report"'), 1)
             self.assertIn('data-week="2026-09-28" aria-label="第 40 周 · 2026.09.28—10.04">', home)
@@ -273,7 +297,9 @@ class BuildSiteTests(unittest.TestCase):
             reports.mkdir()
             with patch("scripts.build_site.NEWS", news.parent), patch("scripts.build_site.REPORTS", reports), patch("scripts.build_site.NOTES", root / "notes"), patch("scripts.build_site.PRACTICES", root / "practices"):
                 build(root / "site")
-            home = (root / "site/news/index.html").read_text(encoding="utf-8")
+            redirect = (root / "site/news/index.html").read_text(encoding="utf-8")
+            self.assertIn("new URL('./2026-week-40/', window.location.href)", redirect)
+            home = (root / "site/news/2026-week-40/index.html").read_text(encoding="utf-8")
             self.assertIn('data-week="2026-09-28"', home)
             self.assertIn('data-category="产业观察"', home)
             self.assertEqual(len(list((root / "site").rglob("*.html"))), 5)
