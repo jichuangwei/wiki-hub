@@ -99,3 +99,5 @@ lsof -p "$(pgrep -f '/Applications/Claude.app/Contents/MacOS/Claude' | head -1)"
 - 以上基于本机当时的 Claude Desktop 与 CC Switch 版本，其他版本的 3P 数据根命名可能变化。
 
 相关记录：[CC Switch 接管后 Codex 旧会话恢复报 Model provider not found](/notes/codex-cc-switch-model-provider-missing/)
+
+相关经验笔记：[多账号使用 Codex 与 Claude Code：会话共享与切换边界](/practices/multi-account-codex-claude-session-sharing/)

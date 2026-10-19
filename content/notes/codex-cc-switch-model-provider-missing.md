@@ -57,3 +57,5 @@ experimental_bearer_token = "PROXY_MANAGED"
 - 重开会话后不再提示 provider 不存在。
 
 边界：本次只验证了补回区块后配置解析通过；公共配置能否真正防复发，需要在下次切换供应商后复查 `config.toml` 是否仍包含该区块，尚未做切换实测。
+
+相关经验笔记：[多账号使用 Codex 与 Claude Code：会话共享与切换边界](/practices/multi-account-codex-claude-session-sharing/)
