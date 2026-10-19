@@ -13,7 +13,7 @@ def render_email(source: Path) -> str:
     body = render_mail_body(source.read_text(encoding='utf-8'), issue.categories)
     template = (ROOT / 'templates/news/ai-agent-frontend-weekly-email.html').read_text(encoding='utf-8')
     head = template.split('<body', 1)[0]
-    head = re.sub(r'<title>.*?</title>', '<title>AI 资讯干货｜第 %s 周</title>' % issue.start.isocalendar().week, head)
+    head = re.sub(r'<title>.*?</title>', '<title>资讯干货｜第 %s 周</title>' % issue.start.isocalendar().week, head)
     for old, new in {'#f6f8fc':'#fafafa', '#17233b':'#171b24', '#2456cd':'#3662f4', '#607089':'#424a57', '#394a64':'#424a57', '#8090a6':'#79818f', '#cbd5e1':'#d9dde5', '#dde5f0':'#d9dde5'}.items():
         body = body.replace(old,new)
     body = body.replace('font-size:34px;line-height:1.2;', 'font-size:42px;line-height:1.2;text-align:center;')
