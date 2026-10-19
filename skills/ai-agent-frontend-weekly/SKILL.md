@@ -5,7 +5,7 @@ description: 筛选国际与中国生态的 AI、大模型、Agent 与前端资�
 
 # AI × Agent × 前端周报
 
-默认整理上一完整自然周（周一至周日）的资讯；测试指定周次时使用指定日期。使用固定五栏目模板，线上发布核验成功后，按云任务私有配置发送同一份 HTML 邮件。
+默认整理上一完整自然周（周一至周日）的资讯；测试指定周次时使用指定日期。使用固定五栏目模板，核实本次 Publisher request_id 对应的真实归档 commit 已由 GitHub Actions 提交到 main，并完整读取该 commit 的归档 HTML、确认周期与正文一致后，按云任务私有配置发送完整 HTML 邮件；Actions、Pages 与线上内容独立检查并报告。
 
 ## 选题与分类
 
@@ -46,8 +46,8 @@ description: 筛选国际与中国生态的 AI、大模型、Agent 与前端资�
 目标仓库 jichuangwei/wiki-hub，main 分支；归档路径 content/news/reports/ai-agent-frontend/YEAR/week-N.html，YEAR 与 N 取 START 的 ISO 周年份和周序号。确认仓库可访问再检查本期归档；默认已有完整归档则复用；只有用户明确要求修订已发布周报时，才按下述审核更新流程重新生成并替换，不把权限错误当成文件不存在。
 确认仓库可访问后，先调用 get_publication_by_week(start=START, end=END) 查该周当前 publication 与替换历史，再检查 main 上的归档文件。该工具只返回请求与状态元数据，不返回 HTML。若当前 publication 内容与目标归档一致，复用它并按 request_id 调用 get_publication_status；若该周没有 publication 且归档不存在，才调用 publish_weekly_report(start=START, end=END, html=完整HTML)。若存在不同内容的记录，先用其 request_id 查询状态：dispatch_unknown、pending 或状态不明时停止并继续查原请求；action_failed 且未归档时，只有用户明确批准修正后才可传 replace_failed_request_id 与 review_reason；已 published 时，只有用户明确批准更新后才可传 replace_published_request_id 与 review_reason。没有明确批准就停止并报告需要审核，不得普通重试或覆盖。
 
-发布后保存返回的 request_id，再调用 get_publication_status(request_id)。持续查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
-仅当 get_publication_status 返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true，才报告“提交并部署成功”。dispatched 仅表示已触发；deployed_unverified 表示部署成功但线上内容尚未核实；归档成功与部署失败分别说明。相同内容重试复用同一请求，同周不同内容停止并报告需人工审核修正。
+发布后保存返回的 request_id，再调用 get_publication_status(request_id)。核实该 request_id 对应的真实周报归档 commit 已由 GitHub Actions 提交到 main：核对请求、对应 Action 与 commit 的关联及 main 中的提交记录，不能只凭 commit_sha 非空认定归档成功。为确认归档只查询同一请求，不依赖历史 Action 的最新运行，不重跑旧运行冒充本期发布。请求返回 dispatch_unknown 时，只查询该 request_id，不重复创建发布请求；如仍找不到匹配运行，报告需要检查服务。
+Actions 全流程、Pages 部署与目标线上内容做独立检查并如实报告，不作为发信或任务完成的等待条件。state=published、action_conclusion=success、online_verified=true 不作为发信前置条件；deployed_unverified、online_verified=false 仅用于状态报告，不阻塞邮件或任务完成，不为等待其变化而持续轮询，也不要求人工确认。dispatched 仅表示已触发；deployed_unverified 表示部署成功但线上内容尚未核实，不得据此声称部署验证成功。归档、Actions、Pages 和线上内容分别报告，只有相应检查实际成功才报告成功，未验证成功不得声称部署验证成功。相同内容重试复用同一请求，同周不同内容停止并报告需人工审核修正。
 不要调用 create_file/update_file，不直接提交文件，不把 PAT/token 或登录凭据写进 Prompt、HTML 或仓库；收件邮箱只允许存在于云任务私有 Prompt 邮件发送配置中，不得写入生成 HTML、publish_weekly_report 的任何参数或仓库归档 HTML。文件写入仅由 Action 的 GITHUB_TOKEN 完成。
 如果当前任务没有 publish_weekly_report、get_publication_status 或 get_publication_by_week 工具，保留完整 HTML 并明确报告“发布工具未连接，未触发”，不得声称已提交或部署，也不得要求每周手动触发来代替自动链路。
 
@@ -58,16 +58,16 @@ description: 筛选国际与中国生态的 AI、大模型、Agent 与前端资�
 ## HTML 邮件与 BCC
 
 邮件服务与收件人由云任务私有 Prompt 配置，不写入公开仓库。当前流程使用 Gmail，收件方式仅 BCC；To 和 CC 留空。没有明确的私有 BCC 配置时不发送邮件。收件地址不得复制到 HTML、publish_weekly_report 参数、归档 HTML、邮件主题或公开结果报告。
-只有本次 get_publication_status(request_id) 同时返回 state=published、commit_sha 非空、action_conclusion=success、online_verified=true 后，才允许发送邮件；发布失败、发布未完成或线上未核验时不发送。
-使用已连接且获授权的 Gmail 发送工具，必须将云任务私有配置中的地址作为独立 bcc 参数传入，不得放入 To、CC、主题或正文。邮件主题为“AI 资讯干货｜第 N 周｜START 至 END”；正文必须为本次生成、最终发布且线上核验通过的完整 UTF-8 HTML，以 text/html; charset=UTF-8 发送。发送前核对日期范围及正文与本次 request_id 对应 commit_sha 的归档 HTML 和线上核验内容一致；复用归档时使用该请求最终发布并核验通过的归档 HTML，不重新生成另一版。不得改成纯文本、Markdown、摘要或只有网页链接。
-发送前确认 Gmail 工具实际支持完整 HTML 正文、独立 BCC 参数及 To/CC 留空。工具未连接、未获授权、必需能力缺失或正文无法确认一致时，保留完整 HTML，报告“部署成功，Gmail/BCC 邮件未发送”及原因，不绕过 BCC、不猜测收件人或切换其他服务。
+发信前必须确认本次 Publisher request_id 对应的真实周报归档 commit 已由 GitHub Actions 提交到 main，并从该 commit 完整读取归档 HTML，确认周期正确、正文与待发送邮件一致。满足这些条件即可发送，不等待 Actions 全流程结束、Pages 部署或线上内容验证；无法确认真实归档 commit、周期或正文一致时不发送。
+使用已连接且获授权的 Gmail 发送工具，必须将云任务私有配置中的地址作为独立 bcc 参数传入，不得放入 To、CC、主题或正文。邮件主题为“AI 资讯干货｜第 N 周｜START 至 END”；正文必须为从本次 request_id 对应的真实归档 commit 完整读取并核对的 UTF-8 HTML，以 text/html; charset=UTF-8 发送。发送前核对完整周一至周日的日期范围、ISO 周年份与周序号，并确认待发送完整正文与该 commit 的归档 HTML 一致；复用归档时同样读取并使用该请求对应 commit 的完整归档 HTML，不重新生成另一版。不得改成纯文本、Markdown、摘要或只有网页链接。
+发送前确认 Gmail 工具实际支持完整 HTML 正文、独立 BCC 参数及 To/CC 留空。工具未连接、未获授权、必需能力缺失或正文无法确认一致时，保留完整 HTML，报告“Gmail/BCC 邮件未发送”及原因，部署状态单独按实际检查结果报告，不绕过 BCC、不猜测收件人或切换其他服务。
 以 request_id 为防重复发送键：同一 request_id 成功后只发送一次。发送前读取持久化发送记录或 Gmail 已发送邮件证据，记录 request_id、commit_sha、HTML 内容摘要及真实 message_id 的对应关系；该记录不得写入周报 HTML 或发布参数。已确认发送成功则复用记录并报告“已发送，跳过重复发送”。并发执行须使用同一 request_id 的互斥发送记录；无法可靠查询或保存记录时不发送，并报告无法保证防重复。
 发送超时或结果不明确时先查询同一请求对应的已发送邮件记录；无法确认时报告“发送状态待核实”，不得直接重发。只有 Gmail 返回真实发送成功结果和 message_id（或等效邮件标识），并保存对应发送记录后，才报告“Gmail 邮件已发送（BCC）”；若发送成功但记录保存失败，报告实际发送证据并停止自动重发。草稿创建、生成成功或部署成功均不能当作邮件发送成功。不自动发送历史所有周报，只发送本次指定周期。
 
 ## 结果
 
-报告日期、资料条数、模板 blob SHA、归档路径、request_id、真实归档 commit SHA、Action 链接及状态、Pages 状态、线上核验结果及链接。另外单独报告 Gmail/BCC 发送状态（已发送、已发送并跳过重复、未发送或待核实）、原因、对应 request_id、真实 message_id（或等效标识）及 BCC 参数是否已设置，不显示密送地址或任何凭据。运行未完成时保留 request_id，供继续查询；不得把本地生成、归档前校验或任务通知当作部署成功。
+报告日期、资料条数、模板 blob SHA、归档路径、request_id、真实归档 commit SHA、Action 链接及状态、Pages 状态、线上核验结果及链接。另外单独报告 Gmail/BCC 发送状态（已发送、已发送并跳过重复、未发送或待核实）、原因、对应 request_id、真实 message_id（或等效标识）及 BCC 参数是否已设置，不显示密送地址或任何凭据。归档或发送状态待核实时保留 request_id 及实际证据；Actions、Pages 或线上内容未完成、deployed_unverified、online_verified=false 不阻塞邮件或任务完成，不为等待其变化而持续轮询，也不要求人工确认。不得把本地生成、归档前校验或任务通知当作部署成功，未验证成功不得声称部署验证成功。
 
 ## 已发布周报的审核更新
 
-仅当用户明确批准重新生成并更新已 published 的指定周报时，调用 publish_weekly_report(start=START, end=END, html=完整HTML, replace_published_request_id=该周旧请求ID, review_reason=用户批准及修订原因)。不要使用 update_existing 通用开关，不与 replace_failed_request_id 同时传入。发布前保存完整 HTML 文件，不能只保留长度和校验摘要。服务核对旧请求 state=published、真实 commit 与 main 当前归档摘要一致；Action 在写入前复核旧 commit 的正文摘要与当前文件，任何不一致都停止。修订创建新 request_id，旧记录保留为 superseded 审计证据；持续查询新请求，只有新正文 online_verified=true 才算更新成功。新版工具 schema 未包含 replace_published_request_id 时明确报告需要刷新连接元数据，不调用普通发布冒充修订。邮件仍按正式规则及实际发送授权处理，修订部署成功不表示邮件已发送。
+仅当用户明确批准重新生成并更新已 published 的指定周报时，调用 publish_weekly_report(start=START, end=END, html=完整HTML, replace_published_request_id=该周旧请求ID, review_reason=用户批准及修订原因)。不要使用 update_existing 通用开关，不与 replace_failed_request_id 同时传入。发布前保存完整 HTML 文件，不能只保留长度和校验摘要。服务核对旧请求 state=published、真实 commit 与 main 当前归档摘要一致；Action 在写入前复核旧 commit 的正文摘要与当前文件，任何不一致都停止。修订创建新 request_id，旧记录保留为 superseded 审计证据；按新 request_id 核实新版真实归档 commit 已由 GitHub Actions 提交到 main，并完整读取该 commit 的归档 HTML、核对周期与获批正文，满足后报告归档更新成功；Actions、Pages 与线上内容独立检查并报告，不等待 online_verified 变化，不将线上未核实作为邮件或任务完成的阻断条件。新版工具 schema 未包含 replace_published_request_id 时明确报告需要刷新连接元数据，不调用普通发布冒充修订。邮件仍按正式规则及实际发送授权处理，修订部署成功不表示邮件已发送。

@@ -4,7 +4,7 @@
 
 发布、线上核验和 HTML 邮件发送均遵守 skill。邮件服务为 Gmail，仅使用独立 BCC 字段，To 和 CC 留空。BCC 收件人只从此云任务的私有配置获取，不从仓库、周报正文或历史邮件猜测；缺少明确私有收件配置时，可完成发布，但不得发送邮件，并报告原因。不要将收件地址写入仓库、HTML、发布参数或公开结果。
 
-发布前必须确认当前任务可调用 get_publication_by_week、publish_weekly_report 和 get_publication_status。先按周查询现有记录，再按 skill 选择复用、首次发布或经用户明确批准的修订；不能因同周冲突而普通重试或覆盖。首次发布或获批修订通过 Wiki Hub Publisher 触发 GitHub Actions；保存 request_id 并查询同一请求，直到核实 GitHub 归档 commit、Actions 成功、Pages 部署和目标线上内容。发布工具不可用、Action 失败或线上内容未核实时，明确报告阻断原因，不得声称部署成功。
+发布前必须确认当前任务可调用 get_publication_by_week、publish_weekly_report 和 get_publication_status。先按周查询现有记录，再按 skill 选择复用、首次发布或经用户明确批准的修订；不能因同周冲突而普通重试或覆盖。首次发布或获批修订通过 Wiki Hub Publisher 触发 GitHub Actions；保存 request_id，核实该请求对应的真实周报归档 commit 已由 GitHub Actions 提交到 main，并从该 commit 完整读取归档 HTML，确认周期正确、正文与待发送邮件一致。满足这些条件即可按 skill 通过 Gmail 发送完整 HTML 邮件，不等待 Actions 全流程结束、Pages 部署或线上内容验证。state=published、action_conclusion=success、online_verified=true 不作为发信前置条件；deployed_unverified、online_verified=false 仅用于状态报告，不阻塞邮件或任务完成，不为等待其变化而持续轮询，也不要求人工确认。Actions、Pages 和线上内容仍做独立检查并如实报告；发布工具不可用、无法确认真实归档 commit 或正文一致时停止发信并说明原因，Actions 失败或线上未核实按实际状态报告，未验证成功不得声称部署验证成功。
 
 每次执行结束报告周报周期、Prompt / Skill / 模板 blob SHA、Publisher request_id、归档 commit SHA、GitHub Actions 结果、Pages 地址与线上核验状态，以及 Gmail 发送状态。未发送邮件时说明原因，不显示 BCC 地址。
 
