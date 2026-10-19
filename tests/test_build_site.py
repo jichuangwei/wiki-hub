@@ -32,7 +32,7 @@ class BuildSiteTests(unittest.TestCase):
             "AI 资讯干货｜2026-09-28 至 2026-10-04",
         ):
             with self.subTest(subject=subject):
-                self.assertEqual(report_display_title(subject), "AI 资讯干货")
+                self.assertEqual(report_display_title(subject), "资讯干货")
         self.assertEqual(report_display_title("前端实践｜工具与流程"), "前端实践｜工具与流程")
 
     def test_week_path_uses_iso_week_year(self):
@@ -138,7 +138,7 @@ class BuildSiteTests(unittest.TestCase):
                 self.assertIn(escape(article.title), home)
                 for _, url in article.sources:
                     self.assertIn(f'href="{escape(url)}"', home)
-            self.assertLess(home.index('>AI 资讯干货</h1>'),
+            self.assertLess(home.index('>资讯干货</h1>'),
                             home.index(f'第 {latest.week_number} 周&nbsp;&nbsp;/'))
             self.assertNotIn("{{", home)
             for page in pages:

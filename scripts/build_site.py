@@ -52,9 +52,10 @@ def escape(value: str) -> str:
 
 
 def report_display_title(title: str) -> str:
-    """Omit email subject dates where the page already has a week line."""
+    """Use the website title without the email subject's date suffix."""
     date_suffix = r'\s*[｜|]\s*\d{4}[.-]\d{2}[.-]\d{2}\s*(?:[–—-]|至)\s*(?:\d{4}[.-])?\d{2}[.-]\d{2}\s*$'
-    return re.sub(date_suffix, '', title)
+    title = re.sub(date_suffix, '', title)
+    return "资讯干货" if title == "AI 资讯干货" else title
 
 
 def valid_https(url: str) -> bool:
@@ -397,6 +398,7 @@ def render_mail_body(source: str, categories: list[str]) -> str:
     content = re.sub(r"<!--.*?-->", "", body.group(1), flags=re.S)
     if re.search(r"<(?:script|iframe|object|embed|form|base)\b|\son\w+\s*=", content, flags=re.I):
         raise ValueError("Report body must contain passive email markup")
+    content = re.sub(r'(<h1\b[^>]*>)\s*AI 资讯干货\s*(</h1>)', r'\1资讯干货\2', content)
     # Migrate the old three-column galleries only in website output. The original
     # sent email remains unchanged; current image-slot galleries pass through.
     def migrate_gallery(match: re.Match[str]) -> str:
