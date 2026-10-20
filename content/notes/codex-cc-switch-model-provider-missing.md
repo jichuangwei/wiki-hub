@@ -44,7 +44,7 @@ experimental_bearer_token = "PROXY_MANAGED"
 
 第 3 步，保存后重新打开会话；桌面端仍显示旧错误时，重启一次 Codex 桌面端再试。
 
-第 4 步，防复发：把同一段配置放进 CC Switch → Codex → 公共配置（数据库键为 `common_config_codex`），让它随每次接管写回。若放入公共配置后仍被覆盖，则改为写进当前供应商自己的配置字段。
+第 4 步，防复发（已采用）：把同一段配置放进 CC Switch → Codex → 公共配置（数据库键为 `common_config_codex`），每次接管都会把它合并回 `config.toml`。若某次升级后仍被覆盖，再把这段写进当前供应商自己的配置字段。
 
 第 5 步，恢复后若报 `connection refused`，说明代理没在运行，检查 15721 端口即可，与 provider 配置无关。
 
@@ -54,8 +54,9 @@ experimental_bearer_token = "PROXY_MANAGED"
 
 - `codex doctor` 输出 `config.toml parse ok`，配置可正常加载；其中的 `disable_response_storage is ignored` 告警与本文问题无关。
 - `lsof -nP -iTCP:15721 -sTCP:LISTEN` 能看到 cc-switch 监听 `127.0.0.1:15721`。
+- 加入公共配置并重启 CC Switch 后，接管重写的 `config.toml` 仍包含 `[model_providers.cc-switch-official]`，`codex doctor` 显示配置正常加载。
 - 重开会话后不再提示 provider 不存在。
 
-边界：本次只验证了补回区块后配置解析通过；公共配置能否真正防复发，需要在下次切换供应商后复查 `config.toml` 是否仍包含该区块，尚未做切换实测。
+边界：已验证公共配置在重启接管后会写回；CC Switch 升级后建议再复查一次 `config.toml`，确认合并行为未被改变。
 
 相关经验笔记：[多账号使用 Codex 与 Claude Code：会话共享与切换边界](/practices/multi-account-codex-claude-session-sharing/)
