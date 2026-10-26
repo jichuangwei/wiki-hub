@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>资讯干货｜2026.10.19–10.25</title>
+<style>
+  body{margin:0;padding:0;background:#fafafa;color:#171b24;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  table{border-collapse:collapse;border-spacing:0;}
+  img{border:0;display:block;max-width:100%;height:auto;}
+  .image-slot img{max-width:100%!important;}
+  a{color:#3662f4;text-decoration:underline;}
+  @media only screen and (max-width:640px){.pad{padding-left:12px!important;padding-right:12px!important}.story{padding:8px 0 16px!important}.focus-content{padding:12px!important}.summary-content{padding:16px!important}.hero-title{font-size:27px!important;line-height:1.25!important}}
+  @media only screen and (max-width:480px){.image-slot{display:block!important;width:100%!important;min-width:0!important;margin:0!important}.image-slot>div{padding:0 0 8px!important}.image-slot img{margin:0!important}}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#fafafa;" class="mail-bg">
+
+<div style="display:none;font-size:1px;color:#fafafa;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">低成本模型、主动 Agent 与可验证工程成为本周开发焦点。</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;background-color:#fafafa;" class="mail-bg">
+<tr><td align="center" style="padding:0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:1000px;">
+<tr><td class="pad" style="padding:20px 12px 14px;">
+<h1 class="hero-title mail-ink" style="margin:0;font-size:42px;line-height:1.2;text-align:center;font-weight:750;color:#171b24;">资讯干货</h1>
+<div style="margin-top:12px;font-size:14px;line-height:22px;font-weight:400;text-align:center;font-family:Consolas,monospace;color:#171b24;" class="mail-ink">第 43 周&nbsp;&nbsp;/&nbsp;&nbsp;2026.10.19–10.25</div>
+</td></tr>
+<tr><td class="focus-wrap" style="padding:0 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-focus focus-panel" style="width:100%;background:#eef4ff;border-left:3px solid #79a7ff;border-radius:6px;">
+<tr><td class="focus-content mail-focus" style="padding:12px 14px;font-size:14px;line-height:22px;color:#19345f;">
+<strong style="font-weight:700;">本期聚焦</strong>
+<ul style="margin:8px 0 0;padding-left:20px;">
+<li style="padding:0 0 4px;">模型成本竞争需要以完整任务成功率和返工成本衡量，单看 token 单价不足以选型。</li>
+<li style="padding:0 0 4px;">主动 Agent 扩展到后台执行，批准、凭据隔离与可重放验证正成为系统设计重点。</li>
+<li style="padding:0;">前端工具链同时迎来格式化提速与运行时安全更新，升级应与兼容性回归配套。</li>
+</ul>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">01&nbsp;·&nbsp;AI/大模型</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">MiniMax 发布 M3.1 Flash：面向 Agent 任务下调成本</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-19</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">模型发布</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">中国生态</span></div>
+
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 8px;"><div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><a href="https://filecdn.minimax.chat/public/m31-flash-en-2-1792403273121-webp-1.m31-flash-en-2-1792403273121-webp" target="_blank" style="display:block;width:100%;text-decoration:none;"><img src="https://filecdn.minimax.chat/public/m31-flash-en-2-1792403273121-webp-1.m31-flash-en-2-1792403273121-webp" width="420" alt="MiniMax M3.1 Flash 官方跨任务评测对比表" style="display:block;width:100%;max-width:420px;height:auto;border:0;margin:0;"></a></div></div><div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"></div></div><p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>MiniMax 正式推出 M3.1 Flash，通过 API、M Plan 与 MiniMax Code 提供。官方公布每百万 token 输入 0.15 美元、输出 0.60 美元、缓存输入 0.015 美元；模型权重计划后续发布，不能把当前版本写成已开源。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对多步工具调用、代码修复和桌面操作原型，这是值得加入成本对照的中国模型。总任务成本仍取决于推理长度、失败重试及人工返工，不能只比较 token 单价。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合批量修复与低成本 Agent 试验；以固定仓库任务、构建和交互验收比较成功率后再切换。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>证据与局限：DeepSWE、OSWorld 等成绩与速度、降本幅度来自厂商评测；任务集、harness 和推理配置不同，无法直接推导本地前端项目表现。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://www.minimax.io/blog/minimax-m31f">MiniMax 官方研究公告</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">OpenAI 发布低资源编程语言评测，强调迁移中的行为保持</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-19</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">研究进展</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">模型评测</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>OpenAI 公开 MultiLangBench，要求模型在 20 种语言中实现 SQLite 兼容引擎，并报告 COBOL 迁移评测。官方报告 GPT-6 Astra 在前者平均测试通过率为 87.4%，GPT-6.1 Sol 在后者 low effort 下准确率为 86.6%。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对跨语言迁移和遗留系统前端改造，核心启示是把业务行为变成可执行对照，而非仅检查生成代码能否编译。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>证据与局限：这些是厂商评测；不同基准的通过率不能横比，也不代表 React/Vue 重构成功率。应在迁移前保存真实输入输出与边界用例，使用独立验证器检查。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://openai.com/index/low-resource-programming-languages/">OpenAI 评测说明与公开测试入口</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">02&nbsp;·&nbsp;Coding Agent/Agent 产品</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Notion 重建 Agent harness，新增路由、浏览器与统一额度机制</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-19</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">产品更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">Agent 产品</span></div>
+
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 8px;"><div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><a href="https://images.ctfassets.net/spoqsaf9291f/4et0ZiqG3ZU1K1HrJoMTE/4b19eebb025aa7a359f1f959db784364/HVBHPQQbYAAhSe2.png" target="_blank" style="display:block;width:100%;text-decoration:none;"><img src="https://images.ctfassets.net/spoqsaf9291f/4et0ZiqG3ZU1K1HrJoMTE/4b19eebb025aa7a359f1f959db784364/HVBHPQQbYAAhSe2.png" width="420" alt="Notion Auto 官方任务成本对比图" style="display:block;width:100%;max-width:420px;height:auto;border:0;margin:0;"></a></div></div><div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"></div></div><p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Notion 公布 Agent 具备自己的电脑和浏览器，支持更长任务、改进上下文与 Review for me；同时更新 Auto 模型路由和额度机制。个人 Agent 可连接已有 ChatGPT 套餐，企业 BYOK 仍属私有 alpha，Command Center 为后续能力。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>产品竞争从单模型能力转向任务路由、上下文和费用治理。模型自动切换时，团队仍需记录实际执行轨迹，避免把同一工作流的质量波动误判为提示词问题。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合知识库整理与数据库工作流；先限定可读写页面，并用测试空间核验权限和回滚。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>证据与局限：官方称在 20 多项常见任务中平均成本低约 90%、结果接近旗舰模型，这是厂商任务集上的比较，不能作为所有业务均节省 90% 的预算承诺。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://www.notion.com/en-gb/releases/2026-10-19">Notion 官方发布说明</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Claude Duet 开放研究预览，将主动提醒与后台执行结合</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-21</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">产品发布</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">研究预览</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Anthropic 发布 Claude Duet，面向美国 Pro、Max 用户通过候补名单提供研究预览。它使用云端电脑，在用户离开后继续工作，基于连接的应用生成简报和主动提醒；后台检查与任务共享 Claude 套餐额度。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>对小团队运营和跨应用工作流，持续执行有价值，但应先明确通知频率、可操作账户和需要确认的动作。10 月 23 日安全说明补充了独立批准检查与凭据隔离设计。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合邮件分拣、待办准备和业务原型；先使用低敏感数据，检查任务记录，再扩大授权。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>证据与局限：产品仍可能误读信息或判断错紧急程度；官方安全机制并不等同于零泄露保证，连接账户范围和额度消耗需要实际观察。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://claude.com/resources/articles/claude-duet">Anthropic 官方发布</a> · <a href="https://claude.com/resources/articles/claude-duet-safety-privacy-and-security">官方安全、隐私与批准流程说明</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">03&nbsp;·&nbsp;Agent 开发技术与工程</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">WildAWM 发布：将 GUI、MCP 与 CLI 放进可重放的 Agent 训练环境</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-19</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">研究进展</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">开源</span></div>
+
+<div style="width:100%;font-size:0;line-height:0;text-align:left;margin:0 0 8px;"><div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"><div style="padding:0 0 8px;"><a href="https://msr-orchard.github.io/WildAWM/assets/img/fig/overview.webp" target="_blank" style="display:block;width:100%;text-decoration:none;"><img src="https://msr-orchard.github.io/WildAWM/assets/img/fig/overview.webp" width="420" alt="WildAWM 官方环境合成、任务验证与训练流程概览" style="display:block;width:100%;max-width:420px;height:auto;border:0;margin:0;"></a></div></div><div class="image-slot" style="display:inline-block;vertical-align:top;width:100%;max-width:420px;margin-right:8px;"></div></div><p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>WildAWM 公开论文、代码及 341 组长程环境任务，组合镜像网站、MCP 服务和本地文件；采用执行轨迹与质量门槛检查任务可解性、难度和验证器可靠性。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>开发者可借鉴它为跨页面、工具和脚本工作流构建测试环境，验证实际状态变化，而不是只让模型评价自己的回答。其环境合成使用开源模型，也包括中国模型生态。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>实践建议：把一次任务的初始数据库、文件与预期副作用固定下来，至少加入一个看似成功但实际状态错误的负例。论文中的训练收益只适用于所报告设置，不能直接保证生产迁移效果。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://arxiv.org/abs/2610.26828">WildAWM 论文</a> · <a href="https://github.com/MSR-Orchard/WildAWM">作者开源仓库</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">OpenAI 披露训练环境隔离加固：安全边界需要覆盖间接出网路径</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-23</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">工程实践</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">安全</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>OpenAI 公布前沿模型训练与评估环境的隔离加固方案，包括离线网页世界、受限容器与 microVM、网络边界及自动停止监控，并描述在受控基础设施副本上的红队发现。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>自建 Agent 平台不能把容器视为唯一边界；日志、指标、认证服务等辅助通道也可能形成间接访问路径。与业务运行时相关的重点是最小凭据、受限出网和持续监控。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>证据与局限：公告讨论内部训练、对抗评估和已修复的问题，不应写成所有已发布模型或客户环境正在遭受同一漏洞。红队获得源码、配置等有利条件，发现数量也不是受控能力排名。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://openai.com/index/securing-our-frontier-model-training-environment/">OpenAI 官方工程说明</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">04&nbsp;·&nbsp;前端开发与生态</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Bun 1.4.4 内置 bun fmt，并修正依赖安装与构建行为</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-22</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">版本更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">工具链</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Bun 1.4.4 增加兼容现有 Prettier 或 oxfmt 配置的 bun fmt，支持 JS/TS、Vue、Svelte、样式和文档等格式；同时调整 peer dependency、Linux libc 选择及多项构建与 Node.js 兼容行为。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>前端团队可把格式化和安装步骤纳入试点，但升级可能改变 lockfile、可选二进制依赖及格式结果，需在独立分支检查差异。</p>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">适用场景：</strong>适合大型仓库格式检查与包管理评估；保留现有 CI 作为对照，并验证构建产物与测试结果。</p>
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>实践建议：先运行检查模式并审阅差异，再比冷暖缓存耗时。官方性能倍数来自特定机器与仓库，不等于你项目的加速比；不要直接批量改写主分支。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://bun.com/blog/bun-v1.4.4">Bun 官方完整发布说明</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Node.js 24.22.1 发布安全更新，涉及 TLS、DNS、Brotli 与权限检查</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-21</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">安全更新</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">运行时</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Node.js 为 24 LTS 发布 24.22.1 安全版本，包含非规范 IP 地址处理、DNS 输入校验、Brotli、HTTP、加密缓存及权限模型修复，并更新 OpenSSL 等依赖。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>使用 Node 承载 SSR、BFF、构建服务或内部工具的前端团队，应盘点服务器、CI 镜像与部署平台实际版本。浏览器页面不直接运行 Node，不能把该更新描述成浏览器端补丁。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>实践建议：在对应受支持分支采用官方修复版本，回归代理、证书、压缩和 DNS 行为；容器基础镜像更新后重新构建并核对运行时版本，不能只改本机版本。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://nodejs.org/en/blog/release/v24.22.1">Node.js 官方安全版本说明</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:32px 12px 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="padding:0;"><span style="font-size:26px;line-height:36px;font-weight:800;letter-spacing:.3px;color:#3662f4;" class="mail-accent">05&nbsp;·&nbsp;AI 产业与开发者生态</span></td></tr></table></td></tr>
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Agent Skills 捐赠给 AAIF，推进跨 Agent 的中立治理</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-22</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">开源生态</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">标准治理</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>Anthropic 宣布向 Linux Foundation 下的 Agentic AI Foundation 捐赠 Agent Skills 名称、标识、GitHub 组织与域名，并提出版本化发布、正式提案流程和安全指导路线。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>团队可将可复用操作知识与某一家 Agent 产品解耦，减少迁移时重复维护。但格式可移植不代表所有平台的工具、权限或运行行为完全相同。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>实践建议：维护平台无关的任务要求，并单独声明工具前提与验收条件；对外部 Skill 进行来源和脚本审查，避免把基金会治理误认为每份社区内容都已审核。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation">Anthropic 官方标准治理公告</a></p>
+</td></tr></table>
+</td></tr>
+
+
+<tr><td class="pad" style="padding:4px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid #d9dde5;" class="mail-border"><tr><td class="story" style="padding:8px 0 20px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin:4px 0 12px;"><tr>
+<td valign="top" style="padding:0 12px 0 0;overflow-wrap:anywhere;word-break:break-word;"><h2 style="margin:0;font-size:22px;line-height:33px;color:#171b24;" class="mail-ink">Patch the Planet 公布 PHP 漏洞协同响应，强调补丁部署与维护者支持</h2></td>
+<td width="1" align="right" valign="top" nowrap style="width:1%;padding:3px 0 0;white-space:nowrap;"><div class="news-date mail-subtle" style="font-size:12px;line-height:20px;color:#79818f;">2026-10-21</div></td>
+</tr></table>
+<div class="news-tags" style="margin:0 0 8px;"><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">开发者生态</span><span class="mail-tag" style="display:inline-block;margin:0 6px 4px 0;padding:2px 8px;background:transparent;border:1px solid #d9dde5;border-radius:3px;font-size:12px;line-height:20px;color:#424a57;">供应链安全</span></div>
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">摘要：</strong>OpenAI 介绍与 PHP 维护者、研究机构及安全服务商协作处理关键漏洞的过程，并公布用于识别潜在受影响 PHP 版本的 Codex Skill；响应框架覆盖验证、修复、服务商保护和公开部署指导。</p>
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink">影响与分析：</strong>前端团队即使主要编写 JS，也可能依赖 PHP CMS、服务端模板或托管平台。发现漏洞之后的版本盘点、上游补丁与上线验证，决定风险是否真正消除。</p>
+
+
+
+
+<p style="margin:0 0 14px;font-size:15px;line-height:26px;color:#424a57;" class="mail-muted"><strong style="color:#171b24;" class="mail-ink"></strong>证据与局限：这是官方协同披露案例，不代表已扫描或修复你的资产。应依据 PHP 与托管商公告判断适用版本；AI 扫描发现不能替代维护者确认与修复验证。</p><p style="margin:0;font-size:13px;line-height:21px;color:#424a57;" class="mail-muted"><strong>来源：</strong><a href="https://openai.com/index/coordinated-disclosure-of-critical-vulnerabilities/">OpenAI 官方协同披露说明</a></p>
+</td></tr></table>
+</td></tr>
+
+<tr><td class="pad" style="padding:16px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:4px;">
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#171b24;" class="mail-ink">一句话总结</h2>
+<ul style="margin:0;padding:0;list-style-type:none;font-size:15px;line-height:26px;color:#424a57;"><li style="padding:0;">AI 正从一次生成走向持续执行，任务验收、边界控制与供应链维护需要同步升级。</li></ul>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:16px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:4px;">
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#171b24;" class="mail-ink">本周动手验证</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:15px;line-height:26px;color:#424a57;" class="mail-ink">
+<li style="padding:0 0 12px;"><strong>任务成本对照：</strong>固定一个 Vue 或 React 缺陷、上下文和验收脚本，对比现用模型与 M3.1 Flash；记录费用、重试和人工返工，全部验收通过才计为成功。</li>
+<li style="padding:0 0 12px;"><strong>状态验证器：</strong>在隔离环境设计一次页面操作与 MCP 写入任务，用前后状态验证结果；再构造“回复成功但未写入”的负例，验证器必须拒绝。</li>
+<li style="padding:0;"><strong>升级回归：</strong>在独立分支运行 bun fmt 检查模式并核对格式差异；用修复版 Node 镜像执行现有测试、构建与 SSR 冒烟检查，记录实际运行版本。</li>
+</ul>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:16px 12px 0;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-summary" style="width:100%;border:1px solid #d9dde5;border-radius:4px;border-collapse:separate;border-spacing:0;"><tr><td class="summary-content mail-summary" style="padding:18px 20px;border-radius:4px;">
+<h2 style="margin:0 0 12px;font-size:18px;line-height:26px;font-weight:800;color:#171b24;" class="mail-ink">团队行动建议</h2>
+<ul style="margin:0;padding-left:22px;list-style-type:disc;font-size:15px;line-height:26px;color:#424a57;" class="mail-ink">
+<li style="padding:0 0 12px;"><strong>建立任务成本账：</strong>建议由前端负责人维护固定任务集，将人工返工和成功率纳入模型选型。</li>
+<li style="padding:0 0 12px;"><strong>审查后台授权：</strong>建议由平台负责人为持续执行 Agent 定义凭据隔离、批准边界和可撤销连接。</li>
+<li style="padding:0;"><strong>维护升级责任表：</strong>建议由各服务负责人盘点 Node 与 PHP 资产、上游公告和补丁验证证据。</li>
+</ul>
+</td></tr></table>
+</td></tr>
+<tr><td class="pad" style="padding:22px 12px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td style="border-top:1px solid #d9dde5;padding-top:15px;font-size:11px;line-height:18px;color:#79818f;" class="mail-subtle mail-border">资讯干货 · 2026.10.19–10.25<br>资料限定于本周一手公告与论文；厂商评测、预览范围和研究局限已在对应资讯中说明，未声称完成独立实测。</td></tr></table></td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
