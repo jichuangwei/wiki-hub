@@ -401,6 +401,8 @@ def render_mail_body(source: str, categories: list[str]) -> str:
     if not body:
         raise ValueError("Report is missing an HTML body")
     content = re.sub(r"<!--.*?-->", "", body.group(1), flags=re.S)
+    # The mail's web-version link would point to this same page on the site.
+    content = re.sub(r'<a\b[^>]*\bdata-email-only="web-link"[^>]*>.*?</a>', '', content, flags=re.S | re.I)
     if re.search(r"<(?:script|iframe|object|embed|form|base)\b|\son\w+\s*=", content, flags=re.I):
         raise ValueError("Report body must contain passive email markup")
     content = re.sub(r'(<h1\b[^>]*>)\s*AI 资讯干货\s*(</h1>)', r'\1资讯干货\2', content)
