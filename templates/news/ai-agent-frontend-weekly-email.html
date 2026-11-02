@@ -17,7 +17,8 @@
 </head>
 <body style="margin:0;padding:0;background-color:#fafafa;" class="mail-bg">
 <!--
-邮件正文模板。发送前将所有 {{...}} 替换为真实内容，并删除这些说明注释。
+邮件正文模板。WEB_VERSION_URL 填写本期 Wiki Hub 页面完整 HTTPS 地址：https://jichuangwei.github.io/wiki-hub/news/YYYY-week-N/；YYYY 与 N 使用周期起始日期的 ISO 周年份和周序号，N 不补零，不能固定为某一期或使用最新周跳转入口。保留链接的 data-email-only="web-link" 标记，网站构建会移除此邮件专用入口。
+发送前将所有 {{...}} 替换为真实内容，并删除这些说明注释。
 邮件采用浅色 HTML 基准并声明 color-scheme: light；不要加入 prefers-color-scheme: dark 或 [data-ogsc]/[data-ogsb] 颜色覆写，让 QQ 邮箱按自身策略整体转换深色主题。body 仅使用 mail-bg，不要加 mail-ink。
 每个栏目复制 NEWS ITEM 区块至 2–4 条，总数保持 10–20 条；资讯标题不显示序号。
 DATE_RANGE 统一填写 YYYY.MM.DD–MM.DD（跨年时结束日期保留年份）；顶部显示“第 N 周 / 日期范围”。本期聚焦使用三条简短、无加粗前缀的完整结论，与历史周报保持一致。每条资讯填写 1–3 个事件标签（如模型发布、产品发布、开源、版本更新、研究进展），标签置于标题与时间下方、配图上方，日期位于标题右侧，只填写日期，不含机构、发布阶段或说明；附加时间信息放正文，日期不换行、标题自适应换行；机构名称在正文与来源链接中体现，不设 SOURCE_NAME。
@@ -33,7 +34,11 @@ DATE_RANGE 统一填写 YYYY.MM.DD–MM.DD（跨年时结束日期保留年份�
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:1000px;">
 <tr><td class="pad" style="padding:20px 12px 14px;">
 <h1 class="hero-title mail-ink" style="margin:0;font-size:42px;line-height:1.2;text-align:center;font-weight:750;color:#171b24;">资讯干货</h1>
-<div style="margin-top:12px;font-size:14px;line-height:22px;font-weight:400;text-align:center;font-family:Consolas,monospace;color:#171b24;" class="mail-ink">第 {{WEEK_NO}} 周&nbsp;&nbsp;/&nbsp;&nbsp;{{DATE_RANGE}}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;margin-top:12px;"><tr>
+<td width="64" style="width:64px;padding:0;"></td>
+<td align="center" style="padding:0;"><div style="font-size:14px;line-height:22px;font-weight:400;text-align:center;font-family:Consolas,monospace;color:#171b24;" class="mail-ink">第 {{WEEK_NO}} 周&nbsp;&nbsp;/&nbsp;&nbsp;{{DATE_RANGE}}</div></td>
+<td width="64" align="right" style="width:64px;padding:0;white-space:nowrap;"><a data-email-only="web-link" href="{{WEB_VERSION_URL}}" target="_blank" rel="noopener" aria-label="在 Wiki Hub 阅读本期周报" style="font-size:12px;line-height:22px;font-weight:400;color:#79899f;text-decoration:none;white-space:nowrap;">网页版 ↗</a></td>
+</tr></table>
 </td></tr>
 <tr><td class="focus-wrap" style="padding:0 12px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="mail-focus focus-panel" style="width:100%;background:#eef4ff;border-left:3px solid #79a7ff;border-radius:6px;">
